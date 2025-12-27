@@ -15,6 +15,8 @@ class Screensaver(arcade.View):
         self.title = None
         self.title_ = None
 
+        self.heartbeat_sound = arcade.load_sound('././assets/sounds/effects/heartbeat.wav')
+
         # Анимация буквы f
         self.f_animation_timer = 0
         self.f_animation_phase = 'waiting'
@@ -79,6 +81,7 @@ class Screensaver(arcade.View):
 
             # Быстрое мерцание
             elif self.f_animation_phase == 'blinking':
+                self.heartbeat_sound.play()
                 blink_interval = 0.1
                 blink_state = int(self.f_animation_timer / blink_interval) % 2
                 if blink_state == 0:
