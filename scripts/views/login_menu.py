@@ -1,155 +1,229 @@
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
-from scripts.custom_widgets import InteractiveLabel
+
+from scripts.custom_widgets import InteractiveLabel, TextInputField
 
 
 class LoginMenu(arcade.View):
-    def __init__(self):
+    def __init__(self, back_callback):
         super().__init__()
-        self.background_color = arcade.color.BLACK
-        self.background_sound = arcade.load_sound('././assets/sounds/background/login.mp3')
-        self.background_sound.play(loop=True, volume=0.2)
+        self.back_callback = back_callback
 
         self.manager = UIManager()
         self.manager.enable()
 
-        self.anchor_layout = UIAnchorLayout()
-        self.box_layout_labels = UIBoxLayout(vertical=True, space_between=20)
-        self.box_layout_buttons = UIBoxLayout(vertical=True, space_between=20)
+        self.hover_sound = arcade.load_sound('././assets/sounds/effects/hover.wav')
+        self.click_sound = arcade.load_sound('././assets/sounds/effects/click.wav')
 
-        self.label1 = None  # Добро пожаловать
-        self.label2 = None  # Вам нужен профиль
-        self.button1 = None  # Создать
-        self.button2 = None  # Войти
+        self.status_text = '> ОЖИДАНИЕ ВВОДА...'
+        self.active_input = None
 
         self.setup_widgets()
 
     def setup_widgets(self):
-        self.label1 = UILabel(
-            text='Добро пожаловать',
-            font_size=26,
+        main_box = UIBoxLayout(vertical=True, space_between=20)
+
+        # Заголовок
+        title = UILabel(
+            text='ПОДКЛЮЧЕНИЕ К СИСТЕМЕ P-BASE',
+            font_size=24,
             font_name='Courier New',
-            width=300,
+            width=500,
+            height=50,
             align='center',
+            text_color=arcade.color.WHITE,
+            bold=True
         )
-        self.box_layout_labels.add(self.label1)
+        main_box.add(title)
 
-        self.label2 = UILabel(
-            text='Вам нужен профиль',
-            font_size=20,
+        # Поле логина
+        login_label = UILabel(
+            text='ЛОГИН:',
+            font_size=18,
             font_name='Courier New',
+            width=100,
+            height=30,
+            text_color=arcade.color.LIGHT_GRAY
+        )
+
+        self.login_input = TextInputField(
             width=300,
-            align='center'
-        )
-        self.box_layout_labels.add(self.label2)
-
-        self.button_create = InteractiveLabel(
-            text='СОЗДАТЬ',  # Базовый текст
-            width=250,
-            height=45,
-            font_size=22,
+            height=35,
+            font_size=16,
             font_name='Courier New',
-            normal_color='#C8C8C8',  # Серый
-            hover_color='#FFFFFF',  # Белый
-            active_color='#FFFFFF',  # Белый
-            hover_sound=arcade.load_sound('././assets/sounds/effects/hover.wav'),
-            click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
+            text_color=arcade.color.WHITE,
+            bg_color=arcade.color.DARK_GRAY,
+            click_sound=self.click_sound,
+            on_enter=self.on_login_enter
         )
-        self.box_layout_buttons.add(self.button_create)
 
-        self.button_login = InteractiveLabel(
-            text='ВОЙТИ',
-            width=250,
+        login_row = UIBoxLayout(vertical=False, space_between=15)
+        login_row.add(login_label)
+        login_row.add(self.login_input)
+        main_box.add(login_row)
+
+        # Поле пароля
+        password_label = UILabel(
+            text='ПАРОЛЬ:',
+            font_size=18,
+            font_name='Courier New',
+            width=100,
+            height=30,
+            text_color=arcade.color.LIGHT_GRAY
+        )
+
+        self.password_input = TextInputField(
+            width=300,
+            height=35,
+            font_size=16,
+            font_name='Courier New',
+            text_color=arcade.color.WHITE,
+            bg_color=arcade.color.DARK_GRAY,
+            is_password=True,
+            click_sound=self.click_sound,
+            on_enter=self.on_password_enter
+        )
+
+        password_row = UIBoxLayout(vertical=False, space_between=15)
+        password_row.add(password_label)
+        password_row.add(self.password_input)
+        main_box.add(password_row)
+
+        # Статус
+        self.status_label = UILabel(
+            text=self.status_text,
+            font_size=16,
+            font_name='Courier New',
+            width=400,
+            height=30,
+            text_color=arcade.color.YELLOW
+        )
+        main_box.add(self.status_label)
+
+        # Кнопки
+        buttons_row = UIBoxLayout(vertical=False, space_between=50)
+
+        self.connect_btn = InteractiveLabel(
+            text='ПОДКЛЮЧИТЬСЯ',
+            width=200,
             height=45,
-            font_size=22,
+            font_size=18,
             font_name='Courier New',
             normal_color='#C8C8C8',
             hover_color='#FFFFFF',
             active_color='#FFFFFF',
-            hover_sound=arcade.load_sound('././assets/sounds/effects/hover.wav'),
-            click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
-        )
-        self.box_layout_buttons.add(self.button_login)
-
-        # Собираем все в anchor layout
-        self.anchor_layout.add(
-            child=self.box_layout_labels,
-            anchor_x='center',
-            anchor_y='top',
-            align_y=-100
+            hover_sound=self.hover_sound,
+            click_sound=self.click_sound
         )
 
-        self.anchor_layout.add(
-            child=self.box_layout_buttons,
-            anchor_x='center',
-            anchor_y='center'
+        self.back_btn = InteractiveLabel(
+            text='НАЗАД',
+            width=200,
+            height=45,
+            font_size=18,
+            font_name='Courier New',
+            normal_color='#C8C8C8',
+            hover_color='#FFFFFF',
+            active_color='#FFFFFF',
+            hover_sound=self.hover_sound,
+            click_sound=self.click_sound
         )
 
-        # Добавляем anchor_layout в менеджер
-        self.manager.add(self.anchor_layout)
+        buttons_row.add(self.connect_btn)
+        buttons_row.add(self.back_btn)
+        main_box.add(buttons_row)
 
-    def on_draw(self) -> bool | None:
+        # Центрируем
+        anchor = UIAnchorLayout()
+        anchor.add(child=main_box, anchor_x='center', anchor_y='center')
+        self.manager.add(anchor)
+
+    def on_login_enter(self, text):
+        """Когда нажали Enter в поле логина"""
+        if text and self.password_input.text == '':
+            # Переходим к паролю
+            self.login_input.deactivate()
+            self.password_input.on_click()
+            self.active_input = self.password_input
+
+    def on_password_enter(self, text):
+        """Когда нажали Enter в поле пароля"""
+        if text:
+            self.password_input.deactivate()
+            self.active_input = None
+            self.attempt_login()
+
+    def attempt_login(self):
+        """Попытка входа"""
+        login = self.login_input.text
+        password = self.password_input.text
+
+        if not login or not password:
+            self.status_text = '> ОШИБКА: ЗАПОЛНИТЕ ВСЕ ПОЛЯ'
+            self.status_label.text = self.status_text
+            return
+
+        self.status_text = '> ПОДКЛЮЧЕНИЕ...'
+        self.status_label.text = self.status_text
+
+        # TODO: сделать запись в бд
+
+    def on_draw(self):
         self.clear()
 
         self.manager.draw()
 
     def on_update(self, delta_time):
-        """Обновление анимации"""
-        self.button_create.on_update(delta_time)
-        self.button_login.on_update(delta_time)
+        self.connect_btn.on_update(delta_time)
+        self.back_btn.on_update(delta_time)
+        self.login_input.on_update(delta_time)
+        self.password_input.on_update(delta_time)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        """Обработка движения мыши"""
-        # Проверяем наведение на обе кнопки
-        self.button_create.check_mouse_hover(x, y)
-        self.button_login.check_mouse_hover(x, y)
+        self.connect_btn.check_mouse_hover(x, y)
+        self.back_btn.check_mouse_hover(x, y)
+        self.login_input.check_mouse_hover(x, y)
+        self.password_input.check_mouse_hover(x, y)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        """Обработка клика мыши"""
         if button == arcade.MOUSE_BUTTON_LEFT:
-            # Проверяем клик по кнопке СОЗДАТЬ
-            if self.button_create.check_mouse_hover(x, y):
-                self.button_create.on_click()
+            # Деактивируем все поля если кликнули мимо
+            clicked_on_input = False
 
-                # Если нажали СОЗДАТЬ, сбрасываем ВОЙТИ
-                if self.button_create._is_active:
-                    self.button_login.reset_state()
-                    self.active_button = self.button_create
+            # Проверяем поля ввода
+            if self.login_input.check_mouse_hover(x, y):
+                self.login_input.on_click()
+                self.password_input.reset_state()
+                self.active_input = self.login_input
+                clicked_on_input = True
+            elif self.password_input.check_mouse_hover(x, y):
+                self.password_input.on_click()
+                self.login_input.reset_state()
+                self.active_input = self.password_input
+                clicked_on_input = True
 
-                    # Действие при нажатии СОЗДАТЬ
-                    self.on_create_click()
+            # Кнопки
+            if self.connect_btn.check_mouse_hover(x, y):
+                self.connect_btn.on_click()
+                if self.connect_btn.is_active:
+                    self.back_btn.reset_state()
+                    self.attempt_login()
 
-            # Проверяем клик по кнопке ВОЙТИ
-            elif self.button_login.check_mouse_hover(x, y):
-                self.button_login.on_click()
+            elif self.back_btn.check_mouse_hover(x, y):
+                self.back_btn.on_click()
+                if self.back_btn.is_active:
+                    self.connect_btn.reset_state()
+                    # Возвращаемся назад
+                    self.back_callback()
 
-                # Если нажали ВОЙТИ, сбрасываем СОЗДАТЬ
-                if self.button_login._is_active:
-                    self.button_create.reset_state()
-                    self.active_button = self.button_login
-
-                    # Действие при нажатии ВОЙТИ
-                    self.on_login_click()
-
-    def on_create_click(self):
-        """Действие при клике на СОЗДАТЬ"""
-        print("Создание профиля...")
-        # Здесь переход к созданию профиля
-        # Например: self.window.show_view(CreateProfileView())
-
-    def on_login_click(self):
-        """Действие при клике на ВОЙТИ"""
-        print("Вход в профиль...")
-        # Здесь переход к входу
-        # Например: self.window.show_view(LoginView())
+            # Если кликнули не на поле ввода, деактивируем активное
+            if not clicked_on_input and self.active_input:
+                self.active_input.deactivate()
+                self.active_input = None
 
     def on_key_press(self, key, modifiers):
-        """Обработка клавиш"""
-        if key == arcade.key.ESCAPE:
-            self.window.close()
-        elif key == arcade.key.ENTER:
-            # Если есть активная кнопка, выполняем её действие
-            if self.active_button == self.button_create:
-                self.on_create_click()
-            elif self.active_button == self.button_login:
-                self.on_login_click()
+        # Передаем нажатия активному полю ввода
+        if self.active_input:
+            self.active_input.on_key_press(key, modifiers)
+        elif key == arcade.key.ESCAPE:
+            self.back_callback()

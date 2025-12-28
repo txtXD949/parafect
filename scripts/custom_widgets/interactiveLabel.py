@@ -1,20 +1,19 @@
-# scripts/custom_widgets/interactiveLabel.py
 import arcade
 from typing import Optional
 
 
 class InteractiveLabel(arcade.gui.UILabel):
     def __init__(self,
-                 text: str = "",
+                 text: str = '',
                  x: float = 0,
                  y: float = 0,
                  width: float = 200,
                  height: float = 50,
                  font_size: float = 20,
-                 font_name=("Courier New",),
-                 normal_color="#C8C8C8",
-                 hover_color="#FFFFFF",
-                 active_color="#FFFFFF",
+                 font_name=('Courier New',),
+                 normal_color='#C8C8C8',
+                 hover_color='#FFFFFF',
+                 active_color='#FFFFFF',
                  hover_sound: Optional[arcade.sound] = None,
                  click_sound: Optional[arcade.sound] = None,
                  **kwargs):
@@ -25,7 +24,7 @@ class InteractiveLabel(arcade.gui.UILabel):
         self.active_color = arcade.color.Color.from_hex_string(active_color)
 
         super().__init__(
-            text=f"< {text} >",
+            text=f'< {text} >',
             x=x,
             y=y,
             width=width,
@@ -33,7 +32,7 @@ class InteractiveLabel(arcade.gui.UILabel):
             font_size=font_size,
             font_name=font_name,
             text_color=self.normal_color,
-            align="center",
+            align='center',
             **kwargs
         )
 
@@ -58,13 +57,13 @@ class InteractiveLabel(arcade.gui.UILabel):
             arcade.play_sound(self.hover_sound, volume=2)
 
         if self._is_active:
-            self.text = f"= {self.base_text} ="
+            self.text = f'= {self.base_text} ='
             self._label.color = self.active_color
         elif self._is_hovered:
-            self.text = f"> {self.base_text} <"
+            self.text = f'> {self.base_text} <'
             self._label.color = self.hover_color
         else:
-            self.text = f"< {self.base_text} >"
+            self.text = f'< {self.base_text} >'
             self._label.color = self.normal_color
 
         return self._is_hovered

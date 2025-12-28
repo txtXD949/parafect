@@ -2,7 +2,7 @@ import arcade
 import arcade.text
 from pyglet.graphics import Batch
 
-from .login_menu import LoginMenu
+from .entry_menu import EntryMenu
 
 
 class Screensaver(arcade.View):
@@ -28,7 +28,6 @@ class Screensaver(arcade.View):
 
     def setup_text(self):
         """Создаем текст через Batch"""
-        # Создаем объект Batch
         self.batch = Batch()
 
         center_x = self.window.width // 2
@@ -73,7 +72,7 @@ class Screensaver(arcade.View):
                 self.f_animation_phase = 'fade_out'
                 self.f_animation_timer = 0
 
-            # Плавное потухание буквы f
+            # Потухание буквы f
             elif self.f_animation_phase == 'fade_out':
                 self.title_.batch = self.batch
                 self.title.batch = None
@@ -93,20 +92,20 @@ class Screensaver(arcade.View):
                     self.title.batch = None
                     self.title_.batch = self.batch
 
-                # Считаем количество мерцаний (каждые 0.2 секунды - одно полное мерцание)
+                # Считаем количество мерцаний
                 if self.f_animation_timer >= 0.2 * (self.blink_count + 1):
                     self.blink_count += 1
                     if self.blink_count >= 4:
                         self.f_animation_phase = 'fade_in'
                         self.f_animation_timer = 0
 
-            # 4. Плавное загорание обратно (0.5 секунды)
+            # Загорание обратно (0.5 секунды)
             elif self.f_animation_phase == 'fade_in':
                 if self.f_animation_timer >= 0.5:
                     self.f_animation_phase = 'done'
 
             if self.f_animation_phase == 'done':
-                login_menu = LoginMenu()
+                login_menu = EntryMenu()
                 self.window.show_view(login_menu)
 
     def on_draw(self):
@@ -123,5 +122,4 @@ class Screensaver(arcade.View):
                 color=(0, 0, 0, int(self.fade_alpha))
             )
 
-        # Рисуем текст
         self.batch.draw()
