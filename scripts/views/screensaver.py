@@ -2,6 +2,8 @@ import arcade
 import arcade.text
 from pyglet.graphics import Batch
 
+from .login_menu import LoginMenu
+
 
 class Screensaver(arcade.View):
     def __init__(self):
@@ -102,6 +104,10 @@ class Screensaver(arcade.View):
             elif self.f_animation_phase == 'fade_in':
                 if self.f_animation_timer >= 0.5:
                     self.f_animation_phase = 'done'
+
+            if self.f_animation_phase == 'done':
+                login_menu = LoginMenu()
+                self.window.show_view(login_menu)
 
     def on_draw(self):
         """Отрисовка кадра"""
