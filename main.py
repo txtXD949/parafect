@@ -1,7 +1,6 @@
 #  Запуск программы отсюда
 from scripts.views import Screensaver
 
-# TODO: сделать спрайт таблеток
 
 def main():
     import arcade
