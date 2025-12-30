@@ -206,6 +206,11 @@ class SigninMenu(arcade.View):
         from database import AccountManager
         manager = AccountManager()
 
+        if name in manager.get_logins():
+            self.status_text = '> ОШИБКА: ВВЕДЕН СУЩЕСТВУЮЩИЙ ЛОГИН'
+            self.status_label.text = self.status_text
+            return
+
         manager.add_account(name, code1)
 
     def on_draw(self):
