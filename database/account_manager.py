@@ -86,6 +86,9 @@ class AccountManager:
 
         return self.profile_manager.save_profile(self.current_account, profile_data)
 
+    def get_logins(self):
+        return [a for b in self.cur.execute("""SELECT login FROM Users""") for a in b]
+
     @staticmethod
     def code_password(password: str) -> str:
         bytes = password.encode('utf-8')
