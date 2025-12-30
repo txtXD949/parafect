@@ -203,7 +203,10 @@ class SigninMenu(arcade.View):
         self.status_text = '> РЕГИСТРАЦИЯ...'
         self.status_label.text = self.status_text
 
-        # TODO: сделать запись в бд
+        from database import AccountManager
+        manager = AccountManager()
+
+        manager.add_account(name, code1)
 
     def on_draw(self):
         self.clear()

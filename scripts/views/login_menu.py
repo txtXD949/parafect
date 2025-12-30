@@ -163,10 +163,15 @@ class LoginMenu(arcade.View):
             self.status_label.text = self.status_text
             return
 
-        self.status_text = '> ПОДКЛЮЧЕНИЕ...'
-        self.status_label.text = self.status_text
+        from database import AccountManager
+        manager = AccountManager()
 
-        # TODO: сделать запись в бд
+        if manager.get_account(login, password):
+            self.status_text = '> ПОДКЛЮЧЕНИЕ...'
+            self.status_label.text = self.status_text
+        else:
+            self.status_text = '> ОШИБКА: НЕВЕРНЫЕ ДАННЫЕ'
+            self.status_label.text = self.status_text
 
     def on_draw(self):
         self.clear()
