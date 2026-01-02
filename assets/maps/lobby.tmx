@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="15" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="1">
+ <tileset firstgid="1" source="../sprites/tsxs/tileset_1.tsx"/>
+ <tileset firstgid="442" source="../sprites/tsxs/tileset_2.tsx"/>
+ <layer id="1" name="Слой тайлов 1" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2BwAQAClAAB
+  </data>
+ </layer>
+ <layer id="9" name="collitions" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJzbxczAsIsCTArAppcUc8i1F10/qerpbS8t9JLrd3QxQnqQ9ZKLAVJeLE0=
+  </data>
+ </layer>
+ <layer id="2" name="ground" width="15" height="11" tintcolor="#3f3f3f">
+  <data encoding="base64" compression="zlib">
+   eJwrYmJgKBrFo3gQYQD9GkrF
+  </data>
+ </layer>
+ <layer id="3" name="walls" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxzZWJgcANiVyTaFU0MhN2xiIEwOYASvTD3kWsvJXopcfNA+dd9APzrhpZGcKUpbOIgGgBwGw1w
+  </data>
+ </layer>
+ <layer id="4" name="main_board" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAemIsDj4JRQAoAAEMwA68=
+  </data>
+ </layer>
+ <layer id="5" name="map_board" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxjYBiaYC4DQ8Ko3uEJANxyBPI=
+  </data>
+ </layer>
+ <layer id="6" name="market" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFtAJXeAbaBUMTAAATlwDh
+  </data>
+ </layer>
+ <layer id="7" name="decorations" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAfWAPFhMTw6ccFGngYGBqBuAmIm4G4hYd4d60Fql0HxOuBeAMQb4TqDQJiC3YGBkt23HpvAdXeBuI7QHwXiO+RYC87LwMDBxBzAjEXEHPzEq/XBKjWFIjNgNgciC2gek0YsasnJpw9cehFNoMSeWIBALfHFA8=
+  </data>
+ </layer>
+</map>
