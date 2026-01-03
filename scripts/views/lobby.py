@@ -12,9 +12,19 @@ class LobbyView(arcade.View):
         self.map_board_use = False
         self.market_use = False
 
+        # Храним состояние нажатых клавиш
+        self.keys_pressed = {
+            arcade.key.UP: False,
+            arcade.key.DOWN: False,
+            arcade.key.LEFT: False,
+            arcade.key.RIGHT: False
+        }
+
         self.setup()
 
     def setup(self):
+        from ..player import PlayerSprite
+
         # Карта
         self.tile_map = arcade.load_tilemap('././assets/maps/lobby.tmx', scaling=1.0)
 
@@ -26,7 +36,7 @@ class LobbyView(arcade.View):
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
         # Игрок
-        self.player = arcade.Sprite('././assets/images/hum/hum_fd1.png', scale=0.6)  # поставить игрока
+        self.player = PlayerSprite(scale=0.6)
         self.player.center_x, self.player.center_y = self.map_width / 2, self.map_height / 2
 
         self.player_list = arcade.SpriteList()
@@ -53,6 +63,8 @@ class LobbyView(arcade.View):
             self.map_height / 2
         )
 
+
+
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -63,6 +75,7 @@ class LobbyView(arcade.View):
 
     def on_update(self, delta_time: float) -> bool | None:
         self.physics_engine.update()
+        self.player_list.update()
 
         # Доска игры
         hit = arcade.check_for_collision_with_list(self.player, self.scene['main_board'])
@@ -92,12 +105,17 @@ class LobbyView(arcade.View):
             self.market_use = False
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
+        self.player.is_going = True
+
         if symbol == arcade.key.UP:
             self.player.change_y = SPEED
+
         if symbol == arcade.key.DOWN:
             self.player.change_y = -SPEED
+
         if symbol == arcade.key.LEFT:
             self.player.change_x = -SPEED
+
         if symbol == arcade.key.RIGHT:
             self.player.change_x = SPEED
 
