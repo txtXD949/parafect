@@ -3,10 +3,10 @@ import enum
 
 
 class Direction(enum.Enum):
-    DOWN = 0  # Текстуры 0, 1, 2
-    UP = 1  # Текстуры 3, 4, 5
-    LEFT = 2  # Текстуры 6, 7, 8
-    RIGHT = 3  # Текстуры 9, 10, 11
+    DOWN = 0
+    UP = 1
+    LEFT = 2
+    RIGHT = 3
 
 
 class PlayerSprite(arcade.Sprite):

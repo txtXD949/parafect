@@ -1,3 +1,5 @@
+import random
+
 import arcade
 
 CAMERA_LERP = 0.3
@@ -8,22 +10,21 @@ class LobbyView(arcade.View):
     def __init__(self):
         super().__init__()
 
+        self.sound_player = None
+
         self.main_board_use = False
         self.map_board_use = False
         self.market_use = False
 
-        # Храним состояние нажатых клавиш
-        self.keys_pressed = {
-            arcade.key.UP: False,
-            arcade.key.DOWN: False,
-            arcade.key.LEFT: False,
-            arcade.key.RIGHT: False
-        }
+        self.sound_ghost_chance = 0.0003
 
         self.setup()
 
     def setup(self):
         from ..player import PlayerSprite
+
+        self.sound_player = arcade.load_sound('././assets/sounds/background/lobby(1).mp3')
+        self.sound_player.play(loop=True, volume=0.2)
 
         # Карта
         self.tile_map = arcade.load_tilemap('././assets/maps/lobby.tmx', scaling=1.0)
@@ -63,8 +64,6 @@ class LobbyView(arcade.View):
             self.map_height / 2
         )
 
-
-
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -98,11 +97,26 @@ class LobbyView(arcade.View):
         # Маркет
         hit = arcade.check_for_collision_with_list(self.player, self.scene['market'])
         if hit:
-            if self.market_use:
+            if not self.market_use:
                 self.open_market()
-            self.market_use = False
+            self.market_use = True
         else:
             self.market_use = False
+
+        # звук призрака
+        if random.random() < self.sound_ghost_chance:
+            sound = random.randint(0, 1)
+            if sound:
+                arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost1(lobby).wav'))
+            else:
+                arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav'))
+
+        if self.player.is_going:
+            if self.player.animation_timer in (8,):
+                if arcade.check_for_collision_with_list(self.player, self.scene['carpet']):
+                    arcade.play_sound(arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav'), volume=0.03)
+                elif arcade.check_for_collision_with_list(self.player, self.scene['ground']):
+                    arcade.play_sound(arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'), volume=0.03)
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player.is_going = True
@@ -127,15 +141,15 @@ class LobbyView(arcade.View):
 
     def open_main_board(self):
         # TODO: сделать главную доску
-        print('open_main_board')
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
         ...
 
     def open_map_board(self):
         # TODO: сделать доску карт
-        print('open_map_board')
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
         ...
 
     def open_market(self):
         # TODO: сделать маркет
-        print('open_market')
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/market(lobby).wav'), volume=0.04)
         ...

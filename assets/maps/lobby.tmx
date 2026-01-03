@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="15" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="15" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="1">
  <tileset firstgid="1" source="../sprites/tsxs/tileset_1.tsx"/>
  <tileset firstgid="442" source="../sprites/tsxs/tileset_2.tsx"/>
  <layer id="1" name="Слой тайлов 1" width="15" height="11">
@@ -39,7 +39,12 @@
  </layer>
  <layer id="7" name="decorations" width="15" height="11">
   <data encoding="base64" compression="zlib">
-   eJxjYKAfWAPFhMTw6ccFGngYGBqBuAmIm4G4hYd4d60Fql0HxOuBeAMQb4TqDQJiC3YGBkt23HpvAdXeBuI7QHwXiO+RYC87LwMDBxBzAjEXEHPzEq/XBKjWFIjNgNgciC2gek0YsasnJpw9cehFNoMSeWIBALfHFA8=
+   eJxjYKAfWAPFhMTw6acnCAJiC3YGBkt2OltMATBhxC5OTDh74tCLbAYl8sQCANC7B10=
+  </data>
+ </layer>
+ <layer id="10" name="carpet" width="15" height="11">
+  <data encoding="base64" compression="zlib">
+   eJzdy8cRgDAUA1HdTLC7IZVHaofUjgm1sCX43xg0825a6R/rvTRgxITZp7cL3xUbdhyGNvI9ceHGY2hdkDLkKFCG9LbiW6NBi87Qfn0v6ZEMsw==
   </data>
  </layer>
 </map>
