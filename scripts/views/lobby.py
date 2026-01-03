@@ -67,17 +67,29 @@ class LobbyView(arcade.View):
         # Доска игры
         hit = arcade.check_for_collision_with_list(self.player, self.scene['main_board'])
         if hit:
-            self.open_main_board()
+            if not self.main_board_use:
+                self.open_main_board()
+            self.main_board_use = True
+        else:
+            self.main_board_use = False
 
         # Доска карт
         hit = arcade.check_for_collision_with_list(self.player, self.scene['map_board'])
         if hit:
-            self.open_map_board()
+            if not self.map_board_use:
+                self.open_map_board()
+            self.map_board_use = True
+        else:
+            self.map_board_use = False
 
         # Маркет
         hit = arcade.check_for_collision_with_list(self.player, self.scene['market'])
         if hit:
-            self.open_market()
+            if self.market_use:
+                self.open_market()
+            self.market_use = False
+        else:
+            self.market_use = False
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.UP:
