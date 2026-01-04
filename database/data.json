@@ -21,5 +21,28 @@
       "ef_volume": 1.0,
       "language": "ru"
     }
+  },
+  "2": {
+    "cash": 0,
+    "level": 1,
+    "experience": 0,
+    "inventory": {
+      "emf": 0,
+      "uf": 0,
+      "book": 0,
+      "mic": 0,
+      "dict": 0,
+      "term": 0,
+      "flash_light": 0,
+      "camera": 0,
+      "blag": 0,
+      "light": 0,
+      "pills": 0
+    },
+    "settings": {
+      "volume": 1.0,
+      "ef_volume": 1.0,
+      "language": "ru"
+    }
   }
 }
