@@ -114,7 +114,12 @@ class LobbyView(arcade.View):
         if self.player.is_going:
             if self.player.animation_timer in (8,):
                 if arcade.check_for_collision_with_list(self.player, self.scene['carpet']):
-                    arcade.play_sound(arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav'), volume=0.03)
+                    if self.player.bottom >= 16 * 3:
+                        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav'),
+                                          volume=0.03)
+                    else:
+                        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'),
+                                          volume=0.03)
                 elif arcade.check_for_collision_with_list(self.player, self.scene['ground']):
                     arcade.play_sound(arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'), volume=0.03)
 
