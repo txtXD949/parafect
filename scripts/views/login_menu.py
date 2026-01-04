@@ -169,6 +169,14 @@ class LoginMenu(arcade.View):
         if manager.get_account(login, password):
             self.status_text = '> ПОДКЛЮЧЕНИЕ...'
             self.status_label.text = self.status_text
+
+            from .lobby import LobbyView
+            lobby = LobbyView()
+            self.window.show_view(lobby)
+
+            from constants import ENTRY_BACKGROUND_SOUND
+            ENTRY_BACKGROUND_SOUND.pause()
+
         else:
             self.status_text = '> ОШИБКА: НЕВЕРНЫЕ ДАННЫЕ'
             self.status_label.text = self.status_text
