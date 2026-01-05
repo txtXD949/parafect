@@ -7,14 +7,40 @@ class MarketView(arcade.View):
 
         self.player_balance = balance
         self.selected_item_id = None
-
         self.lobby = lobby
 
+        # Камера для маркета
+        self.camera = None
+
+        # Размеры виртуального экрана (как в лобби)
+        self.virtual_width = 800
+        self.virtual_height = 600
+
     def on_show_view(self):
+        # Инициализируем камеру
+        self.camera = arcade.Camera2D()
+
+        # Задаем виртуальные размеры
+        self.camera.projection = arcade.rect.XYWH(
+            0, 0,
+            self.virtual_width,
+            self.virtual_height
+        )
+
+        # Настраиваем вьюпорт под реальный размер окна
+        self.camera.viewport_width = self.window.width
+        self.camera.viewport_height = self.window.height
+
+        # Позиционируем камеру
+        self.camera.position = (
+            self.virtual_width / 2,
+            self.virtual_height / 2
+        )
+
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
-        # МАРКЕТ
+        # МАРКЕТ - используем виртуальные координаты
         market_label = arcade.gui.UILabel(
             text='МАРКЕТ',
             font_name='Courier New',
@@ -22,15 +48,15 @@ class MarketView(arcade.View):
             text_color=arcade.color.WHITE,
             align='center'
         )
-        market_label.center_x = 400
+        market_label.center_x = 400  # виртуальные координаты
         market_label.top = 550
         self.manager.add(market_label)
 
-        # Создаем ItemsList
+        # Создаем ItemsList - используем виртуальные координаты
         from ..ui import ItemsList
         self.items_list = ItemsList(x=70, y=520, width=380, height=450)
 
-        # Виджет информации о предмете
+        # Виджет информации о предмете - виртуальные координаты
         from ..ui import ItemInfoWidget
         self.item_info = ItemInfoWidget(
             x=460, y=520,
@@ -38,7 +64,7 @@ class MarketView(arcade.View):
         )
         self.item_info.add_to_manager(self.manager)
 
-        # Кнопочки
+        # Кнопочки - виртуальные координаты
         from ..ui import MarketButtons
         self.market_buttons = MarketButtons(
             x=460, y=200,
@@ -79,7 +105,10 @@ class MarketView(arcade.View):
     def on_draw(self):
         self.clear()
 
-        # Внешняя рамка
+        # Используем камеру для всего рендеринга
+        self.camera.use()
+
+        # Внешняя рамка - виртуальные координаты
         arcade.draw_line(50, 550, 750, 550, arcade.color.WHITE, 2)
         arcade.draw_line(750, 550, 750, 50, arcade.color.WHITE, 2)
         arcade.draw_line(750, 50, 50, 50, arcade.color.WHITE, 2)
@@ -129,7 +158,7 @@ class MarketView(arcade.View):
         # Спрайт предмета
         self.item_info.draw_image()
 
-        # UI элементы
+        # UI элементы рисуем без камеры (они уже в правильных координатах)
         self.manager.draw()
 
     def on_update(self, delta_time):
@@ -146,16 +175,41 @@ class MarketView(arcade.View):
             if button:
                 button.on_update(delta_time)
 
+    def on_resize(self, width: int, height: int):
+        """Обработка изменения размера окна"""
+        super().on_resize(width, height)
+
+        if self.camera:
+            # Обновляем вьюпорт камеры под новый размер окна
+            self.camera.viewport_width = width
+            self.camera.viewport_height = height
+
+            # Пересчитываем позиционирование
+            self.camera.position = (
+                self.virtual_width / 2,
+                self.virtual_height / 2
+            )
+
+    # Остальные методы остаются без изменений...
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
             self.close_market()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        """Обработка движения мыши"""
-        self.market_buttons.check_mouse_hover(x, y)
+        """Обработка движения мыши - конвертируем реальные координаты в виртуальные"""
+        # Конвертируем реальные координаты мыши в виртуальные
+        virtual_x = (x / self.window.width) * self.virtual_width
+        virtual_y = (y / self.window.height) * self.virtual_height
+
+        self.market_buttons.check_mouse_hover(virtual_x, virtual_y)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        selected_id = self.items_list.check_mouse_press(x, y)
+        """Обработка клика мыши - конвертируем реальные координаты в виртуальные"""
+        # Конвертируем реальные координаты мыши в виртуальные
+        virtual_x = (x / self.window.width) * self.virtual_width
+        virtual_y = (y / self.window.height) * self.virtual_height
+
+        selected_id = self.items_list.check_mouse_press(virtual_x, virtual_y)
         if selected_id:
             self.selected_item_id = selected_id
 
@@ -164,26 +218,43 @@ class MarketView(arcade.View):
 
             self.market_buttons.update_button_state()
 
-        self.market_buttons.on_mouse_press(x, y, button, modifiers)
-
-        # Драг для скролла
-        self.items_list.on_mouse_press(x, y, button, modifiers)
+        self.market_buttons.on_mouse_press(virtual_x, virtual_y, button, modifiers)
 
         # X
-        if 715 <= x <= 725 and 520 <= y <= 530:
+        if 715 <= virtual_x <= 725 and 520 <= virtual_y <= 530:
             self.close_market()
 
+        # Драг для скролла
+        self.items_list.on_mouse_press(virtual_x, virtual_y, button, modifiers)
+
     def on_mouse_release(self, x, y, button, modifiers):
-        self.items_list.on_mouse_release(x, y, button, modifiers)
+        """Обработка отпускания мыши - конвертируем реальные координаты в виртуальные"""
+        virtual_x = (x / self.window.width) * self.virtual_width
+        virtual_y = (y / self.window.height) * self.virtual_height
+
+        self.items_list.on_mouse_release(virtual_x, virtual_y, button, modifiers)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        if self.items_list.on_mouse_scroll(x, y, scroll_x, scroll_y):
+        """Обработка скролла мыши - конвертируем реальные координаты в виртуальные"""
+        virtual_x = (x / self.window.width) * self.virtual_width
+        virtual_y = (y / self.window.height) * self.virtual_height
+
+        if self.items_list.on_mouse_scroll(virtual_x, virtual_y, scroll_x, scroll_y):
             self.items_list.update_visibility(self.manager)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if self.items_list.on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+        """Обработка перетаскивания мыши - конвертируем реальные координаты в виртуальные"""
+        virtual_x = (x / self.window.width) * self.virtual_width
+        virtual_y = (y / self.window.height) * self.virtual_height
+
+        # Конвертируем дельту тоже
+        virtual_dx = (dx / self.window.width) * self.virtual_width
+        virtual_dy = (dy / self.window.height) * self.virtual_height
+
+        if self.items_list.on_mouse_drag(virtual_x, virtual_y, virtual_dx, virtual_dy, buttons, modifiers):
             self.items_list.update_visibility(self.manager)
 
+    # Остальные методы остаются без изменений...
     def buy_selected_item(self):
         if not self.selected_item_id:
             return
