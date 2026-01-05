@@ -1,7 +1,7 @@
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 
-from scripts.custom_widgets import InteractiveLabel
+from scripts.ui import InteractiveLabel
 import constants
 
 
