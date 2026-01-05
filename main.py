@@ -1,6 +1,6 @@
 #  Запуск программы отсюда
 from scripts.views import Screensaver
-from scripts.views import MarketView
+from scripts.views import LobbyView
 
 
 def main():
@@ -11,8 +11,8 @@ def main():
     # screensaver = Screensaver()
     # window.show_view(screensaver)
 
-    market = MarketView()
-    window.show_view(market)
+    lobby = LobbyView()
+    window.show_view(lobby)
 
     arcade.run()
 

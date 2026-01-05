@@ -244,5 +244,13 @@ class LobbyView(arcade.View):
         ...
 
     def open_market(self):
-        # TODO: сделать маркет
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/market(lobby).wav'), volume=0.03)
+        self.player.change_x = self.player.change_y = 0
+
+        from .market import MarketView
+        market = MarketView(lobby=self)
+        self.window.show_view(market)
+
+    def open_journal(self):
+        # TODO: сделать журнал
+        ...

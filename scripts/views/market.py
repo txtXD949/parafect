@@ -2,11 +2,13 @@ import arcade
 
 
 class MarketView(arcade.View):
-    def __init__(self, balance=1000):
+    def __init__(self, balance=1000, lobby=None):
         super().__init__()
 
         self.player_balance = balance
         self.selected_item_id = None
+
+        self.lobby = lobby
 
     def on_show_view(self):
         self.manager = arcade.gui.UIManager()
@@ -146,8 +148,7 @@ class MarketView(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
-            self.window.close()
-            # self.close_market()
+            self.close_market()
 
     def on_mouse_motion(self, x, y, dx, dy):
         """Обработка движения мыши"""
@@ -170,7 +171,7 @@ class MarketView(arcade.View):
 
         # X
         if 715 <= x <= 725 and 520 <= y <= 530:
-            self.window.close()
+            self.close_market()
 
     def on_mouse_release(self, x, y, button, modifiers):
         self.items_list.on_mouse_release(x, y, button, modifiers)
@@ -259,5 +260,4 @@ class MarketView(arcade.View):
         self.item_info.update_info(item)
 
     def close_market(self):
-        # TODO: делать возврат в лобби
-        ...
+        self.window.show_view(self.lobby)
