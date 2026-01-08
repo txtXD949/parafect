@@ -171,7 +171,7 @@ class LoginMenu(arcade.View):
             self.status_label.text = self.status_text
 
             from .lobby import LobbyView
-            lobby = LobbyView()
+            lobby = LobbyView(account_manager=manager)
             self.window.show_view(lobby)
 
             from constants import ENTRY_BACKGROUND_SOUND

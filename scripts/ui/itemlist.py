@@ -50,13 +50,13 @@ class ItemsList:
             manager.remove(item)
         self.visible_items.clear()
 
+        panel_top = self.y - 55 * self.scale
+        panel_bottom = self.y - self.height + 20 * self.scale
+
         # Добавляем только видимые элементы
         for item in self.items:
             item_bottom = item.top - item.height
             item_top = item.top
-
-            panel_bottom = self.y - self.height
-            panel_top = self.y - 30
 
             is_visible = (item_bottom < panel_top and
                           item_top > panel_bottom)
@@ -146,6 +146,6 @@ class ItemsList:
             left=self.x,
             right=self.x + self.width,
             bottom=self.y - self.height,
-            top=self.y - 10,
+            top=self.y - 30,
             color=(30, 30, 30)
         )

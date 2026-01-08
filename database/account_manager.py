@@ -58,7 +58,7 @@ class AccountManager:
         else:
             return False
 
-    def get_data(self, ):
+    def get_data(self):
         if not self.current_account:
             return None
 

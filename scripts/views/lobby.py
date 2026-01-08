@@ -63,21 +63,28 @@ class FootstepParticle(arcade.SpriteSolidColor):
 
 
 class LobbyView(arcade.View):
-    def __init__(self):
+    def __init__(self, account_manager):
         super().__init__()
 
+        # Звук
         self.sound_player = None
 
+        # Вспомогательное
         self.main_board_use = False
         self.map_board_use = False
         self.market_use = False
 
+        # Шансы
         self.sound_ghost_chance = 0.0003
 
         # Частицы следов
         self.footstep_particles = arcade.SpriteList()
         self.last_step_particle_time = 0
         self.step_particle_interval = 0.15
+
+        # Файлики
+        self.account_manager = account_manager
+        self.game_state_path = '././database/_game.json'
 
         self.setup()
 
@@ -87,6 +94,9 @@ class LobbyView(arcade.View):
         # Фоновый звук
         self.sound_player = arcade.load_sound('././assets/sounds/background/lobby(1).mp3')
         self.sound_player.play(loop=True, volume=0.2)
+
+        # Файлик
+        self.create_game_state_file()
 
         # Карта
         self.tile_map = arcade.load_tilemap('././assets/maps/lobby.tmx', scaling=1.0)
@@ -248,8 +258,39 @@ class LobbyView(arcade.View):
         self.player.change_x = self.player.change_y = 0
 
         from .market import MarketView
-        market = MarketView(lobby=self)
+        market = MarketView(lobby=self, account_manager=self.account_manager)
         self.window.show_view(market)
+
+    def create_game_state_file(self):
+        """Создает файл состояния игры при входе в лобби"""
+        import json
+
+        user_id = self.account_manager.current_account
+        profile = self.account_manager.profile_manager.load_profile(user_id)
+
+        # Базовый набор предметов
+        game_inventory = {
+            'flash_light': 1,
+            'emf': 1,
+            'uf': 1,
+            'dict': 1,
+            'camera': 0,
+            'term': 1,
+            'mic': 1,
+            'book': 1,
+            'incense': 0,
+            'lighter': 0,
+            'pills': 0
+        }
+
+        game_state = {
+            'inventory': game_inventory,
+            'map': None,
+            'difficulty': None
+        }
+
+        with open(self.game_state_path, 'w', encoding='utf-8') as f:
+            json.dump(game_state, f, ensure_ascii=False, indent=2)
 
     def open_journal(self):
         # TODO: сделать журнал

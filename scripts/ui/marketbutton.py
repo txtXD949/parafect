@@ -9,6 +9,9 @@ class MarketButtons:
         self.width = width
         self.height = 90
         self.market_view = market_view
+        self.scale = 1.0
+        self.offset_x = 0
+        self.offset_y = 0
 
         # Звуки
         self.hover_sound = arcade.load_sound('././assets/sounds/effects/hover.wav')
@@ -22,18 +25,17 @@ class MarketButtons:
 
     def add_to_manager(self, manager):
         """Добавляем кнопки в UI Manager"""
-
-        # Верхний ряд кнопок
-        top_y = self.y - 100
+        # Рассчитываем позиции с учетом масштаба
+        top_y = self.y - 100 * self.scale
 
         # $
         self.button_buy_item = InteractiveLabel(
             text='$',
-            x=self.x + 10,
+            x=self.x + 10 * self.scale,
             y=top_y,
-            width=120,
-            height=35,
-            font_size=12,
+            width=120 * self.scale,
+            height=35 * self.scale,
+            font_size=int(12 * self.scale),
             font_name='Courier New',
             normal_color='#C8C8C8',
             hover_color='#FFF',
@@ -46,11 +48,11 @@ class MarketButtons:
         # $$
         self.button_buy_all = InteractiveLabel(
             text='$$',
-            x=self.x + 140,
+            x=self.x + 140 * self.scale,
             y=top_y,
-            width=120,
-            height=35,
-            font_size=12,
+            width=120 * self.scale,
+            height=35 * self.scale,
+            font_size=int(12 * self.scale),
             font_name='Courier New',
             normal_color='#C8C8C8',
             hover_color='#FFF',
@@ -61,16 +63,16 @@ class MarketButtons:
         manager.add(self.button_buy_all)
 
         # Нижний ряд кнопок
-        bottom_y = self.y - 135
+        bottom_y = self.y - 135 * self.scale
 
-        # Кнопка "^" (ВЗЯТЬ ПРЕДМЕТ)
+        # ^
         self.button_take_item = InteractiveLabel(
             text='^',
-            x=self.x + 10,
+            x=self.x + 10 * self.scale,
             y=bottom_y,
-            width=120,
-            height=35,
-            font_size=12,
+            width=120 * self.scale,
+            height=35 * self.scale,
+            font_size=int(12 * self.scale),
             font_name='Courier New',
             normal_color='#C8C8C8',
             hover_color='#FFF',
@@ -83,11 +85,11 @@ class MarketButtons:
         # ∨
         self.button_remove_selected = InteractiveLabel(
             text='∨',
-            x=self.x + 140,
+            x=self.x + 140 * self.scale,
             y=bottom_y,
-            width=120,
-            height=35,
-            font_size=12,
+            width=120 * self.scale,
+            height=35 * self.scale,
+            font_size=int(12 * self.scale),
             font_name='Courier New',
             normal_color='#C8C8C8',
             hover_color='#FFF',
@@ -110,6 +112,7 @@ class MarketButtons:
 
     def check_mouse_hover(self, x, y):
         """Проверяем наведение на кнопки"""
+        # Преобразуем координаты для проверки кнопок
         self.button_buy_item.check_mouse_hover(x, y)
         self.button_buy_all.check_mouse_hover(x, y)
         self.button_take_item.check_mouse_hover(x, y)
