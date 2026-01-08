@@ -595,5 +595,3 @@ class MarketView(arcade.View):
 
     def close_market(self):
         self.window.show_view(self.lobby)
-
-# TODO: Привести в порядок код
