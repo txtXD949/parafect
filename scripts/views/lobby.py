@@ -254,7 +254,7 @@ class LobbyView(arcade.View):
         self.player.change_x = self.player.change_y = 0
 
         from . import MapBoard
-        map_board = MapBoard(lobby=self)
+        map_board = MapBoard(lobby=self, account_manager=self.account_manager)
         self.window.show_view(map_board)
 
     def open_market(self):

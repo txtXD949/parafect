@@ -1,3 +1,5 @@
+import json
+
 import arcade
 from pyglet.graphics import Batch
 
@@ -5,7 +7,8 @@ from functools import lru_cache
 
 
 class MapInfo:
-    def __init__(self, name, size, desc, cords, on_level=1):
+    def __init__(self, id, name, size, desc, cords, on_level=1):
+        self.id: int = id
         self.name: str = name
         self.size: str = size
         self.desc: str = desc
@@ -15,12 +18,14 @@ class MapInfo:
 
 MAP_DATABASE = {
     'dom_1': MapInfo(
+        id='0',
         name='ДОМ 1',
         size='МАЛЕНЬКАЯ',
         cords='38.279567°N, -122.009865°E',
         desc='"Они переехали через месяц. Говорят, ребёнок всё время разговаривал с кем-то в углу."',
     ),
     'dom_3': MapInfo(
+        id='1',
         name='ДОМ 3',
         size='СРЕДНЯЯ',
         cords='38.349100°N, -121.956000°E',
@@ -28,6 +33,7 @@ MAP_DATABASE = {
         on_level=5
     ),
     'caffe': MapInfo(
+        id='2',
         name='КАФЕ',
         size='СРЕДНЯЯ',
         cords='34.163680°N, -117.904245°E',
@@ -35,6 +41,7 @@ MAP_DATABASE = {
         on_level=10
     ),
     'kv_no96': MapInfo(
+        id='3',
         name='КВАРТИРА №96',
         size='СРЕДНЯЯ',
         cords='58.630501°N, 59.789185°E',
@@ -42,6 +49,7 @@ MAP_DATABASE = {
         on_level=15
     ),
     'school': MapInfo(
+        id='4',
         name='ШКОЛА',
         size='БОЛЬШАЯ',
         cords='57.874040°N, 59.949528°E',
@@ -49,8 +57,9 @@ MAP_DATABASE = {
         on_level=20
     ),
     'bunker': MapInfo(
-        name='КАФЕ',
-        size='СРЕДНЯЯ',
+        id='5',
+        name='БУНКЕР',
+        size='ОГРОМНАЯ',
         cords='68.925214°N, 33.089326°E',
         desc='"Группа исследователей сообщила, что видела свои же трупы. Больше сообщений от них не поступало."',
         on_level=30
@@ -59,10 +68,23 @@ MAP_DATABASE = {
 
 
 class MapBoard(arcade.View):
-    def __init__(self, lobby=None):
+    def __init__(self, lobby=None, account_manager=None):
         super().__init__()
         self.background_color = arcade.color.BLACK
+
         self.lobby = lobby
+
+        # Профиль
+        from database import ProfileManager
+        self.account = account_manager
+        self.profile = ProfileManager()
+
+        # Игрок
+        self.player_level = None
+
+        # Временный выбор карты
+        self.temp_map_path = '././database/_game.json'
+        self.temp_map = None
 
         # Спрайт-листы
         self.map_sprites = arcade.SpriteList()  # Белые #
@@ -81,6 +103,14 @@ class MapBoard(arcade.View):
 
     def setup(self):
         """UI элементы (заголовки)"""
+
+        # Уровень
+        profile = self.profile.load_profile(self.account.current_account)
+        self.player_level = profile['level']
+
+        # Создаем или загружаем карту
+        self.load_or_create_temp_map()
+
         # КАРТА
         self.text_map = arcade.Text(
             text='КАРТА',
@@ -107,7 +137,437 @@ class MapBoard(arcade.View):
             batch=self.batch
         )
 
-        self.map_textes()
+        # Уровень игрока
+        self.text_lvl = arcade.Text(
+            text=f'Lvl: {self.player_level}',
+            x=35,
+            y=485,
+            color=arcade.color.WHITE,
+            font_size=14,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='top',
+            batch=self.batch
+        )
+
+    def get_map_texts_dom_1(self):
+        # Дом 1
+        map = MAP_DATABASE['dom_1']
+        # Название
+        self.dom1_title = arcade.Text(
+            text=map.name,
+            x=680,
+            y=490,
+            color=arcade.color.WHITE,
+            font_size=18,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Координаты
+        self.dom1_cords = arcade.Text(
+            text=map.cords,
+            x=680,
+            y=470,
+            color=arcade.color.WHITE,
+            font_size=8,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Размер
+        self.dom1_size = arcade.Text(
+            text=f'Размер: {map.size}',
+            x=600,
+            y=430,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # С уровня
+        self.dom1_on_level = arcade.Text(
+            text=f'С уровня: {map.on_level}',
+            x=600,
+            y=410,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # Описание
+        self.dom1_desc = arcade.Text(
+            text=map.desc,
+            x=600,
+            y=320,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_size=9,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            width=160,
+            align='left',
+            multiline=True,
+            batch=None
+        )
+
+        return self.dom1_title, self.dom1_cords, self.dom1_size, self.dom1_on_level, self.dom1_desc
+
+    def get_map_texts_dom_3(self):
+        # Дом 3
+        map = MAP_DATABASE['dom_3']
+
+        # Название
+        self.dom3_title = arcade.Text(
+            text=map.name,
+            x=680,
+            y=490,
+            color=arcade.color.WHITE,
+            font_size=18,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Координаты
+        self.dom3_cords = arcade.Text(
+            text=map.cords,
+            x=680,
+            y=470,
+            color=arcade.color.WHITE,
+            font_size=8,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Размер
+        self.dom3_size = arcade.Text(
+            text=f'Размер: {map.size}',
+            x=600,
+            y=430,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # С уровня
+        self.dom3_on_level = arcade.Text(
+            text=f'С уровня: {map.on_level}',
+            x=600,
+            y=410,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # Описание
+        self.dom3_desc = arcade.Text(
+            text=map.desc,
+            x=600,
+            y=320,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_size=9,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            width=160,
+            align='left',
+            multiline=True,
+            batch=None
+        )
+
+        return self.dom3_title, self.dom3_cords, self.dom3_size, self.dom3_on_level, self.dom3_desc
+
+    def get_map_texts_caffe(self):
+        # Кафе
+        map = MAP_DATABASE['caffe']
+
+        # Название
+        self.caffe_title = arcade.Text(
+            text=map.name,
+            x=680,
+            y=490,
+            color=arcade.color.WHITE,
+            font_size=18,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Координаты
+        self.caffe_cords = arcade.Text(
+            text=map.cords,
+            x=680,
+            y=470,
+            color=arcade.color.WHITE,
+            font_size=8,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Размер
+        self.caffe_size = arcade.Text(
+            text=f'Размер: {map.size}',
+            x=600,
+            y=430,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # С уровня
+        self.caffe_on_level = arcade.Text(
+            text=f'С уровня: {map.on_level}',
+            x=600,
+            y=410,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # Описание
+        self.caffe_desc = arcade.Text(
+            text=map.desc,
+            x=600,
+            y=305,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_size=9,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            width=160,
+            align='left',
+            multiline=True,
+            batch=None
+        )
+
+        return self.caffe_title, self.caffe_cords, self.caffe_size, self.caffe_on_level, self.caffe_desc
+
+    def get_map_texts_kv_no96(self):
+        # Кв.96
+        map = MAP_DATABASE['kv_no96']
+
+        # Название
+        self.kv_no96_title = arcade.Text(
+            text=map.name,
+            x=680,
+            y=490,
+            color=arcade.color.WHITE,
+            font_size=18,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Координаты
+        self.kv_no96_cords = arcade.Text(
+            text=map.cords,
+            x=680,
+            y=470,
+            color=arcade.color.WHITE,
+            font_size=8,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Размер
+        self.kv_no96_size = arcade.Text(
+            text=f'Размер: {map.size}',
+            x=600,
+            y=430,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # С уровня
+        self.kv_no96_on_level = arcade.Text(
+            text=f'С уровня: {map.on_level}',
+            x=600,
+            y=410,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # Описание
+        self.kv_no96_desc = arcade.Text(
+            text=map.desc,
+            x=600,
+            y=290,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_size=9,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            width=160,
+            align='left',
+            multiline=True,
+            batch=None
+        )
+
+        return self.kv_no96_title, self.kv_no96_cords, self.kv_no96_size, self.kv_no96_on_level, self.kv_no96_desc
+
+    def get_map_texts_school(self):
+        # Школа
+        map = MAP_DATABASE['school']
+
+        # Название
+        self.school_title = arcade.Text(
+            text=map.name,
+            x=680,
+            y=490,
+            color=arcade.color.WHITE,
+            font_size=18,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Координаты
+        self.school_cords = arcade.Text(
+            text=map.cords,
+            x=680,
+            y=470,
+            color=arcade.color.WHITE,
+            font_size=8,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Размер
+        self.school_size = arcade.Text(
+            text=f'Размер: {map.size}',
+            x=600,
+            y=430,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # С уровня
+        self.school_on_level = arcade.Text(
+            text=f'С уровня: {map.on_level}',
+            x=600,
+            y=410,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # Описание
+        self.school_desc = arcade.Text(
+            text=map.desc,
+            x=600,
+            y=330,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_size=9,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            width=160,
+            align='left',
+            multiline=True,
+            batch=None
+        )
+
+        return self.school_title, self.school_cords, self.school_size, self.school_on_level, self.school_desc
+
+    def get_map_texts_bunker(self):
+        # Бункер
+        map = MAP_DATABASE['bunker']
+
+        # Название
+        self.bunker_title = arcade.Text(
+            text=map.name,
+            x=680,
+            y=490,
+            color=arcade.color.WHITE,
+            font_size=18,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Координаты
+        self.bunker_cords = arcade.Text(
+            text=map.cords,
+            x=680,
+            y=470,
+            color=arcade.color.WHITE,
+            font_size=8,
+            font_name='Courier New',
+            anchor_x='center',
+            anchor_y='center',
+            batch=None
+        )
+        # Размер
+        self.bunker_size = arcade.Text(
+            text=f'Размер: {map.size}',
+            x=600,
+            y=430,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # С уровня
+        self.bunker_on_level = arcade.Text(
+            text=f'С уровня: {map.on_level}',
+            x=600,
+            y=410,
+            color=arcade.color.WHITE,
+            font_size=10,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='center',
+            batch=None
+        )
+        # Описание
+        self.bunker_desc = arcade.Text(
+            text=map.desc,
+            x=600,
+            y=320,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_size=9,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            width=160,
+            align='left',
+            multiline=True,
+            batch=None
+        )
+
+        return self.bunker_title, self.bunker_cords, self.bunker_size, self.bunker_on_level, self.bunker_desc
 
     def on_show_view(self) -> None:
         self.camera = arcade.Camera2D(
@@ -161,7 +621,7 @@ class MapBoard(arcade.View):
         world_pos = self.camera.unproject((x, y))
 
         # Закрытие доски
-        if 300 <= world_pos[0] <= 330 and 70 <= world_pos[1] <= 80:
+        if 300 <= world_pos.x <= 330 and 70 <= world_pos.y <= 80:
             self.close_mapboard()
 
         # 1. Проверяем желтые точки (кликабельные)
@@ -172,26 +632,13 @@ class MapBoard(arcade.View):
 
         if clicked_points:
             for point in clicked_points:
-                print(f"Клик на желтую точку! ID: {point.point_id}")
-                print(f"Координаты сетки: ({point.char_x}, {point.char_y})")
-                print(f"Данные уровня: {point.level_data}")
+                self.show_info_info(point.map_id)
 
                 # Вызываем обработчик
                 self.on_point_clicked(point)
             return
 
-        # 2. Проверяем белые # (не кликабельные, но можем логировать)
-        clicked_map = arcade.get_sprites_at_point(
-            (world_pos.x, world_pos.y),
-            self.map_sprites
-        )
-
-        if clicked_map:
-            print(f"Клик на карту (белый #)")
-            # Ничего не делаем, или просто логируем
-            return
-
-        print(f"Клик вне карты: {world_pos}")
+        print(f"Клик: {world_pos}")
 
     def create_map_sprites(self):
         """Создает спрайты для карты и точек"""
@@ -242,7 +689,7 @@ class MapBoard(arcade.View):
 
                     # Можно добавить дополнительные данные
                     sprite.clickable = True
-                    sprite.map_data = self.get_map_data(y_idx, x_idx)  # Пример
+                    sprite.map_id = self.get_map_id(y_idx, x_idx)  # Пример
 
                     self.point_sprites.append(sprite)
                     self.all_sprites.append(sprite)
@@ -291,133 +738,57 @@ class MapBoard(arcade.View):
         if symbol == arcade.key.ESCAPE:
             self.close_mapboard()
 
-    def map_textes(self):
-        # Дом 1
-        map = MAP_DATABASE['dom_1']
-        # Название
-        self.dom1_title = arcade.Text(
-            text=map.name,
-            x=680,
-            y=490,
-            color=arcade.color.WHITE,
-            font_size=18,
-            font_name='Courier New',
-            anchor_x='center',
-            anchor_y='center',
-            batch=self.batch
-        )
-        # Координаты
-        self.dom1_cords = arcade.Text(
-            text=map.cords,
-            x=680,
-            y=470,
-            color=arcade.color.WHITE,
-            font_size=8,
-            font_name='Courier New',
-            anchor_x='center',
-            anchor_y='center',
-            batch=self.batch
-        )
-        # Размер
-        self.dom1_size = arcade.Text(
-            text=f'Размер: {map.size}',
-            x=600,
-            y=430,
-            color=arcade.color.WHITE,
-            font_size=10,
-            font_name='Courier New',
-            anchor_x='left',
-            anchor_y='center',
-            batch=self.batch
-        )
-        # С уровня
-        self.dom1_on_level = arcade.Text(
-            text=f'С уровня: {map.on_level}',
-            x=600,
-            y=410,
-            color=arcade.color.WHITE,
-            font_size=10,
-            font_name='Courier New',
-            anchor_x='left',
-            anchor_y='center',
-            batch=self.batch
-        )
-        # Описание
-        self.dom1_desc = arcade.Text(  # TODO: Исправить неперенос
-            text=map.desc,
-            x=600,
-            y=390,
-            color=arcade.color.WHITE,
-            font_size=9,
-            font_name='Courier New',
-            anchor_x='left',
-            anchor_y='center',
-            width=1,
-            align='center',
-            batch=self.batch
-        )
-        # Дом 3
-        map = MAP_DATABASE['dom_3']
-
-        # Кафе
-        map = MAP_DATABASE['caffe']
-
-        # Кв.96
-        map = MAP_DATABASE['kv_no96']
-
-        # Школа
-        map = MAP_DATABASE['school']
-
-        # Бункер
-        map = MAP_DATABASE['bunker']
-
     @staticmethod
-    def get_map_data(grid_y, grid_x):
+    def get_map_id(grid_y, grid_x):
         """Возвращает данные уровня по координатам сетки"""
-        # Здесь можешь мапить координаты на ID уровней
+        # Мапинг координат
         maps = {
-            (9, 8): MAP_DATABASE['kv_no96'],
-            (8, 18): MAP_DATABASE['caffe'],
-            (20, 13): MAP_DATABASE['school'],
-            (27, 6): MAP_DATABASE['dom_3'],
-            (22, 1): MAP_DATABASE['dom_1'],
-            (32, 13): MAP_DATABASE['bunker']
+            (9, 8): MAP_DATABASE['kv_no96'].id,
+            (8, 18): MAP_DATABASE['caffe'].id,
+            (20, 13): MAP_DATABASE['school'].id,
+            (27, 6): MAP_DATABASE['dom_3'].id,
+            (22, 1): MAP_DATABASE['dom_1'].id,
+            (32, 13): MAP_DATABASE['bunker'].id
         }
 
-        return maps.get((grid_y, grid_x))
+        return maps.get((grid_x, grid_y))
 
     def show_info_info(self, map_id):
         data = {
-            'dom_1': ...,
-            'dom_3': ...,
-            'caffe': ...,
-            'kv_no96': ...,
-            'school': ...,
-            'bunker': ...,
+            MAP_DATABASE['dom_1'].id: self.get_map_texts_dom_1(),
+            MAP_DATABASE['dom_3'].id: self.get_map_texts_dom_3(),
+            MAP_DATABASE['caffe'].id: self.get_map_texts_caffe(),
+            MAP_DATABASE['kv_no96'].id: self.get_map_texts_kv_no96(),
+            MAP_DATABASE['school'].id: self.get_map_texts_school(),
+            MAP_DATABASE['bunker'].id: self.get_map_texts_bunker(),
         }
 
-        for map in data:
-            for b in data[map]:
-                b = (None, self.batch)[map == map_id]
+        for i in data:
+            for text in data[i]:
+                try:
+                    text.batch = (None, self.batch)[i == map_id]
+                except Exception:
+                    pass
 
     def on_point_clicked(self, point_sprite):
         """Обработчик клика на желтую точку"""
-        map_data = point_sprite.map_data
 
         # Визуальная обратная связь
-        point_sprite.color = arcade.color.RED  # Подсветка
+        for point in self.point_sprites:
+            point.color = arcade.color.YELLOW
+        point_sprite.color = arcade.color.DARK_YELLOW  # Подсветка
 
-    def show_map_info(self, point_sprite):
-        """Показать информацию о карте"""
-        # Поля
-        self.name_text = ...
-        self.size_text = ...
-        self.desc_text = ...
-        self.cord_text = ...
-        self.on_level_text = ...
+    def load_or_create_temp_map(self):
+        try:
+            with open('././database/_game.json', 'r', encoding='utf-8') as f:
+                self.temp_map = json.load(f)
+        except FileNotFoundError:
+            self.temp_map = {'inventory': {}, 'map': None, 'difficulty': None}
+            self.save_temp_map()
 
-    def close_mapboard(self):
-        self.window.show_view(self.lobby)
+    def save_temp_map(self):
+        with open('././database/_game.json', 'w', encoding='utf-8') as f:
+            json.dump(self.temp_map, f, ensure_ascii=False, indent=2)
 
     @staticmethod
     def get_map(arg: 'map' or 'points' = 'map') -> list:
@@ -429,7 +800,8 @@ class MapBoard(arcade.View):
 
         return list(map(lambda x: x.strip('\n'), lines))
 
-# TODO: Сделать инфо-панельку
+# TODO: Запретить выбирать карты выше уровня
 # TODO: Подключить к _game.json
+# TODO: Сохранять выбранную карту при выходе
 # TODO: Добавить звуки
 # TODO: Почистить код
