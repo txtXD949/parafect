@@ -83,8 +83,8 @@ class MapBoard(arcade.View):
         self.player_level = None
 
         # Временный выбор карты
-        self.temp_map_path = '././database/_game.json'
-        self.temp_map = None
+        self.game_state_path = '././database/_game.json'
+        self.game_state = None
 
         # Спрайт-листы
         self.map_sprites = arcade.SpriteList()  # Белые #
@@ -109,7 +109,7 @@ class MapBoard(arcade.View):
         self.player_level = profile['level']
 
         # Создаем или загружаем карту
-        self.load_or_create_temp_map()
+        self.load_game_state()
 
         # КАРТА
         self.text_map = arcade.Text(
@@ -689,7 +689,8 @@ class MapBoard(arcade.View):
 
                     # Можно добавить дополнительные данные
                     sprite.clickable = True
-                    sprite.map_id = self.get_map_id(y_idx, x_idx)  # Пример
+                    sprite.map_id = self.get_map_id(x_idx, y_idx)  # Пример
+                    print(sprite.map_id)
 
                     self.point_sprites.append(sprite)
                     self.all_sprites.append(sprite)
@@ -751,7 +752,9 @@ class MapBoard(arcade.View):
             (32, 13): MAP_DATABASE['bunker'].id
         }
 
-        return maps.get((grid_x, grid_y))
+        # print(maps.get((grid_x, grid_y)))
+
+        return maps.get((grid_y, grid_x))
 
     def show_info_info(self, map_id):
         data = {
@@ -770,25 +773,85 @@ class MapBoard(arcade.View):
                 except Exception:
                     pass
 
+        if map_id is not None:
+            map_key = self.get_map_key_by_id(map_id)
+            if map_key:
+                map_info = MAP_DATABASE[map_key]
+                if self.player_level < map_info.on_level:
+                    # Можно добавить сообщение, что карта недоступна
+                    pass
+
     def on_point_clicked(self, point_sprite):
         """Обработчик клика на желтую точку"""
 
         # Визуальная обратная связь
         for point in self.point_sprites:
             point.color = arcade.color.YELLOW
-        point_sprite.color = arcade.color.DARK_YELLOW  # Подсветка
+        point_sprite.color = arcade.color.DARK_YELLOW
 
-    def load_or_create_temp_map(self):
+        # Получаем id карты
+        map_id = self.get_map_id(point_sprite.char_x, point_sprite.char_y)
+        print(f"🔍 Получен map_id: {map_id} (тип: {type(map_id)})")
+
+        if map_id is not None:
+            # Преобразуем id в ключ (например, '0' -> 'dom_1')
+            map_key = self.get_map_key_by_id(map_id)
+            print(f"🔍 Найден map_key: {map_key}")
+
+            if map_key:
+                map_info = MAP_DATABASE[map_key]
+
+                # Проверяем уровень
+                print(f"🔍 Уровень игрока: {self.player_level}, требуется: {map_info.on_level}")
+                if self.player_level >= map_info.on_level:
+                    # Сохраняем ключ карты ('dom_1', 'dom_3' и т.д.)
+                    self.game_state['map'] = map_key
+                    self.save_game_state()
+                    print(f"✅ Выбрана карта: {map_info.name} (ключ: {map_key})")
+                else:
+                    print(f"❌ Недостаточно уровня! Требуется {map_info.on_level}, у вас {self.player_level}")
+            else:
+                print(f"❌ Не найден map_key для map_id: {map_id}")
+        else:
+            print(f"❌ map_id is None! Координаты: char_x={point_sprite.char_x}, char_y={point_sprite.char_y}")
+
+    def load_game_state(self):
         try:
-            with open('././database/_game.json', 'r', encoding='utf-8') as f:
-                self.temp_map = json.load(f)
+            with open(self.game_state_path, 'r', encoding='utf-8') as f:
+                self.game_state = json.load(f)
+            print(f"📂 Загружен game_state: {self.game_state}")
         except FileNotFoundError:
-            self.temp_map = {'inventory': {}, 'map': None, 'difficulty': None}
-            self.save_temp_map()
+            print(f"📂 Файл не найден, создаем новый")
+            # Создаем структуру, если файла нет
+            self.game_state = {'inventory': {}, 'map': None, 'difficulty': None}
+            self.save_game_state()
 
-    def save_temp_map(self):
-        with open('././database/_game.json', 'w', encoding='utf-8') as f:
-            json.dump(self.temp_map, f, ensure_ascii=False, indent=2)
+    def get_map_key_by_id(self, map_id):
+        """Возвращает ключ карты по её ID (например, 'dom_1' для id='0')"""
+        print(f"🔍 Ищем ключ для map_id: {map_id} (тип: {type(map_id)})")
+
+        for key, map_info in MAP_DATABASE.items():
+            print(f"   Проверяем ключ: {key}, map_info.id: {map_info.id} (тип: {type(map_info.id)})")
+            if map_info.id == map_id:  # Сравниваем строки '0' == '0'
+                print(f"   ✅ Нашли совпадение!")
+                return key
+
+        print(f"   ❌ Не нашли ключ для map_id: {map_id}")
+        return None
+
+    def save_game_state(self):
+        """Сохраняет состояние игры в файл"""
+        try:
+            with open(self.game_state_path, 'w', encoding='utf-8') as f:
+                json.dump(self.game_state, f, ensure_ascii=False, indent=2)
+            print(f"💾 Сохранено в {self.game_state_path}:")
+            print(f"   map: {self.game_state.get('map')}")
+            print(f"   inventory: {self.game_state.get('inventory')}")
+        except Exception as e:
+            print(f"❌ Ошибка сохранения: {e}")
+
+    def close_mapboard(self):
+        self.window.show_view(self.lobby)
 
     @staticmethod
     def get_map(arg: 'map' or 'points' = 'map') -> list:
@@ -800,8 +863,7 @@ class MapBoard(arcade.View):
 
         return list(map(lambda x: x.strip('\n'), lines))
 
-# TODO: Запретить выбирать карты выше уровня
-# TODO: Подключить к _game.json
+# TODO: Запретить выбирать карты выше уровня #
 # TODO: Сохранять выбранную карту при выходе
 # TODO: Добавить звуки
 # TODO: Почистить код
