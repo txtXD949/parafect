@@ -644,8 +644,6 @@ class MapBoard(arcade.View):
                 self.on_point_clicked(point)
             return
 
-        print(f"Клик: {world_pos}")
-
     def create_map_sprites(self):
         """Создает спрайты для карты и точек"""
         map_lines = self.get_map(arg='map')
@@ -788,7 +786,6 @@ class MapBoard(arcade.View):
 
     def on_point_clicked(self, point_sprite):
         """Обработчик клика на желтую/красную точку"""
-
         # id карты
         map_id = self.get_map_id(point_sprite.char_x, point_sprite.char_y)
         map_key = self.get_map_key_by_id(map_id)
@@ -806,6 +803,9 @@ class MapBoard(arcade.View):
             point_sprite.color = arcade.color.DARK_YELLOW
             self.game_state['map'] = map_key
             self.save_game_state()
+            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
+        else:
+            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
 
     def load_game_state(self):
         try:
@@ -828,6 +828,7 @@ class MapBoard(arcade.View):
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mapboard(self):
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'), volume=0.4)
         self.window.show_view(self.lobby)
 
     @staticmethod
@@ -840,4 +841,5 @@ class MapBoard(arcade.View):
 
         return list(map(lambda x: x.strip('\n'), lines))
 
-# TODO: Добавить звуки
+# TODO: Сохранять цвет на последней доступной карте
+# TODO: Почистить код

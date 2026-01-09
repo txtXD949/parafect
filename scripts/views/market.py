@@ -594,4 +594,5 @@ class MarketView(arcade.View):
             json.dump(self.temp_inventory, f, ensure_ascii=False, indent=2)
 
     def close_market(self):
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click.wav'), volume=0.2)
         self.window.show_view(self.lobby)
