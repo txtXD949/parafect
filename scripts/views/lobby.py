@@ -69,6 +69,9 @@ class LobbyView(arcade.View):
         # Звук
         self.sound_player = None
 
+        # Сцены
+        self.map_board = None
+
         # Вспомогательное
         self.main_board_use = False
         self.map_board_use = False
@@ -135,6 +138,9 @@ class LobbyView(arcade.View):
             self.map_width / 2,
             self.map_height / 2
         )
+
+        from . import MapBoard
+        self.map_board = MapBoard(lobby=self, account_manager=self.account_manager)
 
     def create_footstep_particle(self):
         if not self.player.is_going:
@@ -253,9 +259,7 @@ class LobbyView(arcade.View):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
         self.player.change_x = self.player.change_y = 0
 
-        from . import MapBoard
-        map_board = MapBoard(lobby=self, account_manager=self.account_manager)
-        self.window.show_view(map_board)
+        self.window.show_view(self.map_board)
 
     def open_market(self):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/market(lobby).wav'), volume=0.03)
@@ -299,3 +303,5 @@ class LobbyView(arcade.View):
     def open_journal(self):
         # TODO: сделать журнал
         ...
+
+# TODO: добавить горячие клавиши в лобби, в маркет, в доски, в журнал

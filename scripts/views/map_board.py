@@ -37,7 +37,7 @@ MAP_DATABASE = {
         name='КАФЕ',
         size='СРЕДНЯЯ',
         cords='34.163680°N, -117.904245°E',
-        desc='"Бармен жаловался, на посетителя, который несколько часов пил один кофе в углу. На камера никого не было видно."',
+        desc='"Бармен жаловался, на посетителя, который несколько часов пил один кофе в углу. На камерах никого не было видно."',
         on_level=10
     ),
     'kv_no96': MapInfo(
@@ -156,6 +156,11 @@ class MapBoard(arcade.View):
             anchor_y='top',
             batch=self.batch
         )
+
+    def on_show_view(self) -> None:
+        self.__init__(self.lobby, self.account)
+        profile = self.profile.load_profile(self.account.current_account)
+        self.player_level = profile['level']
 
     def get_map_texts_dom_1(self):
         # Дом 1
@@ -615,6 +620,13 @@ class MapBoard(arcade.View):
         # Batch
         self.batch.draw()
 
+    def on_update(self, delta_time: float) -> bool | None:
+        """Обновление уровня"""
+        # Обновляем уровень из профиля
+        profile = self.profile.load_profile(self.account.current_account)  # ← Хорошо!
+        self.player_level = profile['level']
+        self.text_lvl.text = f'Lvl: {self.player_level}'
+
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # Преобразуем в мировые координаты
         world_pos = self.camera.unproject((x, y))
@@ -694,9 +706,11 @@ class MapBoard(arcade.View):
                     if player_lvl >= map_info.on_level:
                         sprite.texture = yellow_texture
                         sprite.color = arcade.color.YELLOW
+                        sprite.original_color = arcade.color.YELLOW  # Добавляем
                     else:
                         sprite.texture = red_texture
                         sprite.color = arcade.color.RED
+                        sprite.original_color = arcade.color.RED  # Добавляем
 
                     # Можно добавить дополнительные данные
                     sprite.clickable = True
@@ -792,38 +806,26 @@ class MapBoard(arcade.View):
                     pass
 
     def on_point_clicked(self, point_sprite):
-        """Обработчик клика на желтую точку"""
-
-        # Визуальная обратная связь
-        for point in self.point_sprites:
-            point.color = arcade.color.YELLOW
-        point_sprite.color = arcade.color.DARK_YELLOW
+        """Обработчик клика на желтую/красную точку"""
 
         # Получаем id карты
         map_id = self.get_map_id(point_sprite.char_x, point_sprite.char_y)
-        print(f"🔍 Получен map_id: {map_id} (тип: {type(map_id)})")
+        map_key = self.get_map_key_by_id(map_id)
+        map_info = MAP_DATABASE[map_key]
 
-        if map_id is not None:
-            # Преобразуем id в ключ (например, '0' -> 'dom_1')
-            map_key = self.get_map_key_by_id(map_id)
-            print(f"🔍 Найден map_key: {map_key}")
+        # 1. Всегда показываем информацию о карте
+        self.show_info_info(map_id)
 
-            if map_key:
-                map_info = MAP_DATABASE[map_key]
+        # 2. Сбрасываем все цвета к исходным
+        for point in self.point_sprites:
+            point.color = point.original_color
 
-                # Проверяем уровень
-                print(f"🔍 Уровень игрока: {self.player_level}, требуется: {map_info.on_level}")
-                if self.player_level >= map_info.on_level:
-                    # Сохраняем ключ карты ('dom_1', 'dom_3' и т.д.)
-                    self.game_state['map'] = map_key
-                    self.save_game_state()
-                    print(f"✅ Выбрана карта: {map_info.name} (ключ: {map_key})")
-                else:
-                    print(f"❌ Недостаточно уровня! Требуется {map_info.on_level}, у вас {self.player_level}")
-            else:
-                print(f"❌ Не найден map_key для map_id: {map_id}")
-        else:
-            print(f"❌ map_id is None! Координаты: char_x={point_sprite.char_x}, char_y={point_sprite.char_y}")
+        # 3. Подсвечиваем текущую точку (только если доступна)
+        if self.player_level >= map_info.on_level:
+            point_sprite.color = arcade.color.DARK_YELLOW
+            # Сохраняем ВЫБРАННУЮ ДОСТУПНУЮ карту
+            self.game_state['map'] = map_key
+            self.save_game_state()
 
     def load_game_state(self):
         try:
@@ -873,7 +875,5 @@ class MapBoard(arcade.View):
 
         return list(map(lambda x: x.strip('\n'), lines))
 
-# TODO: Запретить выбирать карты выше уровня #
-# TODO: Сохранять выбранную карту при выходе
 # TODO: Добавить звуки
 # TODO: Почистить код
