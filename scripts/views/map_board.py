@@ -1,9 +1,8 @@
 import json
+from functools import lru_cache
 
 import arcade
 from pyglet.graphics import Batch
-
-from functools import lru_cache
 
 
 class MapInfo:
@@ -89,7 +88,7 @@ class MapBoard(arcade.View):
         # Спрайт-листы
         self.map_sprites = arcade.SpriteList()  # Белые #
         self.point_sprites = arcade.SpriteList()  # Желтые #
-        self.all_sprites = arcade.SpriteList()  # Все вместе (для отрисовки)
+        self.all_sprites = arcade.SpriteList()  # Все вместе
 
         # Загружаем и создаем спрайты
         self.create_map_sprites()
@@ -97,12 +96,11 @@ class MapBoard(arcade.View):
         # Камера
         self.camera = None
 
-        # UI элементы (оставляем batch для текстов)
+        # UI
         self.batch = Batch()
         self.setup()
 
     def setup(self):
-        """UI элементы (заголовки)"""
         # Камера
         self.camera = arcade.Camera2D(
             projection=arcade.rect.XYWH(0, 0, 800, 600),
@@ -165,6 +163,7 @@ class MapBoard(arcade.View):
     def get_map_texts_dom_1(self):
         # Дом 1
         map = MAP_DATABASE['dom_1']
+
         # Название
         self.dom1_title = arcade.Text(
             text=map.name,
@@ -621,21 +620,19 @@ class MapBoard(arcade.View):
         self.batch.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
-        """Обновление уровня"""
-        # Обновляем уровень из профиля
-        profile = self.profile.load_profile(self.account.current_account)  # ← Хорошо!
+        profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
         self.text_lvl.text = f'Lvl: {self.player_level}'
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-        # Преобразуем в мировые координаты
+        # Мировые координаты
         world_pos = self.camera.unproject((x, y))
 
         # Закрытие доски
         if 300 <= world_pos.x <= 330 and 70 <= world_pos.y <= 80:
             self.close_mapboard()
 
-        # 1. Проверяем желтые точки (кликабельные)
+        # Желтые точки
         clicked_points = arcade.get_sprites_at_point(
             (world_pos.x, world_pos.y),
             self.point_sprites
@@ -644,8 +641,6 @@ class MapBoard(arcade.View):
         if clicked_points:
             for point in clicked_points:
                 self.show_info_info(point.map_id)
-
-                # Вызываем обработчик
                 self.on_point_clicked(point)
             return
 
@@ -653,21 +648,20 @@ class MapBoard(arcade.View):
 
     def create_map_sprites(self):
         """Создает спрайты для карты и точек"""
-        # Загружаем текстовые файлы
         map_lines = self.get_map(arg='map')
         point_lines = self.get_map(arg='points')
 
-        # Настройки
-        char_size = 16.5  # Размер спрайта (квадрат 20x20)
-        start_x = 23  # Начальная позиция X
-        start_y = 450  # Начальная позиция Y (сверху вниз)
+        # Позиции
+        char_size = 16.5
+        start_x = 23
+        start_y = 450
 
-        # 1. СОЗДАЕМ ТЕКСТУРЫ ОДИН РАЗ
+        # Создание текстур
         white_texture = self.create_char_texture('#', arcade.color.WHITE)
         yellow_texture = self.create_char_texture('#', arcade.color.YELLOW)
         red_texture = self.create_char_texture('#', arcade.color.RED)
 
-        # 2. СОЗДАЕМ СПРАЙТЫ ДЛЯ КАРТЫ (белые #)
+        # Белые #
         for y_idx, line in enumerate(map_lines):
             for x_idx, char in enumerate(line):
                 if char == '#':
@@ -677,14 +671,14 @@ class MapBoard(arcade.View):
                     sprite.height = char_size
                     sprite.center_x = start_x + (x_idx * char_size)
                     sprite.center_y = start_y - (y_idx * char_size)
-                    sprite.char_type = 'map'  # Метаданные
-                    sprite.char_x = x_idx  # Позиция в сетке
+                    sprite.char_type = 'map'
+                    sprite.char_x = x_idx
                     sprite.char_y = y_idx
 
                     self.map_sprites.append(sprite)
                     self.all_sprites.append(sprite)
 
-        # 3. СОЗДАЕМ СПРАЙТЫ ДЛЯ ТОЧЕК (желтые #)
+        # Желтые #
         for y_idx, line in enumerate(point_lines):
             for x_idx, char in enumerate(line):
                 if char == '#':
@@ -694,8 +688,8 @@ class MapBoard(arcade.View):
                     sprite.height = char_size
                     sprite.center_x = start_x + (x_idx * char_size)
                     sprite.center_y = start_y - (y_idx * char_size)
-                    sprite.char_type = 'point'  # Метаданные
-                    sprite.point_id = len(self.point_sprites)  # ID точки
+                    sprite.char_type = 'point'
+                    sprite.point_id = len(self.point_sprites)
                     sprite.char_x = x_idx
                     sprite.char_y = y_idx
 
@@ -706,15 +700,13 @@ class MapBoard(arcade.View):
                     if player_lvl >= map_info.on_level:
                         sprite.texture = yellow_texture
                         sprite.color = arcade.color.YELLOW
-                        sprite.original_color = arcade.color.YELLOW  # Добавляем
+                        sprite.original_color = arcade.color.YELLOW
                     else:
                         sprite.texture = red_texture
                         sprite.color = arcade.color.RED
-                        sprite.original_color = arcade.color.RED  # Добавляем
+                        sprite.original_color = arcade.color.RED
 
-                    # Можно добавить дополнительные данные
-                    sprite.clickable = True
-                    sprite.map_id = self.get_map_id(x_idx, y_idx)  # Пример
+                    sprite.map_id = self.get_map_id(x_idx, y_idx)
 
                     self.point_sprites.append(sprite)
                     self.all_sprites.append(sprite)
@@ -755,7 +747,6 @@ class MapBoard(arcade.View):
         return texture
 
     def create_char_texture(self, char, color):
-        """Обертка для удобства"""
         r, g, b = color[:3]
         return self.create_char_texture_cached(r, g, b)
 
@@ -776,8 +767,6 @@ class MapBoard(arcade.View):
             (32, 13): MAP_DATABASE['bunker'].id
         }
 
-        # print(maps.get((grid_x, grid_y)))
-
         return maps.get((grid_y, grid_x))
 
     def show_info_info(self, map_id):
@@ -797,33 +786,24 @@ class MapBoard(arcade.View):
                 except Exception:
                     pass
 
-        if map_id is not None:
-            map_key = self.get_map_key_by_id(map_id)
-            if map_key:
-                map_info = MAP_DATABASE[map_key]
-                if self.player_level < map_info.on_level:
-                    # Можно добавить сообщение, что карта недоступна
-                    pass
-
     def on_point_clicked(self, point_sprite):
         """Обработчик клика на желтую/красную точку"""
 
-        # Получаем id карты
+        # id карты
         map_id = self.get_map_id(point_sprite.char_x, point_sprite.char_y)
         map_key = self.get_map_key_by_id(map_id)
         map_info = MAP_DATABASE[map_key]
 
-        # 1. Всегда показываем информацию о карте
+        # Информация о карте
         self.show_info_info(map_id)
 
-        # 2. Сбрасываем все цвета к исходным
+        # Сброс все цвета к исходным
         for point in self.point_sprites:
             point.color = point.original_color
 
-        # 3. Подсвечиваем текущую точку (только если доступна)
+        # Проверка карты на доступность
         if self.player_level >= map_info.on_level:
             point_sprite.color = arcade.color.DARK_YELLOW
-            # Сохраняем ВЫБРАННУЮ ДОСТУПНУЮ карту
             self.game_state['map'] = map_key
             self.save_game_state()
 
@@ -831,36 +811,21 @@ class MapBoard(arcade.View):
         try:
             with open(self.game_state_path, 'r', encoding='utf-8') as f:
                 self.game_state = json.load(f)
-            print(f"📂 Загружен game_state: {self.game_state}")
         except FileNotFoundError:
-            print(f"📂 Файл не найден, создаем новый")
-            # Создаем структуру, если файла нет
             self.game_state = {'inventory': {}, 'map': None, 'difficulty': None}
             self.save_game_state()
 
     def get_map_key_by_id(self, map_id):
         """Возвращает ключ карты по её ID (например, 'dom_1' для id='0')"""
-        print(f"🔍 Ищем ключ для map_id: {map_id} (тип: {type(map_id)})")
-
         for key, map_info in MAP_DATABASE.items():
-            print(f"   Проверяем ключ: {key}, map_info.id: {map_info.id} (тип: {type(map_info.id)})")
             if map_info.id == map_id:  # Сравниваем строки '0' == '0'
-                print(f"   ✅ Нашли совпадение!")
                 return key
-
-        print(f"   ❌ Не нашли ключ для map_id: {map_id}")
-        return None
+        return
 
     def save_game_state(self):
         """Сохраняет состояние игры в файл"""
-        try:
-            with open(self.game_state_path, 'w', encoding='utf-8') as f:
-                json.dump(self.game_state, f, ensure_ascii=False, indent=2)
-            print(f"💾 Сохранено в {self.game_state_path}:")
-            print(f"   map: {self.game_state.get('map')}")
-            print(f"   inventory: {self.game_state.get('inventory')}")
-        except Exception as e:
-            print(f"❌ Ошибка сохранения: {e}")
+        with open(self.game_state_path, 'w', encoding='utf-8') as f:
+            json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mapboard(self):
         self.window.show_view(self.lobby)
@@ -876,4 +841,3 @@ class MapBoard(arcade.View):
         return list(map(lambda x: x.strip('\n'), lines))
 
 # TODO: Добавить звуки
-# TODO: Почистить код

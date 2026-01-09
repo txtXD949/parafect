@@ -273,9 +273,6 @@ class LobbyView(arcade.View):
         """Создает файл состояния игры при входе в лобби"""
         import json
 
-        user_id = self.account_manager.current_account
-        profile = self.account_manager.profile_manager.load_profile(user_id)
-
         # Базовый набор предметов
         game_inventory = {
             'flash_light': 1,
