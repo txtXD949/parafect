@@ -5,6 +5,7 @@ from .signin_menu import SigninMenu
 from .lobby import LobbyView
 from .market import MarketView
 from .map_board import MapBoard
+from .main_board import MainBoard
 
 __all__ = [
     'Screensaver',
@@ -13,5 +14,6 @@ __all__ = [
     'SigninMenu',
     'LobbyView',
     'MarketView',
-    'MapBoard'
+    'MapBoard',
+    'MainBoard'
 ]
