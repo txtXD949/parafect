@@ -103,6 +103,13 @@ class MapBoard(arcade.View):
 
     def setup(self):
         """UI элементы (заголовки)"""
+        # Камера
+        self.camera = arcade.Camera2D(
+            projection=arcade.rect.XYWH(0, 0, 800, 600),
+            position=(400, 300)
+        )
+        self.camera.viewport_width = self.width
+        self.camera.viewport_height = self.height
 
         # Уровень
         profile = self.profile.load_profile(self.account.current_account)
@@ -569,14 +576,6 @@ class MapBoard(arcade.View):
 
         return self.bunker_title, self.bunker_cords, self.bunker_size, self.bunker_on_level, self.bunker_desc
 
-    def on_show_view(self) -> None:
-        self.camera = arcade.Camera2D(
-            projection=arcade.rect.XYWH(0, 0, 800, 600),
-            position=(400, 300)
-        )
-        self.camera.viewport_width = self.width
-        self.camera.viewport_height = self.height
-
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -654,6 +653,7 @@ class MapBoard(arcade.View):
         # 1. СОЗДАЕМ ТЕКСТУРЫ ОДИН РАЗ
         white_texture = self.create_char_texture('#', arcade.color.WHITE)
         yellow_texture = self.create_char_texture('#', arcade.color.YELLOW)
+        red_texture = self.create_char_texture('#', arcade.color.RED)
 
         # 2. СОЗДАЕМ СПРАЙТЫ ДЛЯ КАРТЫ (белые #)
         for y_idx, line in enumerate(map_lines):
@@ -687,10 +687,20 @@ class MapBoard(arcade.View):
                     sprite.char_x = x_idx
                     sprite.char_y = y_idx
 
+                    # Даем цвет
+                    player_lvl = self.profile.load_profile(self.account.current_account)['level']
+                    map_info = MAP_DATABASE[self.get_map_key_by_id(self.get_map_id(x_idx, y_idx))]
+
+                    if player_lvl >= map_info.on_level:
+                        sprite.texture = yellow_texture
+                        sprite.color = arcade.color.YELLOW
+                    else:
+                        sprite.texture = red_texture
+                        sprite.color = arcade.color.RED
+
                     # Можно добавить дополнительные данные
                     sprite.clickable = True
                     sprite.map_id = self.get_map_id(x_idx, y_idx)  # Пример
-                    print(sprite.map_id)
 
                     self.point_sprites.append(sprite)
                     self.all_sprites.append(sprite)
