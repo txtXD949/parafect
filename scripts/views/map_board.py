@@ -96,6 +96,9 @@ class MapBoard(arcade.View):
         # Камера
         self.camera = None
 
+        # Вспомогательные константы
+        self.last_accessible_point = None
+
         # UI
         self.batch = Batch()
         self.setup()
@@ -159,6 +162,11 @@ class MapBoard(arcade.View):
         self.__init__(self.lobby, self.account)
         profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
+
+        for point in self.point_sprites:
+            if point == self.last_accessible_point:
+                continue
+            point.color = arcade.color.YELLOW
 
     def get_map_texts_dom_1(self):
         # Дом 1
@@ -796,7 +804,8 @@ class MapBoard(arcade.View):
 
         # Сброс все цвета к исходным
         for point in self.point_sprites:
-            point.color = point.original_color
+            if point == self.last_accessible_point:
+                point.color = point.original_color
 
         # Проверка карты на доступность
         if self.player_level >= map_info.on_level:
@@ -804,19 +813,40 @@ class MapBoard(arcade.View):
             self.game_state['map'] = map_key
             self.save_game_state()
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
+
+            # Сохраняем как последнюю доступную карту
+            self.last_accessible_point = point_sprite
+
         else:
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
+
+            if self.last_accessible_point:
+                self.last_accessible_point.color = arcade.color.DARK_YELLOW
 
     def load_game_state(self):
         try:
             with open(self.game_state_path, 'r', encoding='utf-8') as f:
                 self.game_state = json.load(f)
+
+            # Автоматическое восстановление последнюю выбранную карту
+            if self.game_state['map']:
+                map_key = self.game_state['map']
+                map_id = MAP_DATABASE[map_key].id
+
+                for point in self.point_sprites:
+                    if point.map_id == map_id:
+                        point.color = arcade.color.DARK_YELLOW
+                        self.show_info_info(map_id)
+                        self.last_accessible_point = point
+                        point.is_checked = True
+                    point.is_checked = False
+
         except FileNotFoundError:
             self.game_state = {'inventory': {}, 'map': None, 'difficulty': None}
             self.save_game_state()
 
     def get_map_key_by_id(self, map_id):
-        """Возвращает ключ карты по её ID (например, 'dom_1' для id='0')"""
+        """Возвращает ключ карты по её ID"""
         for key, map_info in MAP_DATABASE.items():
             if map_info.id == map_id:  # Сравниваем строки '0' == '0'
                 return key
@@ -840,6 +870,3 @@ class MapBoard(arcade.View):
             lines = f.readlines()
 
         return list(map(lambda x: x.strip('\n'), lines))
-
-# TODO: Сохранять цвет на последней доступной карте
-# TODO: Почистить код
