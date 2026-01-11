@@ -252,6 +252,7 @@ class LobbyView(arcade.View):
     def open_main_board(self):
         # TODO: сделать главную доску
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        self.player.change_x = self.player.change_y = 0
 
         from . import MainBoard
         main_board = MainBoard(lobby=self, account_manager=self.account_manager)
