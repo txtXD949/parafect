@@ -1,6 +1,84 @@
 import arcade
 from pyglet.graphics import Batch
-from pyglet.font import have_font
+from arcade.gui import UIManager
+
+
+class DifficultyInfo:
+    def __init__(self, name, desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level=1):
+        self.name: str = name
+        self.desc: str = desc
+        self.sanity: str = sanity
+        self.broke_chance: str = broke_chance
+        self.roomchange_chance: str = roomchange_chance
+        self.evidence_count: int = evidence_count
+        self.on_level: int = on_level
+
+
+DIFFICULTY_DATABASE = {
+    'peaceful': DifficultyInfo(
+        name='Мирный',
+        desc='Ознакомительный режим, призраки не начинают охоту.',
+        sanity='100%',
+        broke_chance='0%',
+        roomchange_chance='0%',
+        evidence_count=3,
+        on_level=1
+    ),
+    'simple': DifficultyInfo(
+        name='Легкий',
+        desc='Подходит для новичков.',
+        sanity='100%',
+        broke_chance='10%',
+        roomchange_chance='0%',
+        evidence_count=3,
+        on_level=1
+    ),
+    'normal': DifficultyInfo(
+        name='Нормальный',
+        desc='Стандартный уровень сложности.',
+        sanity='100%',
+        broke_chance='30%',
+        roomchange_chance='25%',
+        evidence_count=3,
+        on_level=1
+    ),
+    'difficult': DifficultyInfo(
+        name='Сложный',
+        desc='Призрак более агрессивен. Для продвинутых игроков',
+        sanity='85%',
+        broke_chance='50%',
+        roomchange_chance='35%',
+        evidence_count=3,
+        on_level=10
+    ),
+    'nightmare': DifficultyInfo(
+        name='Кошмар',
+        desc='Призрак настроен убить вас, будь аккуратнее. Для профессиональных игроков',
+        sanity='25%',
+        broke_chance='70%',
+        roomchange_chance='50%',
+        evidence_count=2,
+        on_level=20
+    ),
+    'madness': DifficultyInfo(
+        name='Безумие',
+        desc='Призрак обезумел и не даст тебе шансов.',
+        sanity='10%',
+        broke_chance='85%',
+        roomchange_chance='60%',
+        evidence_count=1,
+        on_level=30
+    ),
+    'chaos': DifficultyInfo(
+        name='Хаос',
+        desc='Призрак совсем в бешенстве. У тебя нет шансов…',
+        sanity='1%',
+        broke_chance='99%',
+        roomchange_chance='99%',
+        evidence_count=0,
+        on_level=50
+    ),
+}
 
 
 class MainBoard(arcade.View):
@@ -11,6 +89,7 @@ class MainBoard(arcade.View):
         self.lobby = lobby
         self.account = account_manager
 
+        self.manager = None
         self.camera = None
         self.batch = None
 
@@ -24,6 +103,10 @@ class MainBoard(arcade.View):
         self.set_gui_texts()
         self.set_profile_texts()
         self.set_info_game_texts()
+
+        # UI
+        self.manager = UIManager()
+        self.manager.enable()
 
         # Камера
         self.camera = arcade.Camera2D(
@@ -131,6 +214,9 @@ class MainBoard(arcade.View):
             batch=self.batch
         )
 
+    def set_difficulty_texts(self):
+        ...
+
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -180,6 +266,7 @@ class MainBoard(arcade.View):
         arcade.draw_line(365 / 2 + 30, 60, 365 / 2 + 30 - 15, 70, color=arcade.color.WHITE)
 
         self.batch.draw()
+        self.manager.draw()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         # Мировые координаты
