@@ -1,6 +1,6 @@
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
-from scripts.custom_widgets import InteractiveLabel, TextInputField
+from scripts.ui import InteractiveLabel, TextInputField
 
 
 class SigninMenu(arcade.View):

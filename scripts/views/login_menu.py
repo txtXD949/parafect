@@ -1,7 +1,7 @@
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 
-from scripts.custom_widgets import InteractiveLabel, TextInputField
+from scripts.ui import InteractiveLabel, TextInputField
 
 
 class LoginMenu(arcade.View):
@@ -169,6 +169,14 @@ class LoginMenu(arcade.View):
         if manager.get_account(login, password):
             self.status_text = '> ПОДКЛЮЧЕНИЕ...'
             self.status_label.text = self.status_text
+
+            from .lobby import LobbyView
+            lobby = LobbyView(account_manager=manager)
+            self.window.show_view(lobby)
+
+            from constants import ENTRY_BACKGROUND_SOUND
+            ENTRY_BACKGROUND_SOUND.pause()
+
         else:
             self.status_text = '> ОШИБКА: НЕВЕРНЫЕ ДАННЫЕ'
             self.status_label.text = self.status_text

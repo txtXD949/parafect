@@ -78,7 +78,7 @@ class ProfileManager:
     def create_default_profile():
         """Создает JSON структуру профиля по умолчанию"""
         return {
-            'cash': 0,
+            'cash': 100,
             'level': 1,
             'experience': 0,
             'inventory': {
@@ -90,8 +90,8 @@ class ProfileManager:
                 'term': 0,
                 'flash_light': 0,
                 'camera': 0,
-                'blag': 0,
-                'light': 0,
+                'incense': 0,
+                'lighter': 0,
                 'pills': 0,
             },
             'settings': {

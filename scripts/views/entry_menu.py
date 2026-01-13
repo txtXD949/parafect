@@ -1,7 +1,7 @@
 import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 
-from scripts.custom_widgets import InteractiveLabel
+from scripts.ui import InteractiveLabel
 import constants
 
 
@@ -9,7 +9,7 @@ class EntryMenu(arcade.View):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.BLACK
-        constants.ENTRY_BACKGROUND_SOUND.play(loop=True, volume=0.2)
+        constants.ENTRY_BACKGROUND_SOUND.play()
 
         self.manager = UIManager()
         self.manager.enable()
