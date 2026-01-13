@@ -120,7 +120,7 @@ from re import search
 
 
 class ItemInfoWidget:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, player_level):
         self.x = x
         self.y = y
         self.width = width
@@ -133,6 +133,8 @@ class ItemInfoWidget:
 
         self.image_sprite_list = arcade.SpriteList()
         self.image_sprite = None
+
+        self.player_level = player_level
 
     def add_to_manager(self, manager):
         """Добавляем UI элементы в менеджер"""
@@ -178,7 +180,7 @@ class ItemInfoWidget:
         self.ui_elements.append(self.price_label)
 
         # Максимум в игру
-        self.max_game_label = arcade.gui.UILabel(
+        self.on_level_ = arcade.gui.UILabel(
             text='В игру: ',
             font_name='Courier New',
             font_size=int(15 * self.scale),
@@ -186,10 +188,10 @@ class ItemInfoWidget:
             align='left',
             width=self.width - 35 * self.scale
         )
-        self.max_game_label.left = self.x + 18 * self.scale
-        self.max_game_label.top = self.y - 200 * self.scale
-        manager.add(self.max_game_label)
-        self.ui_elements.append(self.max_game_label)
+        self.on_level_.left = self.x + 18 * self.scale
+        self.on_level_.top = self.y - 200 * self.scale
+        manager.add(self.on_level_)
+        self.ui_elements.append(self.on_level_)
 
         # В инвентаре
         self.inventory_label = arcade.gui.UILabel(
@@ -244,7 +246,7 @@ class ItemInfoWidget:
         if not item_data:
             self.name_label.text = 'ВЫБЕРИТЕ ТОВАР'
             self.price_label.text = 'Цена: '
-            self.max_game_label.text = 'В игру: '
+            self.on_level_.text = 'На уровне: '
             self.inventory_label.text = 'В инвентаре: '
             self.taken_label.text = 'С собой: '
             self.desc_label.text = ''
@@ -257,10 +259,10 @@ class ItemInfoWidget:
         self.taken_label.text = f'С собой: {item_data.selected}/{item_data.max_in_game}'
         self.desc_label.text = item_data.description
 
-        if item_data.on_level > 1:
-            self.max_game_label.text = f'На уровне: {item_data.on_level}'
+        if item_data.on_level > self.player_level:
+            self.on_level_.text = f'На уровне: {item_data.on_level}'
         else:
-            self.max_game_label.text = ''
+            self.on_level_.text = ''
 
         # Загружаем картинку в спрайт
         image_path = getattr(item_data, 'images_path', None) or getattr(item_data, 'image_path', None)

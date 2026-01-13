@@ -80,7 +80,8 @@ class MarketView(arcade.View):
             x=self.offset_x + 460 * self.scale,
             y=self.offset_y + 520 * self.scale,
             width=270 * self.scale,
-            height=320 * self.scale
+            height=320 * self.scale,
+            player_level=self.player_level
         )
         self.item_info.scale = self.scale
         self.item_info.offset_x = self.offset_x

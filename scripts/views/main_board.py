@@ -3,6 +3,7 @@ from pyglet.graphics import Batch
 from arcade.gui import UIManager
 
 from itertools import cycle
+import json
 
 
 class DifficultyInfo:
@@ -89,7 +90,18 @@ class MainBoard(arcade.View):
         self.background_color = arcade.color.BLACK
 
         self.lobby = lobby
+
+        # Профиль
+        from database import ProfileManager
         self.account = account_manager
+        self.profile = ProfileManager()
+
+        # Игрок
+        self.player_level = None
+
+        # Временный выбор карты
+        self.game_state_path = '././database/_game.json'
+        self.game_state = None
 
         self.camera = None
 
@@ -98,6 +110,13 @@ class MainBoard(arcade.View):
         self.setup()
 
     def setup(self):
+        # Уровень
+        profile = self.profile.load_profile(self.account.current_account)
+        self.player_level = profile['level']
+
+        # Создаем или загружаем карту
+        self.load_game_state()
+
         # Batch
         self.batch = Batch()
 
@@ -117,6 +136,9 @@ class MainBoard(arcade.View):
             color=arcade.color.WHITE,
             batch=self.batch,
         )
+        start_diff = self.game_state.get('difficulty', None)
+        if start_diff and start_diff in DIFFICULTY_DATABASE:
+            self.btn.value = DIFFICULTY_DATABASE[start_diff].name
 
         # Камера
         self.camera = arcade.Camera2D(
@@ -125,6 +147,18 @@ class MainBoard(arcade.View):
         )
         self.camera.viewport_width = self.width
         self.camera.viewport_height = self.height
+
+    def on_show_view(self) -> None:
+        self.load_game_state()
+        profile = self.profile.load_profile(self.account.current_account)
+        self.player_level = profile['level']
+
+        self.setup()
+
+        diff_id = self.game_state.get('difficulty')
+
+        if diff_id:
+            self.set_difficulty_texts(DIFFICULTY_DATABASE[diff_id].name)
 
     def set_gui_texts(self):
         """Тексты: ИГРА/СЛОЖНОСТЬ"""
@@ -170,6 +204,7 @@ class MainBoard(arcade.View):
         )
 
         # Уровень
+        lvl = self.player_level
         self.lvl_text = arcade.Text(
             text=f'Lvl: {lvl}',
             x=290,
@@ -182,11 +217,24 @@ class MainBoard(arcade.View):
             batch=self.batch
         )
 
-    def set_info_game_texts(self, map='...', difficulty='...'):
+    def set_info_game_texts(self, map_key=None, difficulty=None):
         """Тексты: карта/сложность/играть"""
+        from .map_board import MAP_DATABASE
+        map_name = '...'
+        if map_key is None:
+            map_key = self.game_state.get('map')
+        if map_key and map_key in MAP_DATABASE:
+            map_name = MAP_DATABASE[map_key].name
+
+        # Сложность из JSON
+        diff_name = '...'
+        diff_key = self.game_state.get('difficulty')
+        if diff_key and diff_key in DIFFICULTY_DATABASE:
+            diff_name = DIFFICULTY_DATABASE[diff_key].name
+
         # Карта
         self.map_text = arcade.Text(
-            text=f'Карта: {map}.',
+            text=f'Карта: {map_name}.',
             x=40,
             y=225 - 20,
             color=arcade.color.WHITE,
@@ -199,7 +247,7 @@ class MainBoard(arcade.View):
 
         # Сложность
         self.difficulty_text = arcade.Text(
-            text=f'Сложность: {difficulty}.',
+            text=f'Сложность: {diff_name}.',
             x=40,
             y=225 - 50,
             color=arcade.color.WHITE,
@@ -238,9 +286,33 @@ class MainBoard(arcade.View):
                     f'Количество улик: {info.evidence_count}.',
                     f'На уровне {info.on_level}.'
                 )
+
+            if info.on_level > self.player_level:
+                desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level = \
+                    (
+                        '???', f'Начальный уровень рассудка: ???.',
+                        f'Призрак ломает укрытия с шансом ???.',
+                        f'Призрак меняет комнату с шансом ???.',
+                        f'Количество улик: ???.',
+                        f'На уровне {info.on_level}.'
+                    )
+
             chosen = True
+
         except StopIteration:
             desc = sanity = broke_chance = roomchange_chance = evidence_count = on_level = ''
+
+        difficulty_key = None
+        for key, info in DIFFICULTY_DATABASE.items():
+            if info.name == difficulty_name:
+                difficulty_key = key
+                break
+
+        if difficulty_key and self.player_level >= DIFFICULTY_DATABASE[difficulty_key].on_level:
+            self.game_state['difficulty'] = difficulty_key
+        else:
+            self.game_state['difficulty'] = None
+        self.save_game_state()
 
         # Описание
         self.name_text1 = arcade.Text(
@@ -336,6 +408,9 @@ class MainBoard(arcade.View):
             multiline=True,
             batch=self.batch
         )
+        if chosen:
+            if info.on_level <= self.player_level:
+                self.on_level_text = ''
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -403,11 +478,23 @@ class MainBoard(arcade.View):
 
         if self.btn.on_mouse_press(world_pos.x, world_pos.y, button, modifiers):
             self.set_difficulty_texts(self.btn.value)
-            print(f"Значение: {self.btn.value}")
+            self.set_info_game_texts()
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
             self.close_mainboard()
+
+    def load_game_state(self):
+        try:
+            with open(self.game_state_path, 'r', encoding='utf-8') as f:
+                self.game_state = json.load(f)
+        except FileNotFoundError:
+            self.game_state = {'inventory': {}, 'map': None, 'difficulty': None}
+            self.save_game_state()
+
+    def save_game_state(self):
+        with open(self.game_state_path, 'w', encoding='utf-8') as f:
+            json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mainboard(self):
         self.window.show_view(self.lobby)
@@ -415,9 +502,6 @@ class MainBoard(arcade.View):
     def start_game(self):
         print('Начинаем игру...')
 
-# TODO: Подключить к _game.json
 # TODO: Добавить звуки
-# TODO: ??? для тех, где уровень игрока ниже
-# TODO: Скрывать "на уровне" при уровне выше
 # TODO: Почистить код
 # TODO:
