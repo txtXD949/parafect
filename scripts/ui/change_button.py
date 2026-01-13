@@ -15,12 +15,12 @@ class ChangeButton:
             font_size: Number = 12,
             color: arcade.color.Color = arcade.color.WHITE,
             width: Optional[Number] = None,
-            align: str = "center",
-            anchor_x: str = "center",
-            anchor_y: str = "center",
+            align: str = 'center',
+            anchor_x: str = 'center',
+            anchor_y: str = 'center',
             bold: bool = False,
             italic: bool = False,
-            font_name: Union[str, List[str]] = ("calibri", "arial"),
+            font_name: Union[str, List[str]] = ('calibri', 'arial'),
             multiline: bool = False,
             rotation: Number = 0.0,
             batch: Optional[Batch] = None,
@@ -63,16 +63,16 @@ class ChangeButton:
 
         # ← Стрелки статичные
         self.arrow_left = arcade.Text(
-            "<", left_x, self.start_y,
+            '<', left_x, self.start_y,
             font_size=self.font_size, color=self._text_params['color'],
-            align="center", anchor_x="center", anchor_y=self._text_params['anchor_y'],
+            align='center', anchor_x='center', anchor_y=self._text_params['anchor_y'],
             batch=self._text_params['batch']
         )
 
         self.arrow_right = arcade.Text(
-            ">", right_x, self.start_y,
+            '>', right_x, self.start_y,
             font_size=self.font_size, color=self._text_params['color'],
-            align="center", anchor_x="center", anchor_y=self._text_params['anchor_y'],
+            align='center', anchor_x='center', anchor_y=self._text_params['anchor_y'],
             batch=self._text_params['batch']
         )
 

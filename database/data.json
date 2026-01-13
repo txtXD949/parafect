@@ -46,13 +46,13 @@
     }
   },
   "3": {
-    "cash": 9600,
+    "cash": 9050,
     "level": 11,
     "experience": 0,
     "inventory": {
       "emf": 0,
       "uf": 0,
-      "book": 0,
+      "book": 1,
       "mic": 0,
       "dict": 0,
       "term": 0,

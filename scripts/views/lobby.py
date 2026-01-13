@@ -250,7 +250,6 @@ class LobbyView(arcade.View):
             self.player.change_x = 0
 
     def open_main_board(self):
-        # TODO: сделать главную доску
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
         self.player.change_x = self.player.change_y = 0
 
@@ -259,7 +258,6 @@ class LobbyView(arcade.View):
         self.window.show_view(main_board)
 
     def open_map_board(self):
-        # TODO: сделать доску карт
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
         self.player.change_x = self.player.change_y = 0
 

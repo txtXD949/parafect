@@ -99,7 +99,7 @@ class MainBoard(arcade.View):
         # Игрок
         self.player_level = None
 
-        # Временный выбор карты
+        # Временный выбор сложности
         self.game_state_path = '././database/_game.json'
         self.game_state = None
 
@@ -310,7 +310,9 @@ class MainBoard(arcade.View):
 
         if difficulty_key and self.player_level >= DIFFICULTY_DATABASE[difficulty_key].on_level:
             self.game_state['difficulty'] = difficulty_key
+            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
         else:
+            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
             self.game_state['difficulty'] = None
         self.save_game_state()
 
@@ -466,8 +468,6 @@ class MainBoard(arcade.View):
         # Мировые координаты
         world_pos = self.camera.unproject((x, y))
 
-        print(world_pos.x, world_pos.y)
-
         # Закрытие доски
         if 195 <= world_pos.x <= 225 and 60 <= world_pos.y <= 70:
             self.close_mainboard()
@@ -497,11 +497,16 @@ class MainBoard(arcade.View):
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mainboard(self):
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
         self.window.show_view(self.lobby)
 
     def start_game(self):
-        print('Начинаем игру...')
+        dif_id = self.game_state.get('difficulty')
+        map_id = self.game_state.get('map')
 
-# TODO: Добавить звуки
-# TODO: Почистить код
-# TODO:
+        if not (dif_id and map_id):
+            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click_bad(play).wav'), volume=0.5)
+            return
+
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click(play).wav'))
+        print('Начинаем игру...')
