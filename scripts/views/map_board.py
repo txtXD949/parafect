@@ -220,6 +220,8 @@ class MapBoard(arcade.View):
             anchor_y='center',
             batch=None
         )
+        if self.player_level >= map.on_level:
+            self.dom1_on_level.text = ''
         # Описание
         self.dom1_desc = arcade.Text(
             text=map.desc,
@@ -290,6 +292,9 @@ class MapBoard(arcade.View):
             anchor_y='center',
             batch=None
         )
+        if self.player_level >= map.on_level:
+            self.dom3_on_level.text = ''
+
         # Описание
         self.dom3_desc = arcade.Text(
             text=map.desc,
@@ -360,6 +365,8 @@ class MapBoard(arcade.View):
             anchor_y='center',
             batch=None
         )
+        if self.player_level >= map.on_level:
+            self.caffe_on_level.text = ''
         # Описание
         self.caffe_desc = arcade.Text(
             text=map.desc,
@@ -430,6 +437,8 @@ class MapBoard(arcade.View):
             anchor_y='center',
             batch=None
         )
+        if self.player_level >= map.on_level:
+            self.kv_no96_on_level.text = ''
         # Описание
         self.kv_no96_desc = arcade.Text(
             text=map.desc,
@@ -500,6 +509,8 @@ class MapBoard(arcade.View):
             anchor_y='center',
             batch=None
         )
+        if self.player_level >= map.on_level:
+            self.school_on_level.text = ''
         # Описание
         self.school_desc = arcade.Text(
             text=map.desc,
@@ -570,6 +581,8 @@ class MapBoard(arcade.View):
             anchor_y='center',
             batch=None
         )
+        if self.player_level >= map.on_level:
+            self.bunker_on_level.text = ''
         # Описание
         self.bunker_desc = arcade.Text(
             text=map.desc,

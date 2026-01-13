@@ -109,7 +109,7 @@ class MainBoard(arcade.View):
         # UI
         from ..ui import ChangeButton
         self.btn = ChangeButton(
-            values=list(map(lambda x: DIFFICULTY_DATABASE[x].name, DIFFICULTY_DATABASE.keys())),
+            values=[' '] + list(map(lambda x: DIFFICULTY_DATABASE[x].name, DIFFICULTY_DATABASE.keys())),
             start_x=590,
             start_y=460,
             font_size=20,
@@ -224,8 +224,118 @@ class MainBoard(arcade.View):
             batch=self.batch
         )
 
-    def set_difficulty_texts(self):
-        ...
+    def set_difficulty_texts(self, difficulty_name):
+        """Тексты: название/описание/рассудок/шансы/улики/на уровне/???"""
+        chosen = False
+        try:
+            info = next(DIFFICULTY_DATABASE[it] for it in DIFFICULTY_DATABASE.keys() if
+                        DIFFICULTY_DATABASE[it].name == difficulty_name)
+            desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level = \
+                (
+                    info.desc, f'Начальный уровень рассудка: {info.sanity}.',
+                    f'Призрак ломает укрытия с шансом {info.broke_chance}.',
+                    f'Призрак меняет комнату с шансом {info.roomchange_chance}.',
+                    f'Количество улик: {info.evidence_count}.',
+                    f'На уровне {info.on_level}.'
+                )
+            chosen = True
+        except StopIteration:
+            desc = sanity = broke_chance = roomchange_chance = evidence_count = on_level = ''
+
+        # Описание
+        self.name_text1 = arcade.Text(
+            text=desc,
+            x=430,
+            y=380,
+            color=arcade.color.Color.from_hex_string('#C8C8C8'),
+            font_name='Courier New',
+            font_size=9,
+            anchor_x='left',
+            anchor_y='top',
+            align='left',
+            width=310,
+            multiline=True,
+            batch=self.batch
+        )
+
+        # Рассудок
+        self.sanity_text = arcade.Text(
+            text=sanity,
+            x=430,
+            y=380 - 50,
+            color=arcade.color.WHITE,
+            font_name='Courier New',
+            font_size=11,
+            anchor_x='left',
+            anchor_y='top',
+            align='left',
+            width=310,
+            multiline=True,
+            batch=self.batch
+        ),
+
+        # Шансы
+        self.broke_chance_text = arcade.Text(
+            text=broke_chance,
+            x=430,
+            y=380 - 70,
+            color=arcade.color.WHITE,
+            font_name='Courier New',
+            font_size=11,
+            anchor_x='left',
+            anchor_y='top',
+            align='left',
+            width=310,
+            multiline=True,
+            batch=self.batch
+        ),
+
+        self.roomchange_chance_text = arcade.Text(
+            text=roomchange_chance,
+            x=430,
+            y=380 - 90,
+            color=arcade.color.WHITE,
+            font_name='Courier New',
+            font_size=11,
+            anchor_x='left',
+            anchor_y='top',
+            align='left',
+            width=310,
+            multiline=True,
+            batch=self.batch
+        ),
+
+        # Улики
+        self.evidence_count_text = arcade.Text(
+            text=evidence_count,
+            x=430,
+            y=380 - 110,
+            color=arcade.color.WHITE,
+            font_name='Courier New',
+            font_size=11,
+            anchor_x='left',
+            anchor_y='top',
+            align='left',
+            width=310,
+            multiline=True,
+            batch=self.batch
+        ),
+
+        # На уровне
+        self.on_level_text = arcade.Text(
+            text=on_level,
+            x=430,
+            y=380 - 130,
+            color=arcade.color.WHITE,
+            font_name='Courier New',
+            font_size=11,
+            anchor_x='left',
+            anchor_y='top',
+            align='left',
+            width=310,
+            multiline=True,
+            batch=self.batch
+        )
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -292,6 +402,7 @@ class MainBoard(arcade.View):
             self.start_game()
 
         if self.btn.on_mouse_press(world_pos.x, world_pos.y, button, modifiers):
+            self.set_difficulty_texts(self.btn.value)
             print(f"Значение: {self.btn.value}")
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
@@ -303,14 +414,10 @@ class MainBoard(arcade.View):
 
     def start_game(self):
         print('Начинаем игру...')
-        if hasattr(self, 'difficulty_combo'):
-            selected_difficulty = self.difficulty_combo.selected_item
-            print(f'Выбрана сложность: {selected_difficulty}')
 
-
-# TODO: Вывод информации о сложности
 # TODO: Подключить к _game.json
 # TODO: Добавить звуки
+# TODO: ??? для тех, где уровень игрока ниже
+# TODO: Скрывать "на уровне" при уровне выше
 # TODO: Почистить код
-# TODO:
 # TODO:
