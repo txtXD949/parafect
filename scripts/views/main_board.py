@@ -2,6 +2,8 @@ import arcade
 from pyglet.graphics import Batch
 from arcade.gui import UIManager
 
+from itertools import cycle
+
 
 class DifficultyInfo:
     def __init__(self, name, desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level=1):
@@ -89,8 +91,8 @@ class MainBoard(arcade.View):
         self.lobby = lobby
         self.account = account_manager
 
-        self.manager = None
         self.camera = None
+
         self.batch = None
 
         self.setup()
@@ -105,8 +107,16 @@ class MainBoard(arcade.View):
         self.set_info_game_texts()
 
         # UI
-        self.manager = UIManager()
-        self.manager.enable()
+        from ..ui import ChangeButton
+        self.btn = ChangeButton(
+            values=list(map(lambda x: DIFFICULTY_DATABASE[x].name, DIFFICULTY_DATABASE.keys())),
+            start_x=590,
+            start_y=460,
+            font_size=20,
+            font_name='Courier New',
+            color=arcade.color.WHITE,
+            batch=self.batch,
+        )
 
         # Камера
         self.camera = arcade.Camera2D(
@@ -266,7 +276,6 @@ class MainBoard(arcade.View):
         arcade.draw_line(365 / 2 + 30, 60, 365 / 2 + 30 - 15, 70, color=arcade.color.WHITE)
 
         self.batch.draw()
-        self.manager.draw()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         # Мировые координаты
@@ -282,6 +291,9 @@ class MainBoard(arcade.View):
         if 155 <= world_pos.x <= 270 and 105 <= world_pos.y <= 135:
             self.start_game()
 
+        if self.btn.on_mouse_press(world_pos.x, world_pos.y, button, modifiers):
+            print(f"Значение: {self.btn.value}")
+
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
             self.close_mainboard()
@@ -291,4 +303,14 @@ class MainBoard(arcade.View):
 
     def start_game(self):
         print('Начинаем игру...')
-        ...
+        if hasattr(self, 'difficulty_combo'):
+            selected_difficulty = self.difficulty_combo.selected_item
+            print(f'Выбрана сложность: {selected_difficulty}')
+
+
+# TODO: Вывод информации о сложности
+# TODO: Подключить к _game.json
+# TODO: Добавить звуки
+# TODO: Почистить код
+# TODO:
+# TODO:
