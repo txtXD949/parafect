@@ -509,4 +509,7 @@ class MainBoard(arcade.View):
             return
 
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click(play).wav'))
-        print('Начинаем игру...')
+
+        from . import GameLoading
+        loading = GameLoading()
+        self.window.show_view(loading)

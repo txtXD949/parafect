@@ -1,6 +1,7 @@
 #  Запуск программы отсюда
 from scripts.views import Screensaver
 from scripts.views import LoginMenu
+from scripts.views import GameLoading
 import arcade
 import os
 
@@ -28,7 +29,7 @@ def main():
     screensaver = Screensaver()
     window.show_view(screensaver)
 
-    # login = LoginMenu(None)
+    # login = GameLoading()
     # window.show_view(login)
 
     arcade.run()

@@ -46,7 +46,7 @@
     }
   },
   "3": {
-    "cash": 9050,
+    "cash": 8900,
     "level": 11,
     "experience": 0,
     "inventory": {
@@ -56,7 +56,7 @@
       "mic": 0,
       "dict": 0,
       "term": 0,
-      "flash_light": 1,
+      "flash_light": 0,
       "camera": 0,
       "incense": 0,
       "lighter": 1,

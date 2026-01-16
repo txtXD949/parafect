@@ -6,6 +6,7 @@ from .lobby import LobbyView
 from .market import MarketView
 from .map_board import MapBoard
 from .main_board import MainBoard
+from .game_loading import GameLoading
 
 __all__ = [
     'Screensaver',
@@ -15,5 +16,6 @@ __all__ = [
     'LobbyView',
     'MarketView',
     'MapBoard',
-    'MainBoard'
+    'MainBoard',
+    'GameLoading'
 ]
