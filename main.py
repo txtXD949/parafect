@@ -26,11 +26,11 @@ class GameWindow(arcade.Window):
 def main():
     window = GameWindow()
 
-    screensaver = Screensaver()
-    window.show_view(screensaver)
+    # screensaver = Screensaver()
+    # window.show_view(screensaver)
 
-    # login = GameLoading()
-    # window.show_view(login)
+    login = LoginMenu(None)
+    window.show_view(login)
 
     arcade.run()
 

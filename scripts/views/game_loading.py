@@ -52,15 +52,17 @@ class GameLoading(arcade.View):
             self.ind -= 1
 
     def on_update(self, delta_time: float) -> bool | None:
-        if self.closed:
-            return
+        self.open_game()
 
-        self.timer += delta_time
-
-        self.set_text()
-
-        if not self.ind:
-            self.open_game()
+        # if self.closed:
+        #     return
+        #
+        # self.timer += delta_time
+        #
+        # self.set_text()
+        #
+        # if not self.ind:
+        #     self.open_game()
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -73,4 +75,6 @@ class GameLoading(arcade.View):
     def open_game(self):
         self.closed = True
 
-        ...
+        from ..maps.test_map import TestMap
+        t = TestMap()
+        self.window.show_view(t)

@@ -66,3 +66,63 @@ class PlayerSprite(arcade.Sprite):
         texture_index = base_index + self.current_frame
 
         self.texture = self.textures[texture_index]
+
+
+class Player:
+    def __init__(self):
+        from itertools import cycle
+
+        self._inventory = []
+        self._gripped_item = None
+        self.inds = cycle((1, 0))
+
+        self.sprite = None
+
+        self.is_lighter = ...
+
+    @property
+    def inventory(self):
+        return self._inventory
+
+    @property
+    def gripped_item(self):
+        return self._gripped_item
+
+    @gripped_item.setter
+    def gripped_item(self, new_val):
+        self._gripped_item = new_val
+
+    def take_item(self, item):
+        if len(self.inventory) == 2:
+            return
+        if len(self.inventory) == 1:
+            self.inventory.append(item)
+            item.in_inventory = True
+            return
+
+        self.inventory.append(item)
+        self.gripped_item = item
+        item.in_inventory = True
+        item.is_grabbed = True
+
+    def change_gripped_item(self):
+        if len(self.inventory) in (0, 1):
+            return
+
+        self.gripped_item.is_grabbed = False
+
+        self.gripped_item = self.inventory[next(self.inds)]
+        self.gripped_item.is_grabbed = True
+
+    def drop_item(self):
+        self.gripped_item.in_inventory = False
+        self.gripped_item.is_grabbed = False
+
+        self.inventory.remove(self.gripped_item)
+        try:
+            self.gripped_item = self.inventory[0]
+            self.gripped_item.is_grabbed = True
+        except IndexError:
+            pass
+
+
