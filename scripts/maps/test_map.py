@@ -8,10 +8,12 @@ class TestMap(arcade.View):
         super().__init__()
 
         self.pressed_E = False
+        self.evids = ['emf5', 'mic', 'book', 'cold_temp']
 
         self.setup()
 
     def setup(self):
+        self.sound_player = arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav'), volume=0.1, loop=True)
         # Карта
         self.tile_map = arcade.load_tilemap('././assets/maps/test_map.tmx', scaling=1.0)
 
@@ -57,7 +59,7 @@ class TestMap(arcade.View):
         # Предметы
         self.items_list = arcade.SpriteList()
 
-        from ..items import Thermometer, Microphone
+        from ..items import Thermometer, Microphone, EMF, Book, Pills
 
         # Термометр
         self.thermometer = Thermometer()
@@ -71,6 +73,24 @@ class TestMap(arcade.View):
         self.mic.sprite.center_x, self.mic.sprite.center_y = self.map_width / 2 + 60, self.map_height / 2
         self.items_list.append(self.mic.sprite)
 
+        # Детектор ЭМП
+        self.emf = EMF()
+        self.emf.create_sprite(1.0)
+        self.emf.sprite.center_x, self.emf.sprite.center_y = self.map_width / 2 + 30, self.map_height / 2 + 30
+        self.items_list.append(self.emf.sprite)
+
+        # Блокнот
+        self.book = Book()
+        self.book.create_sprite(1.0)
+        self.book.sprite.center_x, self.book.sprite.center_y = self.map_width / 2 + 60, self.map_height / 2 + 60
+        self.items_list.append(self.book.sprite)
+
+        # Таблетки
+        self.pills = Pills()
+        self.pills.create_sprite(1.0)
+        self.pills.sprite.center_x, self.pills.sprite.center_y = self.map_width / 2 + 60, self.map_height / 2 + 60
+        self.items_list.append(self.pills.sprite)
+
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -81,6 +101,8 @@ class TestMap(arcade.View):
         self.items_list.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
+        from .. import Muling, Banshee
+
         self.physics_engine.update()
 
         pos = (
@@ -95,12 +117,25 @@ class TestMap(arcade.View):
 
         for item in self.items_list:
             item._class.update_item(self.player_sprite)
+            if arcade.check_for_collision_with_list(item, self.scene['room']):
+                item._class.in_room = True
+            else:
+                item._class.in_room = False
+
+        self.emf.use_item(self.evids)
+        self.book.use_item(self.evids)
+        self.mic.use_item(self.evids, Muling(), [self.sound_player])
+        self.thermometer.use_item(self.evids)
+        self.pills.use_item(self.player, 20)
+
 
         item_grab = arcade.check_for_collision_with_list(self.player_sprite, self.items_list)
         for item in item_grab:
             if self.pressed_E and not (any(item._class is it for it in self.player.inventory)):
                 self.player.take_item(item._class)
         self.pressed_E = False
+
+        print(self.player.sanity)
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
@@ -122,6 +157,9 @@ class TestMap(arcade.View):
 
         if symbol == arcade.key.G:
             self.player.drop_item()
+
+        if symbol == arcade.key.R:
+            self.player.turn_on_item()
 
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
