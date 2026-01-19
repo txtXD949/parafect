@@ -92,7 +92,7 @@ ITEM_DATABASE = {
         price=150,
         description='Защитит от паранормальных явлений.',
         max_in_game=4,
-        image_path='././assets/images/itms/blag.png',
+        image_path='././assets/images/itms/incense.png',
         on_level=15
     ),
     'lighter': ItemData(

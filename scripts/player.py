@@ -79,6 +79,7 @@ class Player:
         self.has_lighter = False
 
         self.sanity = 3
+        self.is_unhittable = False
 
         self.sprite = None
 
@@ -98,6 +99,14 @@ class Player:
         if item.id in ('pills',):
             if item.used:
                 return
+
+        if item.id == 'incense' and not item.take_item(self):
+            return
+
+        if item.id in ('lighter',):
+            item.use_item(self)
+            item.sprite.remove_from_sprite_lists()
+            return
 
         if len(self.inventory) == 2:
             return
@@ -143,7 +152,11 @@ class Player:
             return
 
         if self.gripped_item.id in ('pills',):
-            self.gripped_item.to_use = True
+            self.gripped_item.use_item(self)
+            return
+
+        if self.gripped_item.id == 'incense':
+            self.gripped_item.use_item(self)
             return
 
         if self.gripped_item.is_turn_on:

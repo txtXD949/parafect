@@ -13,7 +13,7 @@ class TestMap(arcade.View):
         self.setup()
 
     def setup(self):
-        self.sound_player = arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav'), volume=0.1, loop=True)
+        # self.sound_player = arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav'), volume=0.1, loop=True)
         # Карта
         self.tile_map = arcade.load_tilemap('././assets/maps/test_map.tmx', scaling=1.0)
 
@@ -59,7 +59,7 @@ class TestMap(arcade.View):
         # Предметы
         self.items_list = arcade.SpriteList()
 
-        from ..items import Thermometer, Microphone, EMF, Book, Pills
+        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense
 
         # Термометр
         self.thermometer = Thermometer()
@@ -86,10 +86,22 @@ class TestMap(arcade.View):
         self.items_list.append(self.book.sprite)
 
         # Таблетки
-        self.pills = Pills()
+        self.pills = Pills(20)
         self.pills.create_sprite(1.0)
-        self.pills.sprite.center_x, self.pills.sprite.center_y = self.map_width / 2 + 60, self.map_height / 2 + 60
+        self.pills.sprite.center_x, self.pills.sprite.center_y = self.map_width / 2 + 60, self.map_height / 2 + 90
         self.items_list.append(self.pills.sprite)
+
+        # Зажигалка
+        self.lighter = Lighter()
+        self.lighter.create_sprite(0.3)
+        self.lighter.sprite.center_x, self.lighter.sprite.center_y = self.map_width / 2 + 90, self.map_height / 2
+        self.items_list.append(self.lighter.sprite)
+
+        # Благовония
+        self.incense = Incense()
+        self.incense.create_sprite(0.3)
+        self.incense.sprite.center_x, self.incense.sprite.center_y = self.map_width / 2 + 30, self.map_height / 2 - 30
+        self.items_list.append(self.incense.sprite)
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -124,10 +136,9 @@ class TestMap(arcade.View):
 
         self.emf.use_item(self.evids)
         self.book.use_item(self.evids)
-        self.mic.use_item(self.evids, Muling(), [self.sound_player])
+        self.mic.use_item(self.evids, Muling(), [])
         self.thermometer.use_item(self.evids)
-        self.pills.use_item(self.player, 20)
-
+        self.incense.update_item(self.player_sprite)
 
         item_grab = arcade.check_for_collision_with_list(self.player_sprite, self.items_list)
         for item in item_grab:
@@ -135,7 +146,7 @@ class TestMap(arcade.View):
                 self.player.take_item(item._class)
         self.pressed_E = False
 
-        print(self.player.sanity)
+        print(self.player.has_lighter)
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True

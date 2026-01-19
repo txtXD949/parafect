@@ -325,42 +325,182 @@ class PhotoCamera(Item):
 
 
 class Incense(Item):
-    TEXTURES = []
+    TEXTURES = [
+        './assets/images/itms/incense.png'
+        './assets/images/itms/incense_1.png'
+        './assets/images/itms/incense_2.png'
+        './assets/images/itms/incense_3.png'
+        './assets/images/itms/incense_4.png'
+    ]
+    SOUNDS = [
+        arcade.load_sound('./assets/sounds/effects/smoke_incense.wav')
+    ]
 
     def __init__(self):
         super().__init__('incense', 'Благовония', sprite=None)
 
+        # состояние горения
+        self.phase = 0  # 0-4
+        self.phase_timer = 0.0  # время до следующей фазы
+        self.is_burning = False
+        self.sound_player = None
 
-class Lighter(Item):  # TODO: доделать
-    TEXTURES = []
+        # частицы дыма
+        self.smoke_particles = arcade.SpriteList()
 
-    def __init__(self):
-        super().__init__('incense', 'Зажигалка', sprite=None)
+        # ссылка на игрока
+        self.player = None
 
     def use_item(self, player):
-        player.has_lighter = True
+        """Зажигает благовония (вызывается из Player.turn_on_item)"""
+        if self.phase > 0 or self.is_burning:
+            return
+
+        # начинаем горение
+        self.phase = 1
+        self.phase_timer = 2.0  # 2 секунды на фазу
+        self.is_burning = True
+        self.player = player
+
+        # делаем игрока неуязвимым
+        player.is_unhittable = True
+
+        # звук первой фазы
+        self.sound_player = arcade.play_sound(self.SOUNDS[0])
+
+        # обновляем текстуру
+        self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
+
+        print("🔥 Благовония зажжены!")
+
+    def update_smoke(self, delta_time):
+        """Обновление частиц дыма"""
+        if not self.is_burning:
+            return
+
+        # создаём новые частицы каждые 0.1 сек
+        if random.random() < 0.3:
+            smoke = arcade.SpriteSolidColor(6, 6, arcade.color.LIGHT_GRAY)
+            smoke.center_x = self.sprite.center_x + random.randint(-8, 8)
+            smoke.center_y = self.sprite.top + random.randint(2, 8)
+            smoke.change_y = random.uniform(20, 50)  # скорость вверх
+            smoke.change_x = random.uniform(-10, 10)  # лёгкое рассеивание
+            smoke.life = 2.0  # время жизни
+            self.smoke_particles.append(smoke)
+
+        # обновляем существующие частицы
+        for smoke in self.smoke_particles:
+            smoke.center_x += smoke.change_x * delta_time
+            smoke.center_y += smoke.change_y * delta_time
+            smoke.life -= delta_time
+
+            # эффект затухания (альфа)
+            alpha = int(255 * (smoke.life / 2.0))
+            smoke.color = (128 + alpha // 2, 128 + alpha // 2, 128 + alpha // 2, alpha)
+
+            if smoke.life <= 0:
+                smoke.kill()
+
+    def update_phase(self, delta_time):
+        """Переход между фазами"""
+        if not self.is_burning:
+            return
+
+        self.phase_timer -= delta_time
+
+        if self.phase_timer <= 0:
+            # следующая фаза
+            self.phase += 1
+
+            if self.phase >= 4:
+                # горение закончилось
+                self.phase = 4
+                self.is_burning = False
+                if self.player:
+                    self.player.is_unhittable = False
+                    self.player = None
+                print("💨 Благовония догорели")
+                return
+
+            # новая фаза
+            self.phase_timer = 2.0
+            self.sprite.texture = arcade.load_texture(self.TEXTURES[self.phase])
+
+            # звук фазы
+            if self.sound_player:
+                self.sound_player.pause()
+            self.sound_player = arcade.play_sound(self.SOUNDS[0])
+
+            print(f"🔥 Фаза {self.phase}")
+
+    def update_item(self, player_sprite):
+        """Обновление при отрисовке"""
+        super().update_item(player_sprite)
+
+        # обновляем состояние
+        self.update_phase(1 / 60.0)  # ~60 FPS
+        self.update_smoke(1 / 60.0)
+
+        # отрисовка частиц (если схвачено или на земле)
+        self.smoke_particles.draw()
+
+    def take_item(self, player):
+        """Нельзя поднять горящие благовония"""
+        if self.phase > 0:
+            return False
+        return True
+
+    def turn_on(self):
+        """Не используется, активация через use_item"""
+        pass
+
+    def turn_off(self):
+        pass
 
 
-class Pills(Item):  # TODO: добавить звуки
+class Lighter(Item):
     TEXTURES = [
-        '././assets/images/itms/pills.png'
+        '././assets/images/itms/light.png'
     ]
 
     def __init__(self):
+        super().__init__('lighter', 'Зажигалка', sprite=None)
+
+    def use_item(self, player):
+        if player.has_lighter:
+            return
+        player.has_lighter = True
+
+    def turn_on(self):
+        pass
+
+    def turn_off(self):
+        pass
+
+
+class Pills(Item):
+    TEXTURES = [
+        '././assets/images/itms/pills.png'
+    ]
+    SOUNDS = [
+        arcade.load_sound('./assets/sounds/effects/pills.wav')
+    ]
+
+    def __init__(self, reg_sanity):
         super().__init__('pills', 'Успокоительное', sprite=None)
+
+        self._reg_sanity = reg_sanity
 
         self.used = False
         self.to_use = False
 
-    def use_item(self, player, sanity):
-        if self.used or not self.to_use:
+    def use_item(self, player):
+        if self.used:
             return
 
         self.used = True
 
-        if player.sanity + sanity >= 100:
-            player.sanity = 100
-        else:
-            player.sanity += sanity
+        Item.sound_player = arcade.play_sound(self.SOUNDS[0])
 
+        player.sanity = min(100, player.sanity + self._reg_sanity)
         player.drop_item()
