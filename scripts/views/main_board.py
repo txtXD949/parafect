@@ -501,6 +501,9 @@ class MainBoard(arcade.View):
         self.window.show_view(self.lobby)
 
     def start_game(self):
+        from .maps.house1 import GameView
+        test_view = GameView(account_manager=self.account)
+        self.window.show_view(test_view)
         dif_id = self.game_state.get('difficulty')
         map_id = self.game_state.get('map')
 
