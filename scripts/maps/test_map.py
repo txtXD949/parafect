@@ -112,6 +112,8 @@ class TestMap(arcade.View):
         self.player_list.draw()
         self.items_list.draw()
 
+        self.incense.smoke_particles.draw()
+
     def on_update(self, delta_time: float) -> bool | None:
         from .. import Muling, Banshee
 
@@ -145,8 +147,6 @@ class TestMap(arcade.View):
             if self.pressed_E and not (any(item._class is it for it in self.player.inventory)):
                 self.player.take_item(item._class)
         self.pressed_E = False
-
-        print(self.player.has_lighter)
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
