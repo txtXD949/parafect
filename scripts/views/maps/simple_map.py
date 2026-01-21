@@ -63,19 +63,11 @@ class FootstepParticle(arcade.SpriteSolidColor):
 
 
 class SimpleMapView(arcade.View):
-    def __init__(self, account_manager, map_name="house1.tmx", x0=0, y0=0):
+    def __init__(self, account_manager, map_name=None, x0=0, y0=0, rooms=None):
         super().__init__()
 
         # Звук
         self.sound_player = None
-
-        # Сцены
-        self.map_board = None
-
-        # Вспомогательное
-        self.main_board_use = False
-        self.map_board_use = False
-        self.market_use = False
 
         # Шансы
         self.sound_ghost_chance = 0.0003
@@ -85,9 +77,18 @@ class SimpleMapView(arcade.View):
         self.last_step_particle_time = 0
         self.step_particle_interval = 0.15
 
+        # Вспомогательное
+        self.is_under_roof = False
+
         # Файлики
         self.account_manager = account_manager
         self.game_state_path = './././database/_game.json'
+
+        # Характеристики карты
+        self.map_name = map_name
+        self.x0 = x0
+        self.y0= y0
+        self.rooms = rooms
 
         self.setup()
 
@@ -98,11 +99,9 @@ class SimpleMapView(arcade.View):
         self.sound_player = arcade.load_sound('./././assets/sounds/background/lobby(1).mp3')
         self.sound_player.play(loop=True, volume=0.2)
 
-        # Файлик
-        self.create_game_state_file()
 
         # Карта
-        self.tile_map = arcade.load_tilemap('./././assets/maps/house1.tmx', scaling=2.0)
+        self.tile_map = arcade.load_tilemap(f'./././assets/maps/{self.map_name}.tmx', scaling=1.0)
 
         # Расчет размеров карты с учетом масштаба
         self.map_width = self.tile_map.width * self.tile_map.tile_width
@@ -112,8 +111,8 @@ class SimpleMapView(arcade.View):
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
         # Игрок
-        self.player = PlayerSprite(scale=0.6)
-        self.player.center_x, self.player.center_y = self.map_width / 2, self.map_height / 2
+        self.player = PlayerSprite(scale=0.25)
+        self.player.center_x, self.player.center_y = self.x0 * 16, (self.tile_map.height - self.y0) * 16
 
         self.player_list = arcade.SpriteList()
         self.player_list.append(self.player)
@@ -127,8 +126,8 @@ class SimpleMapView(arcade.View):
 
         self.world_camera.projection = arcade.rect.XYWH(
             0, 0,
-            self.map_width,
-            self.map_height
+            1920 // 10,
+            1080 // 10
         )
 
         self.world_camera.viewport_width = self.width
@@ -157,9 +156,16 @@ class SimpleMapView(arcade.View):
 
         self.world_camera.use()
 
-        self.scene.draw()
-        self.player_list.draw()
-        self.footstep_particles.draw()
+        self.scene["ground"].draw(pixelated=True)
+        self.scene["floor"].draw(pixelated=True)
+        self.scene["carpet"].draw(pixelated=True)
+        self.scene["walls"].draw(pixelated=True)
+        self.scene["doors"].draw(pixelated=True)
+        self.scene["furniture_back"].draw(pixelated=True)
+        self.player_list.draw(pixelated=True)
+        self.footstep_particles.draw(pixelated=True)
+        self.scene["furniture_front"].draw(pixelated=True)
+        self.scene["roof"].draw(pixelated=True)
 
     def on_update(self, delta_time: float) -> bool | None:
         # Всё обновляем
@@ -210,6 +216,15 @@ class SimpleMapView(arcade.View):
             CAMERA_LERP,  # Плавность следования камеры
         )
 
+        # Рендер крыши
+        if arcade.check_for_collision_with_list(self.player, self.scene["roof"]):
+            self.is_under_roof = True
+        else:
+            self.is_under_roof = False
+        self.smooth_roof()
+
+        print(self.player.center_x // 16, self.player.center_y // 16, self.tile_map.height)
+
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player.is_going = True
 
@@ -231,33 +246,13 @@ class SimpleMapView(arcade.View):
         if symbol in (arcade.key.LEFT, arcade.key.RIGHT):
             self.player.change_x = 0
 
-    def create_game_state_file(self):
-        """Создает файл состояния игры при входе в лобби"""
-        import json
-
-        # Базовый набор предметов
-        game_inventory = {
-            'flash_light': 1,
-            'emf': 1,
-            'uf': 1,
-            'dict': 1,
-            'camera': 0,
-            'term': 1,
-            'mic': 1,
-            'book': 1,
-            'incense': 0,
-            'lighter': 0,
-            'pills': 0
-        }
-
-        game_state = {
-            'inventory': game_inventory,
-            'map': None,
-            'difficulty': None
-        }
-
-        with open(self.game_state_path, 'w', encoding='utf-8') as f:
-            json.dump(game_state, f, ensure_ascii=False, indent=2)
+    def smooth_roof(self):
+        if self.is_under_roof:
+            if self.scene["roof"].alpha_normalized > 0:
+                self.scene["roof"].alpha_normalized -= 0.05
+        else:
+            if self.scene["roof"].alpha_normalized < 1:
+                self.scene["roof"].alpha_normalized += 0.05
 
     def open_journal(self):
         # TODO: сделать журнал
