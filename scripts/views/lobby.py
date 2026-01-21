@@ -277,17 +277,17 @@ class LobbyView(arcade.View):
 
         # Базовый набор предметов
         game_inventory = {
-            'flash_light': 1,
-            'emf': 1,
-            'uf': 1,
-            'dict': 1,
+            'flash_light': 4,
+            'emf': 2,
+            'uf': 2,
+            'dict': 2,
             'camera': 0,
-            'term': 1,
-            'mic': 1,
-            'book': 1,
-            'incense': 0,
-            'lighter': 0,
-            'pills': 0
+            'term': 2,
+            'mic': 2,
+            'book': 2,
+            'incense': 4,
+            'lighter': 4,
+            'pills': 4
         }
 
         game_state = {
@@ -298,9 +298,3 @@ class LobbyView(arcade.View):
 
         with open(self.game_state_path, 'w', encoding='utf-8') as f:
             json.dump(game_state, f, ensure_ascii=False, indent=2)
-
-    def open_journal(self):
-        # TODO: сделать журнал
-        ...
-
-# TODO: добавить горячие клавиши в лобби, в маркет, в доски, в журнал

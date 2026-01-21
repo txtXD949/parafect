@@ -56,11 +56,11 @@ ITEM_DATABASE = {
     ),
     'dict': ItemData(
         item_id='dict',
-        name='ДИКТОФОН',
+        name='РАДИОПРИЕМНИК',
         price=200,
         description='Записывает звук.',
         max_in_game=2,
-        image_path='././assets/images/itms/dict.png'
+        image_path='././assets/images/itms/dict_off.png'
     ),
     'term': ItemData(
         item_id='term',

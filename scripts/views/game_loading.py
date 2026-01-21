@@ -3,9 +3,11 @@ from pyglet.graphics import Batch
 
 
 class GameLoading(arcade.View):
-    def __init__(self):
+    def __init__(self, game):
         super().__init__()
         self.background_color = arcade.color.BLACK
+
+        self.game = game
 
         self.camera = None
 
@@ -54,15 +56,15 @@ class GameLoading(arcade.View):
     def on_update(self, delta_time: float) -> bool | None:
         self.open_game()
 
-        # if self.closed:
-        #     return
-        #
-        # self.timer += delta_time
-        #
-        # self.set_text()
-        #
-        # if not self.ind:
-        #     self.open_game()
+        if self.closed:
+            return
+
+        self.timer += delta_time
+
+        self.set_text()
+
+        if not self.ind:
+            self.open_game()
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -74,7 +76,5 @@ class GameLoading(arcade.View):
 
     def open_game(self):
         self.closed = True
+        self.game.open_map()
 
-        from ..maps.test_map import TestMap
-        t = TestMap()
-        self.window.show_view(t)

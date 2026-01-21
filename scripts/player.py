@@ -83,6 +83,10 @@ class Player:
 
         self.sprite = None
 
+        self.voice_vol = 0.0
+        self.is_voice = True
+        self.threshold = 0.2
+
     @property
     def inventory(self):
         return self._inventory
@@ -105,7 +109,6 @@ class Player:
 
         if item.id in ('lighter',):
             item.use_item(self)
-            item.sprite.remove_from_sprite_lists()
             return
 
         if len(self.inventory) == 2:
@@ -141,6 +144,21 @@ class Player:
         self.turn_off_item()
 
         self.inventory.remove(self.gripped_item)
+        try:
+            self.gripped_item = self.inventory[0]
+            self.gripped_item.is_grabbed = True
+        except IndexError:
+            self.gripped_item = None
+
+    def put_item(self, item):
+        if not self.inventory:
+            return
+
+        item.in_inventory = False
+        item.is_grabbed = False
+        item.turn_off()
+
+        self.inventory.remove(item)
         try:
             self.gripped_item = self.inventory[0]
             self.gripped_item.is_grabbed = True

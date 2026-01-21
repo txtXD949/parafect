@@ -5,8 +5,9 @@ from .signin_menu import SigninMenu
 from .lobby import LobbyView
 from .market import MarketView
 from .map_board import MapBoard
-from .main_board import MainBoard
+from .main_board import MainBoard, DIFFICULTY_DATABASE
 from .game_loading import GameLoading
+from .tool_board import ToolBoard
 
 __all__ = [
     'Screensaver',
@@ -17,5 +18,6 @@ __all__ = [
     'MarketView',
     'MapBoard',
     'MainBoard',
-    'GameLoading'
+    'GameLoading',
+    'DIFFICULTY_DATABASE'
 ]

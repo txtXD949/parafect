@@ -152,25 +152,16 @@ class Wrath(Ghost):
 
 
 class Mimic(Ghost):
+    GHOSTS = [
+        Spirit, Demon, Phantom,
+        Oni, Banshee, Reverent,
+        Muling, Poltergeist, Siren,
+        Wrath, Shade, Butcher
+    ]
     def __init__(self):
         self.copied_ghost = None
+
         self.change_ghost()
-
-        hunt_start = 50
-        hunt_chance = 0.02
-        step_loud = 'mid'
-        ghost_event_chance = 0
-        drop_sanity = 5
-        speed = 1.0
-        interaction_chance = 0
-        blink_chance = 0.1
-        boost = 0.07
-
-        if isinstance(self.ghost_events, Mimic):
-            super().__init__('mimic', 'Мимик', spec='копирует другого призрака', evidences=['uf', 'cold_temp', 'mic'],
-                             hunt_start=hunt_start, hunt_chance=hunt_chance, step_loud=step_loud,
-                             ghost_event_chance=ghost_event_chance, drop_sanity=drop_sanity, speed=speed,
-                             interaction_chance=interaction_chance, blink_chance=blink_chance, boost=boost)
 
         super().__init__('mimic', 'Мимик', spec='копирует другого призрака', evidences=['uf', 'cold_temp', 'mic'],
                          hunt_start=self.copied_ghost.hunt_start, hunt_chance=self.copied_ghost.hunt_chance,
@@ -181,13 +172,13 @@ class Mimic(Ghost):
         self.change_chance = 0.7
 
     def change_ghost(self):
-        self.copied_ghost = random.choice(GHOSTS)
-        return ghost
+        self.copied_ghost = random.choice(self.GHOSTS[:-1])
+        return self.copied_ghost
 
 
 GHOSTS = [
     Spirit, Demon, Phantom,
     Oni, Banshee, Reverent,
     Muling, Poltergeist, Siren,
-    Mimic, Shade, Butcher, Wrath
+    Wrath, Shade, Butcher, Mimic
 ]
