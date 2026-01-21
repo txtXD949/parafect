@@ -277,17 +277,17 @@ class LobbyView(arcade.View):
 
         # Базовый набор предметов
         game_inventory = {
-            'flash_light': 4,
-            'emf': 2,
-            'uf': 2,
-            'dict': 2,
+            'flash_light': 1,
+            'emf': 1,
+            'uf': 1,
+            'dict': 1,
             'camera': 0,
-            'term': 2,
-            'mic': 2,
-            'book': 2,
-            'incense': 4,
-            'lighter': 4,
-            'pills': 4
+            'term': 1,
+            'mic': 1,
+            'book': 1,
+            'incense': 0,
+            'lighter': 0,
+            'pills': 0
         }
 
         game_state = {
