@@ -28,7 +28,7 @@ class GameWindow(arcade.Window):
 def main():
     window = GameWindow()
 
-    screensaver = LoginMenu(None)
+    screensaver = Screensaver()
     window.show_view(screensaver)
 
     arcade.run()

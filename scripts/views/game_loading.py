@@ -54,8 +54,6 @@ class GameLoading(arcade.View):
             self.ind -= 1
 
     def on_update(self, delta_time: float) -> bool | None:
-        self.open_game()
-
         if self.closed:
             return
 
