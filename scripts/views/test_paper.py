@@ -14,8 +14,10 @@ class JournalButton(UITextureButton):
         self.journal_widget = journal_widget
         self.circle_tex = arcade.load_texture('././assets/images/ui/circle_button.png')
         self.cross_tex = arcade.load_texture('././assets/images/ui/cross_button.png')
+        self.drow_tex = arcade.load_texture('././assets/images/ui/drow_button.png')
 
         self.state = 0
+        self.disabled = False
 
         self.type = type
         self.ghost = ghost
@@ -42,11 +44,19 @@ class JournalButton(UITextureButton):
                     "font_name": 'Correction Tape',
                     "font_size": 18,
                     "font_color": arcade.color.BLACK,
+                },
+                "disabled": {
+                    "font_name": 'Correction Tape',
+                    "font_size": 18,
+                    "font_color": arcade.color.GRAY,
                 }
             }
         )
 
     def on_click(self, event):
+        if self.disabled:
+            return
+
         if self.type == 'ghost':
             self.state = (self.state + 1) % 3
             self._update_visual()
@@ -70,35 +80,44 @@ class JournalButton(UITextureButton):
                 for ev in circled_evidences:
                     if ev not in ghost_btn.ghost.evidences:
                         is_valid = False
+                        break
 
                 for ev in crossed_evidences:
                     if ev in ghost_btn.ghost.evidences:
                         is_valid = False
+                        break
 
-                if is_valid:
-                    ghost_btn.style['normal']['font_color'] = arcade.color.BLACK
-                    ghost_btn.style['hover']['font_color'] = arcade.color.EERIE_BLACK
-                    ghost_btn.style['press']['font_color'] = arcade.color.BLACK
-                else:
-                    ghost_btn.style['normal']['font_color'] = arcade.color.GRAY
-                    ghost_btn.style['hover']['font_color'] = arcade.color.GRAY
-                    ghost_btn.style['press']['font_color'] = arcade.color.GRAY
+                ghost_btn.disabled = not is_valid
+
+                ghost_btn._update_visual()
 
         self._update_visual()
 
     def _update_visual(self):
-        if self.state == 1:
-            self.texture = self.circle_tex
-            self.texture_hovered = self.circle_tex
-        elif self.state == 2:
-            self.texture = self.cross_tex
-            self.texture_hovered = self.cross_tex
-        else:
-            self.texture = None
-            self.texture_hovered = None
-            self.texture_pressed = None
+        if self.type == 'ghost' and self.disabled:
+            # Для заблокированных кнопок призраков показываем drow_texture
+            self.texture = self.drow_tex
+            self.texture_hovered = self.drow_tex
+            self.texture_pressed = self.drow_tex
 
-        self._apply_style(self.style["normal"])
+            # Меняем цвет текста
+            self.style['normal']['font_color'] = arcade.color.DARK_GRAY
+            self.style['hover']['font_color'] = arcade.color.DARK_GRAY
+            self.style['press']['font_color'] = arcade.color.DARK_GRAY
+        else:
+            # Нормальная логика для активных кнопок и evidence
+            if self.state == 1:
+                self.texture = self.circle_tex
+                self.texture_hovered = self.circle_tex
+                self.texture_pressed = self.circle_tex
+            elif self.state == 2:
+                self.texture = self.cross_tex
+                self.texture_hovered = self.cross_tex
+                self.texture_pressed = self.cross_tex
+            else:
+                self.texture = None
+                self.texture_hovered = None
+                self.texture_pressed = None
 
 
 class JournalWidget(UIWidget):
