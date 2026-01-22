@@ -10,7 +10,6 @@ from .game_loading import GameLoading
 from .tool_board import ToolBoard
 from .paper import Paper
 from .sanity_screen import SanityScreen
-from .test_paper import JournalWidget
 
 __all__ = [
     'Screensaver',
@@ -24,5 +23,4 @@ __all__ = [
     'GameLoading',
     'DIFFICULTY_DATABASE',
     'Paper',
-    'JournalWidget'
 ]

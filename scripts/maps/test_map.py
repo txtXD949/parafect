@@ -59,10 +59,8 @@ class TestMap(arcade.View):
         self.tool_board = ToolBoard(self.game.inv, self, self.player)
         self.tool_board_use = False
 
-        # from ..views import Paper
-        # self.paper = Paper()
-        from ..views import JournalWidget
-        self.paper = JournalWidget(800, 600, 0.9, 1.4)
+        from ..views import Paper
+        self.paper = Paper(800, 600, 0.9, 1.4)
 
         self.manager = UIManager()
         self.manager.enable()
