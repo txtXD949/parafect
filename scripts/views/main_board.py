@@ -7,13 +7,16 @@ import json
 
 
 class DifficultyInfo:
-    def __init__(self, name, desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level=1):
+    def __init__(self, name, desc, sanity, add_sanity, broke_chance, roomchange_chance, evidence_count,
+                 sanity_screen=True, on_level=1):
         self.name: str = name
         self.desc: str = desc
         self.sanity: str = sanity
+        self.add_sanity: str = add_sanity
         self.broke_chance: str = broke_chance
         self.roomchange_chance: str = roomchange_chance
         self.evidence_count: int = evidence_count
+        self.sanity_screen: bool = sanity_screen
         self.on_level: int = on_level
 
 
@@ -22,63 +25,77 @@ DIFFICULTY_DATABASE = {
         name='Мирный',
         desc='Ознакомительный режим, призраки не начинают охоту.',
         sanity='100%',
+        add_sanity='50%',
         broke_chance='0%',
         roomchange_chance='0%',
         evidence_count=3,
+        sanity_screen=True,
         on_level=1
     ),
     'simple': DifficultyInfo(
         name='Легкий',
         desc='Подходит для новичков.',
         sanity='100%',
+        add_sanity='40%',
         broke_chance='10%',
         roomchange_chance='0%',
         evidence_count=3,
+        sanity_screen=True,
         on_level=1
     ),
     'normal': DifficultyInfo(
         name='Нормальный',
         desc='Стандартный уровень сложности.',
         sanity='100%',
+        add_sanity='30%',
         broke_chance='30%',
         roomchange_chance='25%',
         evidence_count=3,
+        sanity_screen=True,
         on_level=1
     ),
     'difficult': DifficultyInfo(
         name='Сложный',
         desc='Призрак более агрессивен. Для продвинутых игроков',
         sanity='85%',
+        add_sanity='20%',
         broke_chance='50%',
         roomchange_chance='35%',
         evidence_count=3,
+        sanity_screen=True,
         on_level=10
     ),
     'nightmare': DifficultyInfo(
         name='Кошмар',
         desc='Призрак настроен убить вас, будь аккуратнее. Для профессиональных игроков',
         sanity='25%',
+        add_sanity='10%',
         broke_chance='70%',
         roomchange_chance='50%',
         evidence_count=2,
+        sanity_screen=False,
         on_level=20
     ),
     'madness': DifficultyInfo(
         name='Безумие',
         desc='Призрак обезумел и не даст тебе шансов.',
         sanity='10%',
+        add_sanity='5%',
         broke_chance='85%',
         roomchange_chance='60%',
         evidence_count=1,
+        sanity_screen=False,
         on_level=30
     ),
     'chaos': DifficultyInfo(
         name='Хаос',
         desc='Призрак совсем в бешенстве. У тебя нет шансов…',
         sanity='1%',
+        add_sanity='0%',
         broke_chance='99%',
         roomchange_chance='99%',
         evidence_count=0,
+        sanity_screen=False,
         on_level=50
     ),
 }
@@ -113,6 +130,9 @@ class MainBoard(arcade.View):
         # Уровень
         profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
+
+        # Ник
+        self.player_name = profile['name']
 
         # Создаем или загружаем карту
         self.load_game_state()
@@ -191,6 +211,7 @@ class MainBoard(arcade.View):
     def set_profile_texts(self, name='test_name', lvl=1000):
         """Тексты: ник/уровень"""
         # Ник
+        name = self.player_name
         self.name_text = arcade.Text(
             text=name,
             x=45 + 30 + 10,
@@ -503,10 +524,19 @@ class MainBoard(arcade.View):
     def start_game(self):
         dif_id = self.game_state.get('difficulty')
         map_id = self.game_state.get('map')
+        inventory = self.game_state.get('inventory')
+
+        map_id = 'test'  # TODO: убрать
 
         if not (dif_id and map_id):
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click_bad(play).wav'), volume=0.5)
             return
 
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click(play).wav'))
-        print('Начинаем игру...')
+
+        from .. import Game
+        game = Game(self.player_name, map_id, dif_id, inventory, self.window)
+
+        from . import GameLoading
+        loading = GameLoading(game)
+        self.window.show_view(loading)

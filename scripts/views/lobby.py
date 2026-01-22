@@ -159,9 +159,9 @@ class LobbyView(arcade.View):
 
         self.world_camera.use()
 
-        self.scene.draw()
-        self.player_list.draw()
-        self.footstep_particles.draw()
+        self.scene.draw(pixelated=True)
+        self.player_list.draw(pixelated=True)
+        self.footstep_particles.draw(pixelated=True)
 
     def on_update(self, delta_time: float) -> bool | None:
         # Всё обновляем
@@ -298,9 +298,3 @@ class LobbyView(arcade.View):
 
         with open(self.game_state_path, 'w', encoding='utf-8') as f:
             json.dump(game_state, f, ensure_ascii=False, indent=2)
-
-    def open_journal(self):
-        # TODO: сделать журнал
-        ...
-
-# TODO: добавить горячие клавиши в лобби, в маркет, в доски, в журнал

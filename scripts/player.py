@@ -66,3 +66,129 @@ class PlayerSprite(arcade.Sprite):
         texture_index = base_index + self.current_frame
 
         self.texture = self.textures[texture_index]
+
+
+class Player:
+    def __init__(self):
+        from itertools import cycle
+
+        self._inventory = []
+        self._gripped_item = None
+        self.inds = cycle((1, 0))
+
+        self.has_lighter = False
+
+        self.sanity = None
+        self.is_unhittable = False
+
+        self.sprite = None
+
+        self.voice_vol = 0.0
+        self.is_voice = True
+        self.threshold = 0.2
+
+    @property
+    def inventory(self):
+        return self._inventory
+
+    @property
+    def gripped_item(self):
+        return self._gripped_item
+
+    @gripped_item.setter
+    def gripped_item(self, new_val):
+        self._gripped_item = new_val
+
+    def take_item(self, item):
+        if item.id in ('pills',):
+            if item.used:
+                return
+
+        if item.id == 'incense' and not item.take_item(self):
+            return
+
+        if item.id in ('lighter',):
+            item.use_item(self)
+            return
+
+        if len(self.inventory) == 2:
+            return
+        if len(self.inventory) == 1:
+            arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
+            self.inventory.append(item)
+            item.in_inventory = True
+            return
+
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
+        self.inventory.append(item)
+        self.gripped_item = item
+        item.in_inventory = True
+        item.is_grabbed = True
+
+    def change_gripped_item(self):
+        if len(self.inventory) in (0, 1):
+            return
+
+        self.gripped_item.is_grabbed = False
+        self.turn_off_item()
+
+        self.gripped_item = self.inventory[next(self.inds)]
+        self.gripped_item.is_grabbed = True
+
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
+
+    def drop_item(self):
+        if self.gripped_item is None:
+            return
+
+        if self.gripped_item.id in ('book',):
+            self.gripped_item.is_dropped = True
+        self.gripped_item.in_inventory = False
+        self.gripped_item.is_grabbed = False
+        self.turn_off_item()
+
+        self.inventory.remove(self.gripped_item)
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/drop_item.wav'))
+        try:
+            self.gripped_item = self.inventory[0]
+            self.gripped_item.is_grabbed = True
+        except IndexError:
+            self.gripped_item = None
+
+    def put_item(self, item):
+        if not self.inventory or item not in self.inventory:
+            return False
+
+        item.in_inventory = False
+        item.is_grabbed = False
+        item.turn_off()
+
+        self.inventory.remove(item)
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/board_item.wav'))
+        try:
+            self.gripped_item = self.inventory[0]
+            self.gripped_item.is_grabbed = True
+        except IndexError:
+            self.gripped_item = None
+
+        return True
+
+    def turn_on_item(self):
+        if not self.gripped_item:
+            return
+
+        if self.gripped_item.id in ('pills',):
+            self.gripped_item.use_item(self)
+            return
+
+        if self.gripped_item.id == 'incense':
+            self.gripped_item.use_item(self)
+            return
+
+        if self.gripped_item.is_turn_on:
+            self.turn_off_item()
+            return
+        self.gripped_item.turn_on()
+
+    def turn_off_item(self):
+        self.gripped_item.turn_off()

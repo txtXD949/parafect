@@ -46,21 +46,22 @@
     }
   },
   "3": {
-    "cash": 9050,
-    "level": 11,
+    "name": "I-303",
+    "cash": 50,
+    "level": 50,
     "experience": 0,
     "inventory": {
-      "emf": 0,
-      "uf": 0,
-      "book": 0,
-      "mic": 0,
-      "dict": 0,
-      "term": 0,
-      "flash_light": 1,
-      "camera": 0,
-      "incense": 0,
-      "lighter": 1,
-      "pills": 0
+      "emf": 2,
+      "uf": 1,
+      "book": 2,
+      "mic": 2,
+      "dict": 2,
+      "term": 3,
+      "flash_light": 2,
+      "camera": 2,
+      "incense": 1,
+      "lighter": 0,
+      "pills": 4
     },
     "settings": {
       "volume": 1.0,

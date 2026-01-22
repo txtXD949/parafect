@@ -22,27 +22,25 @@ class AccountManager:
         self.cur = self.con.cursor()
 
     def close_db(self):
-        self.con.close()
+        if self.con:
+            self.con.close()
 
-    def add_account(self, login, password):
+    def add_account(self, login, password, name):
         coded_password = self.code_password(password)
         self.cur.execute("""INSERT INTO Users(login, password) VALUES (?, ?)""", (login, coded_password))
         self.con.commit()
 
         user_id = self.cur.lastrowid
-        self.profile_manager.create_profile(user_id)
+        self.profile_manager.create_profile(user_id, name)
 
         return user_id
 
     def get_account(self, login, password):
-        self.cur.execute(f"""
-        SELECT
-            id,
-            login,
-            password
-        FROM Users
-            WHERE login = '{login}'
-    """)
+        self.cur.execute("""
+            SELECT id, login, password
+            FROM Users
+            WHERE login = ?
+        """, (login,))
         res = self.cur.fetchone()
 
         if not res:
@@ -85,6 +83,11 @@ class AccountManager:
             return False
 
         return self.profile_manager.save_profile(self.current_account, profile_data)
+
+    def update_name(self, name):
+        if not self.current_account:
+            return False
+        return self.profile_manager.update_name(self.current_account, name)
 
     def get_logins(self):
         return [a for b in self.cur.execute("""SELECT login FROM Users""") for a in b]

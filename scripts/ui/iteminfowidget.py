@@ -27,7 +27,7 @@ ITEM_DATABASE = {
         price=200,
         description='Замеряет аномалии электрического поля.',
         max_in_game=2,
-        image_path='././assets/images/itms/emf.png',
+        image_path='././assets/images/itms/emf_off.png',
     ),
     'uf': ItemData(
         item_id='uf',
@@ -52,15 +52,15 @@ ITEM_DATABASE = {
         price=200,
         description='Дает услышать странное шипение.',
         max_in_game=2,
-        image_path='././assets/images/itms/mic.png'
+        image_path='././assets/images/itms/mic_off.png'
     ),
     'dict': ItemData(
         item_id='dict',
-        name='ДИКТОФОН',
+        name='РАДИОПРИЕМНИК',
         price=200,
         description='Записывает звук.',
         max_in_game=2,
-        image_path='././assets/images/itms/dict.png'
+        image_path='././assets/images/itms/dict_off.png'
     ),
     'term': ItemData(
         item_id='term',
@@ -92,7 +92,7 @@ ITEM_DATABASE = {
         price=150,
         description='Защитит от паранормальных явлений.',
         max_in_game=4,
-        image_path='././assets/images/itms/blag.png',
+        image_path='././assets/images/itms/incense.png',
         on_level=15
     ),
     'lighter': ItemData(

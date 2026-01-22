@@ -18,8 +18,8 @@ class ProfileManager:
             pass
         return {}
 
-    def create_profile(self, user_id):
-        self.profiles[str(user_id)] = self.create_default_profile()
+    def create_profile(self, user_id, name):
+        self.profiles[str(user_id)] = self.create_default_profile(name)
         self.save_profiles()
 
     def save_profile(self, user_id, data):
@@ -28,6 +28,14 @@ class ProfileManager:
 
     def load_profile(self, user_id):
         return self.profiles.get(str(user_id))
+
+    def update_name(self, user_id, name):
+        profile = self.load_profile(user_id)
+        if profile:
+            profile['name'] = name
+            self.save_profile(user_id, profile)
+            return True
+        return False
 
     def update_cash(self, user_id, amount, operation='add'):  # add / subtract / set
         profile = self.load_profile(user_id)
@@ -75,9 +83,10 @@ class ProfileManager:
         self.save_profile(user_id, profile)
 
     @staticmethod
-    def create_default_profile():
+    def create_default_profile(name='test_name'):
         """Создает JSON структуру профиля по умолчанию"""
         return {
+            'name': name,
             'cash': 100,
             'level': 1,
             'experience': 0,

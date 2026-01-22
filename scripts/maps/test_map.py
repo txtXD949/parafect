@@ -1,0 +1,235 @@
+from .. import Game
+
+import arcade
+from arcade.gui import UIManager
+
+SPEED = 1
+
+
+class TestMap(arcade.View):
+    def __init__(self, game):
+        super().__init__()
+
+        self.game = game
+
+        self.pressed_E = False
+
+        self.evidences = self.game.ghost.evidences
+        print(self.evidences, self.game.ghost)
+
+        self.setup()
+
+    def setup(self):
+        # Микрофон (игрока)
+        from .. import MicManager
+        self.mic_manager = MicManager()
+        self.mic_manager.start()
+
+        # Карта
+        self.tile_map = arcade.load_tilemap('././assets/maps/test_map.tmx', scaling=1.0)
+
+        # Расчет размеров карты с учетом масштаба
+        self.map_width = self.tile_map.width * self.tile_map.tile_width
+        self.map_height = self.tile_map.height * self.tile_map.tile_height
+
+        # Сцена
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
+
+        # Игрок
+        from .. import PlayerSprite, Player
+        self.player = Player()
+        self.player.sanity = self.game.sanity
+        self.player_sprite = PlayerSprite(scale=0.6)
+        self.player_sprite.center_x, self.player_sprite.center_y = self.map_width / 2, self.map_height / 2
+
+        self.player.sprite = self.player_sprite
+
+        self.player_list = arcade.SpriteList()
+        self.player_list.append(self.player_sprite)
+
+        # Физ.движок
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.scene['walls'])
+
+        # Предметы
+        self.items_sprite_list = arcade.SpriteList()
+        self.items_list = []
+
+        # Сцены
+        from ..views import ToolBoard
+        self.tool_board = ToolBoard(self.game.inv, self, self.player)
+        self.tool_board_use = False
+
+        # from ..views import Paper
+        # self.paper = Paper()
+        from ..views import JournalWidget
+        self.paper = JournalWidget(800, 600, 0.9, 1.4)
+
+        self.manager = UIManager()
+        self.manager.enable()
+        self.manager.add(self.paper)
+
+        from ..views import SanityScreen
+        self.sanity_screen = SanityScreen(self.player, self, self.game)
+        self.sanity_screen_use = False
+
+        # Камера
+        self.world_camera = arcade.Camera2D()
+        self.world_camera.zoom = 1.0
+
+        self.world_camera.projection = arcade.rect.XYWH(
+            0, 0,
+            400,
+            300
+        )
+
+        self.world_camera.viewport_width = self.width
+        self.world_camera.viewport_height = self.height
+
+        self.world_camera.position = (
+            self.map_width / 2,
+            self.map_height / 2
+        )
+
+        self.gui_camera = arcade.Camera2D()
+
+    def get_voice_level(self):
+        return min(5, max(1, int(self.mic_manager.voice_volume * 5)))
+
+    def draw_voice_level(self):
+        colors = [
+            arcade.color.YELLOW,
+            arcade.color.DARK_YELLOW
+        ]
+
+        from main import GameWindow
+        lvl = self.get_voice_level()
+
+        for i in range(1, 6):
+            color = colors[1 if lvl < i else 0]
+            arcade.draw_line(40 * i, 10, 40 * i, 100, color=color, line_width=4)
+
+    def on_draw(self) -> bool | None:
+        self.clear()
+
+        self.world_camera.use()
+
+        self.scene.draw()
+        self.player_list.draw()
+        self.items_sprite_list.draw()
+
+        for item in self.items_list:
+            if item.id == 'incense':
+                item.smoke_particles.draw()
+
+        self.gui_camera.use()
+        self.draw_voice_level()
+
+        self.manager.draw()
+
+    def on_update(self, delta_time: float) -> bool | None:
+        self.mic_manager.update(delta_time)
+
+        from .. import Muling, Banshee, Siren
+
+        self.physics_engine.update()
+
+        pos = (
+            self.player_sprite.center_x,
+            self.player_sprite.center_y
+        )
+        self.world_camera.position = arcade.math.lerp_2d(
+            self.world_camera.position,
+            pos,
+            0.5
+        )
+
+        if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):
+            if not self.tool_board_use:
+                self.open_tool_board()
+            self.tool_board_use = True
+        else:
+            self.tool_board_use = False
+
+        if arcade.check_for_collision_with_list(self.player_sprite, self.scene['sanity']):
+            if not self.sanity_screen_use:
+                self.open_sanity_screen()
+            self.sanity_screen_use = True
+        else:
+            self.sanity_screen_use = False
+
+        for item in self.items_sprite_list:
+            item._class.update_item(self.player_sprite)
+            if arcade.check_for_collision_with_list(item, self.scene['room']):
+                item._class.in_room = True
+            else:
+                item._class.in_room = False
+
+        for item in self.items_list:
+            if item.id in ('emf', 'book', 'term'):
+                item.use_item(self.evidences)
+            elif item.id in ('mic',):
+                item.use_item(self.evidences, Muling(), [])
+            elif item.id in ('incense',):
+                item.update_item(self.player_sprite)
+            elif item.id in ('dict',):
+                item.use_item(self.player_sprite, ghost=self.game.ghost, evidences=self.evidences)
+                if item.is_turn_on:
+                    item.update_voice_detection(self.player)
+
+        item_grab = arcade.check_for_collision_with_list(self.player_sprite, self.items_sprite_list)
+        for item in item_grab:
+            if self.pressed_E and not (any(item._class is it for it in self.player.inventory)):
+                self.player.take_item(item._class)
+        self.pressed_E = False
+
+    def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
+        self.player_sprite.is_going = True
+
+        if symbol == arcade.key.UP:
+            self.player_sprite.change_y = SPEED
+
+        if symbol == arcade.key.DOWN:
+            self.player_sprite.change_y = -SPEED
+
+        if symbol == arcade.key.LEFT:
+            self.player_sprite.change_x = -SPEED
+
+        if symbol == arcade.key.RIGHT:
+            self.player_sprite.change_x = SPEED
+
+        if symbol == arcade.key.E:
+            self.pressed_E = True
+
+        if symbol == arcade.key.G:
+            self.player.drop_item()
+
+        if symbol == arcade.key.R:
+            self.player.turn_on_item()
+
+        if symbol == arcade.key.J:
+            self.open_paper()
+
+    def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
+        if symbol in (arcade.key.UP, arcade.key.DOWN):
+            self.player_sprite.change_y = 0
+        if symbol in (arcade.key.LEFT, arcade.key.RIGHT):
+            self.player_sprite.change_x = 0
+
+    def on_mouse_scroll(self, x: int, y: int, scroll_x: int, scroll_y: int) -> bool | None:
+        self.player.change_gripped_item()
+
+    def open_tool_board(self):
+        self.player_sprite.change_x = self.player_sprite.change_y = 0
+        self.window.show_view(self.tool_board)
+
+    def open_sanity_screen(self):
+        self.player_sprite.change_x = self.player_sprite.change_y = 0
+        self.window.show_view(self.sanity_screen)
+
+    def open_paper(self):
+        if self.paper.visible:
+            self.manager.remove(self.paper)
+            self.paper.visible = False
+            return
+        self.manager.add(self.paper)
+        self.paper.visible = True

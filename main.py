@@ -1,5 +1,9 @@
 #  Запуск программы отсюда
 from scripts.views import Screensaver
+from scripts.views import LoginMenu
+from scripts.views import GameLoading
+from scripts.maps.test_map import TestMap
+from scripts import MicManager
 import arcade
 import os
 
@@ -18,6 +22,7 @@ class GameWindow(arcade.Window):
         if os.path.exists(game_state_file):
             os.remove(game_state_file)
 
+
         super().on_close()
 
 
@@ -26,6 +31,9 @@ def main():
 
     screensaver = Screensaver()
     window.show_view(screensaver)
+
+    # login = LoginMenu(None)
+    # window.show_view(login)
 
     arcade.run()
 
