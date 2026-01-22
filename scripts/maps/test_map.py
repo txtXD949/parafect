@@ -1,6 +1,7 @@
 from .. import Game
 
 import arcade
+from arcade.gui import UIManager
 
 SPEED = 1
 
@@ -13,7 +14,7 @@ class TestMap(arcade.View):
 
         self.pressed_E = False
 
-        self.evidences = self.game.ghost.evidences + ['cold_temp']
+        self.evidences = self.game.ghost.evidences
         print(self.evidences, self.game.ghost)
 
         self.setup()
@@ -58,8 +59,14 @@ class TestMap(arcade.View):
         self.tool_board = ToolBoard(self.game.inv, self, self.player)
         self.tool_board_use = False
 
-        from ..views import Paper
-        self.paper = Paper()
+        # from ..views import Paper
+        # self.paper = Paper()
+        from ..views import JournalWidget
+        self.paper = JournalWidget(800, 600, 0.9, 1.4)
+
+        self.manager = UIManager()
+        self.manager.enable()
+        self.manager.add(self.paper)
 
         from ..views import SanityScreen
         self.sanity_screen = SanityScreen(self.player, self, self.game)
@@ -116,6 +123,8 @@ class TestMap(arcade.View):
 
         self.gui_camera.use()
         self.draw_voice_level()
+
+        self.manager.draw()
 
     def on_update(self, delta_time: float) -> bool | None:
         self.mic_manager.update(delta_time)
@@ -197,6 +206,9 @@ class TestMap(arcade.View):
         if symbol == arcade.key.R:
             self.player.turn_on_item()
 
+        if symbol == arcade.key.J:
+            self.open_paper()
+
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
             self.player_sprite.change_y = 0
@@ -213,3 +225,11 @@ class TestMap(arcade.View):
     def open_sanity_screen(self):
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.sanity_screen)
+
+    def open_paper(self):
+        if self.paper.visible:
+            self.manager.remove(self.paper)
+            self.paper.visible = False
+            return
+        self.manager.add(self.paper)
+        self.paper.visible = True

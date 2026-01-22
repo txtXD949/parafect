@@ -6,7 +6,8 @@ class Paper(arcade.View):
         arcade.color.BLACK,
         arcade.color.GRAY,
     ]
-    def __init__(self):
+
+    def __init__(self, width, height, game):
         super().__init__()
         self.background_texture = arcade.load_texture('././assets/images/bg/paper.png')
 
@@ -21,8 +22,3 @@ class Paper(arcade.View):
 
         self.camera.use()
         arcade.draw_texture_rect(self.background_texture, arcade.rect.LBWH(0, 0, 800, 600))
-
-
-
-
-

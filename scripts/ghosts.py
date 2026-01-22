@@ -179,6 +179,6 @@ class Mimic(Ghost):
 GHOSTS = [
     Spirit, Demon, Phantom,
     Oni, Banshee, Reverent,
-    Muling, Poltergeist, Siren,
-    Wrath, Shade, Butcher, Mimic
+    Muling, Poltergeist, Mimic,
+    Wrath, Shade, Butcher, Siren
 ]
