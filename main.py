@@ -2,8 +2,6 @@
 from scripts.views import Screensaver
 from scripts.views import LoginMenu
 from scripts.views import GameLoading
-from scripts.maps.test_map import TestMap
-from scripts import MicManager
 import arcade
 import os
 
@@ -21,7 +19,6 @@ class GameWindow(arcade.Window):
         game_state_file = '././database/_game.json'
         if os.path.exists(game_state_file):
             os.remove(game_state_file)
-
 
         super().on_close()
 
