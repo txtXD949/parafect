@@ -5,7 +5,8 @@ from .ghosts import GHOSTS
 
 
 class Game:
-    def __init__(self, map_id='test', difficulty_id='test', inventory=None, window=None):
+    def __init__(self, player_name, map_id='test', difficulty_id='test', inventory=None, window=None):
+        self.player_name = player_name
         self.map_id = map_id
         self.dif_id = difficulty_id
         self.inv = inventory
@@ -28,13 +29,13 @@ class Game:
     def choose_difficult(self, dif_id):
         from .views import DIFFICULTY_DATABASE
 
-        dif = DIFFICULTY_DATABASE[dif_id]
+        self.dif = DIFFICULTY_DATABASE[dif_id]
 
-        self.sanity = int(dif.sanity[:-1])
-        self.add_sanity = int(dif.add_sanity[:-1])
-        self.broke_chance = int(dif.broke_chance[:-1]) / 100_000
-        self.roomchange_chance = int(dif.roomchange_chance[:-1]) / 100_000
-        self.evidence_count = int(dif.evidence_count)
+        self.sanity = int(self.dif.sanity[:-1])
+        self.add_sanity = int(self.dif.add_sanity[:-1])
+        self.broke_chance = int(self.dif.broke_chance[:-1]) / 100_000
+        self.roomchange_chance = int(self.dif.roomchange_chance[:-1]) / 100_000
+        self.evidence_count = int(self.dif.evidence_count)
 
     def choose_map(self, map_id):
         from .maps.test_map import TestMap

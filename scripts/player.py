@@ -78,7 +78,7 @@ class Player:
 
         self.has_lighter = False
 
-        self.sanity = 3
+        self.sanity = None
         self.is_unhittable = False
 
         self.sprite = None
@@ -114,10 +114,12 @@ class Player:
         if len(self.inventory) == 2:
             return
         if len(self.inventory) == 1:
+            arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
             self.inventory.append(item)
             item.in_inventory = True
             return
 
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
         self.inventory.append(item)
         self.gripped_item = item
         item.in_inventory = True
@@ -133,6 +135,8 @@ class Player:
         self.gripped_item = self.inventory[next(self.inds)]
         self.gripped_item.is_grabbed = True
 
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
+
     def drop_item(self):
         if self.gripped_item is None:
             return
@@ -144,6 +148,7 @@ class Player:
         self.turn_off_item()
 
         self.inventory.remove(self.gripped_item)
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/drop_item.wav'))
         try:
             self.gripped_item = self.inventory[0]
             self.gripped_item.is_grabbed = True
@@ -151,19 +156,22 @@ class Player:
             self.gripped_item = None
 
     def put_item(self, item):
-        if not self.inventory:
-            return
+        if not self.inventory or item not in self.inventory:
+            return False
 
         item.in_inventory = False
         item.is_grabbed = False
         item.turn_off()
 
         self.inventory.remove(item)
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/board_item.wav'))
         try:
             self.gripped_item = self.inventory[0]
             self.gripped_item.is_grabbed = True
         except IndexError:
             self.gripped_item = None
+
+        return True
 
     def turn_on_item(self):
         if not self.gripped_item:

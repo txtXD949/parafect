@@ -34,12 +34,12 @@
  </layer>
  <layer id="7" name="paper" width="30" height="40">
   <data encoding="base64" compression="zlib">
-   eJztzgEJAAAIA7B3sI79c5lCBNkSLAEA2NF1PQAA4IMBRAIAUA==
+   eJztzgENAAAIA6B3sI79c9lC5wYJSACAb7quBwAAsGcAd9oAUA==
   </data>
  </layer>
  <layer id="8" name="sanity" width="30" height="40">
   <data encoding="base64" compression="zlib">
-   eJztzgEJAAAIA7B3MI/9a5lCRNgSLAEA4LOu6wEAwK4B3csAUQ==
+   eJztzgEJAAAIA7B3MI/9a5lCRNgSLAEAvuq6HgAAwL4BgFoAUQ==
   </data>
  </layer>
 </map>

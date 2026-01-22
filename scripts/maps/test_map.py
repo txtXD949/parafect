@@ -37,6 +37,7 @@ class TestMap(arcade.View):
         # Игрок
         from .. import PlayerSprite, Player
         self.player = Player()
+        self.player.sanity = self.game.sanity
         self.player_sprite = PlayerSprite(scale=0.6)
         self.player_sprite.center_x, self.player_sprite.center_y = self.map_width / 2, self.map_height / 2
 
@@ -57,8 +58,12 @@ class TestMap(arcade.View):
         self.tool_board = ToolBoard(self.game.inv, self, self.player)
         self.tool_board_use = False
 
-        self.sanity_screen = None
-        self.paper = None
+        from ..views import Paper
+        self.paper = Paper()
+
+        from ..views import SanityScreen
+        self.sanity_screen = SanityScreen(self.player, self, self.game)
+        self.sanity_screen_use = False
 
         # Камера
         self.world_camera = arcade.Camera2D()
@@ -79,7 +84,6 @@ class TestMap(arcade.View):
         )
 
         self.gui_camera = arcade.Camera2D()
-
 
     def get_voice_level(self):
         return min(5, max(1, int(self.mic_manager.voice_volume * 5)))
@@ -106,10 +110,9 @@ class TestMap(arcade.View):
         self.player_list.draw()
         self.items_sprite_list.draw()
 
-        self.incense1.smoke_particles.draw()
-        self.incense2.smoke_particles.draw()
-        self.incense3.smoke_particles.draw()
-        self.incense4.smoke_particles.draw()
+        for item in self.items_list:
+            if item.id == 'incense':
+                item.smoke_particles.draw()
 
         self.gui_camera.use()
         self.draw_voice_level()
@@ -138,6 +141,13 @@ class TestMap(arcade.View):
         else:
             self.tool_board_use = False
 
+        if arcade.check_for_collision_with_list(self.player_sprite, self.scene['sanity']):
+            if not self.sanity_screen_use:
+                self.open_sanity_screen()
+            self.sanity_screen_use = True
+        else:
+            self.sanity_screen_use = False
+
         for item in self.items_sprite_list:
             item._class.update_item(self.player_sprite)
             if arcade.check_for_collision_with_list(item, self.scene['room']):
@@ -145,24 +155,17 @@ class TestMap(arcade.View):
             else:
                 item._class.in_room = False
 
-        self.emf1.use_item(self.evidences)
-        self.emf2.use_item(self.evidences)
-        self.book1.use_item(self.evidences)
-        self.book2.use_item(self.evidences)
-        self.mic1.use_item(self.evidences, Muling(), [])
-        self.mic2.use_item(self.evidences, Muling(), [])
-        self.term1.use_item(self.evidences)
-        self.term2.use_item(self.evidences)
-        self.incense1.update_item(self.player_sprite)
-        self.incense2.update_item(self.player_sprite)
-        self.incense3.update_item(self.player_sprite)
-        self.incense4.update_item(self.player_sprite)
-        self.dict1.use_item(self.player_sprite, ghost=Siren(), evidences=self.evidences)
-        self.dict2.use_item(self.player_sprite, ghost=Siren(), evidences=self.evidences)
-        if self.dict1.is_turn_on:
-            self.dict1.update_voice_detection(self.player)
-        if self.dict2.is_turn_on:
-            self.dict2.update_voice_detection(self.player)
+        for item in self.items_list:
+            if item.id in ('emf', 'book', 'term'):
+                item.use_item(self.evidences)
+            elif item.id in ('mic',):
+                item.use_item(self.evidences, Muling(), [])
+            elif item.id in ('incense',):
+                item.update_item(self.player_sprite)
+            elif item.id in ('dict',):
+                item.use_item(self.player_sprite, ghost=self.game.ghost, evidences=self.evidences)
+                if item.is_turn_on:
+                    item.update_voice_detection(self.player)
 
         item_grab = arcade.check_for_collision_with_list(self.player_sprite, self.items_sprite_list)
         for item in item_grab:
@@ -206,3 +209,7 @@ class TestMap(arcade.View):
     def open_tool_board(self):
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.tool_board)
+
+    def open_sanity_screen(self):
+        self.player_sprite.change_x = self.player_sprite.change_y = 0
+        self.window.show_view(self.sanity_screen)

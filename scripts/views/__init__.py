@@ -8,6 +8,8 @@ from .map_board import MapBoard
 from .main_board import MainBoard, DIFFICULTY_DATABASE
 from .game_loading import GameLoading
 from .tool_board import ToolBoard
+from .paper import Paper
+from .sanity_screen import SanityScreen
 
 __all__ = [
     'Screensaver',
@@ -19,5 +21,6 @@ __all__ = [
     'MapBoard',
     'MainBoard',
     'GameLoading',
-    'DIFFICULTY_DATABASE'
+    'DIFFICULTY_DATABASE',
+    'Paper'
 ]

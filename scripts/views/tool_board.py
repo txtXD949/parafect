@@ -347,8 +347,20 @@ class ToolBoard(arcade.View):
             pass
 
         self.phantom_items = arcade.SpriteList()
+        self.gray_items = arcade.SpriteList()
         for it in self.tools_sprites[:]:
             self.phantom_items.append(it)
+
+            if it._class.id == 'lighter':
+                continue
+            gray_sprite = arcade.Sprite(it.texture.file_path, scale=it.scale)
+            gray_sprite.center_x, gray_sprite.center_y = it.center_x, it.center_y
+            gray_sprite.angle = it._angle
+            gray_sprite.color = (118, 118, 118, 230)
+
+            self.gray_items.append(gray_sprite)
+
+        self.map.items_list = self.tools
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -370,20 +382,26 @@ class ToolBoard(arcade.View):
         arcade.draw_rect_filled(arcade.rect.LRBT(190, 360, 100, 150),
                                 color=arcade.color.Color.from_hex_string('#5b5b5b'))
 
+        self.gray_items.draw(pixelated=True)
         self.tools_sprites.draw(pixelated=True)
 
-        self.gui_camera.use()
-        ...
-
-    def on_update(self, delta_time: float) -> bool | None:
-        ...
+        # Закрыть тулборд
+        arcade.draw_rect_filled(
+            arcade.rect.XYWH(400, 30, 50, 20),
+            color=(118, 118, 118)
+        )
+        arcade.draw_line(400, 25, 410, 30, color=arcade.color.BLACK)
+        arcade.draw_line(400, 25, 390, 30, color=arcade.color.BLACK)
 
     def on_show_view(self) -> None:
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         world_cords = self.world_camera.unproject((x, y))
-        print(world_cords)
+
+        if 375 < world_cords.x < 425 and 20 < world_cords.y < 40:
+            self.close()
+            return
 
         sprites = (
             arcade.get_sprites_at_point(world_cords, self.tools_sprites),
@@ -397,8 +415,7 @@ class ToolBoard(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
-            self.window.show_view(self.map)
+            self.close()
 
     def take_tool(self, item):
         if item.id in ('lighter',):
@@ -423,6 +440,11 @@ class ToolBoard(arcade.View):
         if item.id in ('lighter',):
             return
 
-        self.player.put_item(item)
+        if not self.player.put_item(item):
+            return
         self.map.items_sprite_list.remove(item.sprite)
         self.tools_sprites.append(item.board_sprite)
+
+    def close(self):
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        self.window.show_view(self.map)

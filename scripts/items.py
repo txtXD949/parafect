@@ -11,6 +11,11 @@ import threading
 
 
 class Item:
+    TURN_ON_OFF_SOUNDS = [
+        arcade.load_sound('./assets/sounds/effects/turn_on_off_item.wav'),
+        arcade.load_sound('./assets/sounds/effects/turn_on_off_item.wav')
+    ]
+
     def __init__(self, id, name, is_stationary=False, is_grabbed=False, in_inventory=False, is_turn_on=False,
                  sprite=None, board_scale=5.0):
         self._id = id
@@ -82,9 +87,13 @@ class Item:
         self._in_room = new_val
 
     def turn_on(self):
+        if not self.is_turn_on:
+            arcade.play_sound(self.TURN_ON_OFF_SOUNDS[0])
         self.is_turn_on = True
 
     def turn_off(self):
+        if self.is_turn_on:
+            arcade.play_sound(self.TURN_ON_OFF_SOUNDS[1])
         self.is_turn_on = False
         if self.sound_player:
             self.sound_player.pause()
@@ -193,6 +202,10 @@ class EMF(Item):
 
 
 class FlashLight(Item):
+    TURN_ON_OFF_SOUNDS = [
+        arcade.load_sound('./assets/sounds/effects/flashlight_on.wav'),
+        arcade.load_sound('./assets/sounds/effects/flashlight_off.wav')
+    ]
     TEXTURES = [
         './assets/images/itms/flash_light.png'
     ]
@@ -205,6 +218,10 @@ class FlashLight(Item):
 
 
 class UF(Item):
+    TURN_ON_OFF_SOUNDS = [
+        arcade.load_sound('./assets/sounds/effects/flashlight_on.wav'),
+        arcade.load_sound('./assets/sounds/effects/flashlight_off.wav')
+    ]
     TEXTURES = [
         './assets/images/itms/uf.png'
     ]
@@ -448,6 +465,12 @@ class Thermometer(Item):
             self.sprite.texture = arcade.load_texture(self.TEXTURES[2])
             return
 
+    def turn_on(self):
+        pass
+
+    def turn_off(self):
+        pass
+
 
 class PhotoCamera(Item):
     TEXTURES = []
@@ -582,6 +605,7 @@ class Lighter(Item):
     def use_item(self, player):
         if player.has_lighter:
             return
+        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
         player.has_lighter = True
 
     def turn_on(self):
@@ -617,3 +641,9 @@ class Pills(Item):
 
         player.sanity = min(100, player.sanity + self._reg_sanity)
         player.drop_item()
+
+    def turn_on(self):
+        pass
+
+    def turn_off(self):
+        pass
