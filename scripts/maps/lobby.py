@@ -3,7 +3,6 @@ import random
 import arcade
 
 CAMERA_LERP = 0.3
-SPEED = 1
 
 
 class LobbyView(arcade.View):
@@ -148,16 +147,16 @@ class LobbyView(arcade.View):
         self.player.is_going = True
 
         if symbol == arcade.key.UP:
-            self.player.change_y = SPEED
+            self.player.change_y = self.player.speed
 
         if symbol == arcade.key.DOWN:
-            self.player.change_y = -SPEED
+            self.player.change_y = -self.player.speed
 
         if symbol == arcade.key.LEFT:
-            self.player.change_x = -SPEED
+            self.player.change_x = -self.player.speed
 
         if symbol == arcade.key.RIGHT:
-            self.player.change_x = SPEED
+            self.player.change_x = self.player.speed
 
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):

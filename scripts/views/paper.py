@@ -5,8 +5,6 @@ from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 
 from .. import GHOSTS
 
-E = []
-
 
 class PaperButton(UITextureButton):
     SOUNDS = [

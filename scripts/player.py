@@ -1,6 +1,7 @@
 import arcade
 import enum
 import random
+import math
 
 
 class FootstepParticle(arcade.SpriteSolidColor):
@@ -83,6 +84,8 @@ class PlayerSprite(arcade.Sprite):
         self.direction = Direction.DOWN
         self.is_going = False
 
+        self.speed = 1
+
         # Частицы следов
         self.footstep_particles = arcade.SpriteList()
         self.last_step_particle_time = 0
@@ -93,6 +96,13 @@ class PlayerSprite(arcade.Sprite):
 
     def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
         is_moving = (self.change_x != 0 or self.change_y != 0)
+
+        if is_moving:
+            move_vector_length = math.sqrt(self.change_x ** 2 + self.change_y ** 2)
+
+            if move_vector_length > 0:
+                self.change_x = (self.change_x / move_vector_length) * 1.0
+                self.change_y = (self.change_y / move_vector_length) * 1.0
 
         if is_moving:
             self.is_going = True
