@@ -159,9 +159,9 @@ class LobbyView(arcade.View):
 
         self.world_camera.use()
 
-        self.scene.draw()
-        self.player_list.draw()
-        self.footstep_particles.draw()
+        self.scene.draw(pixelated=True)
+        self.player_list.draw(pixelated=True)
+        self.footstep_particles.draw(pixelated=True)
 
     def on_update(self, delta_time: float) -> bool | None:
         # Всё обновляем
