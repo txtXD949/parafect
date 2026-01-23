@@ -126,6 +126,7 @@ class TestMap(arcade.View):
 
     def on_update(self, delta_time: float) -> bool | None:
         self.mic_manager.update(delta_time)
+        self.player_sprite.update()
 
         from .. import Muling, Banshee, Siren
 

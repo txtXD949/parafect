@@ -139,7 +139,7 @@ class LobbyView(arcade.View):
             self.map_height / 2
         )
 
-        from . import MapBoard
+        from ..views import MapBoard
         self.map_board = MapBoard(lobby=self, account_manager=self.account_manager)
 
     def create_footstep_particle(self):
@@ -253,7 +253,7 @@ class LobbyView(arcade.View):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
         self.player.change_x = self.player.change_y = 0
 
-        from . import MainBoard
+        from ..views import MainBoard
         main_board = MainBoard(lobby=self, account_manager=self.account_manager)
         self.window.show_view(main_board)
 
@@ -267,7 +267,7 @@ class LobbyView(arcade.View):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/market(lobby).wav'), volume=0.03)
         self.player.change_x = self.player.change_y = 0
 
-        from . import MarketView
+        from ..views import MarketView
         market = MarketView(lobby=self, account_manager=self.account_manager)
         self.window.show_view(market)
 
