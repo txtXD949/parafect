@@ -164,8 +164,13 @@ class PlayerSprite(arcade.Sprite):
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, name, lvl, cash, exp):
         from itertools import cycle
+
+        self.name = name
+        self.lvl = lvl
+        self.cash = cash
+        self.exp = exp
 
         self._inventory = []
         self._gripped_item = None

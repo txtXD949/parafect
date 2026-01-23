@@ -5,8 +5,9 @@ from .ghosts import GHOSTS
 
 
 class Game:
-    def __init__(self, player_name, map_id='test', difficulty_id='test', inventory=None, window=None):
-        self.player_name = player_name
+    def __init__(self, player, map_id='test', difficulty_id='test', inventory=None, window=None):
+        self.player = player
+        self.player_name = player.name
         self.map_id = map_id
         self.dif_id = difficulty_id
         self.inv = inventory
@@ -25,6 +26,13 @@ class Game:
 
         self.choose_difficult(difficulty_id)
         self.choose_map(map_id)
+
+        # Конец игры
+        self.is_win = None
+        self.was_death = None
+        self.was_hunt = None
+        self.was_zero_sanity = None
+        self.was_first_death = None
 
     def choose_difficult(self, dif_id):
         from .views import DIFFICULTY_DATABASE

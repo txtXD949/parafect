@@ -77,7 +77,7 @@ class Ghost:
         return self._species
 
     def __str__(self):
-        return self.id + ' ' + self.name
+        return self.name
 
 
 class Spirit(Ghost):

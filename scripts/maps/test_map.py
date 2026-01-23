@@ -37,7 +37,7 @@ class TestMap(arcade.View):
 
         # Игрок
         from .. import PlayerSprite, Player
-        self.player = Player()
+        self.player = self.game.player
         self.player.sanity = self.game.sanity
         self.player_sprite = PlayerSprite(scale=0.6)
         self.player_sprite.center_x, self.player_sprite.center_y = self.map_width / 2, self.map_height / 2
@@ -211,6 +211,9 @@ class TestMap(arcade.View):
         if symbol == arcade.key.J:
             self.open_paper()
 
+        if symbol == arcade.key.I:
+            self.end_game()
+
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
             self.player_sprite.change_y = 0
@@ -237,3 +240,14 @@ class TestMap(arcade.View):
         self.manager.add(self.paper)
         self.paper.visible = True
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
+
+    def end_game(self):
+        self.game.is_win = True
+        self.game.was_death = False
+        self.game.was_hunt = True
+        self.game.was_zero_sanity = True
+        self.game.was_first_death = True
+
+        from ..views import ResultsView
+        res = ResultsView(self.game)
+        self.window.show_view(res)
