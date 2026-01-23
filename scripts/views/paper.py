@@ -11,8 +11,7 @@ E = []
 class PaperButton(UITextureButton):
     SOUNDS = [
         arcade.load_sound('././assets/sounds/effects/click_ghost_button.wav'),
-        arcade.load_sound('././assets/sounds/effects/click_dis_ghost_button.wav'),
-        arcade.load_sound('././assets/sounds/effects/hover_paper_button.wav')
+        arcade.load_sound('././assets/sounds/effects/click_dis_ghost_button.wav')
     ]
 
     def __init__(self, text, width, height, journal_widget, type, *, ghost=None, evidence=None):

@@ -58,7 +58,7 @@ ITEM_DATABASE = {
         item_id='dict',
         name='РАДИОПРИЕМНИК',
         price=200,
-        description='Записывает звук.',
+        description='Можно услышать голоса.',
         max_in_game=2,
         image_path='././assets/images/itms/dict_off.png'
     ),
@@ -77,14 +77,6 @@ ITEM_DATABASE = {
         description='Дает дополнительный свет.',
         max_in_game=4,
         image_path='././assets/images/itms/flash_light.png'
-    ),
-    'camera': ItemData(
-        item_id='camera',
-        name='ФОТОКАМЕРА',
-        price=300,
-        description='Фотографирует.',
-        max_in_game=4,
-        image_path='././assets/images/itms/cam.png'
     ),
     'incense': ItemData(
         item_id='incense',
