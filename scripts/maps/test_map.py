@@ -111,22 +111,25 @@ class TestMap(arcade.View):
 
         self.world_camera.use()
 
-        self.scene.draw()
-        self.player_list.draw()
-        self.items_sprite_list.draw()
+        self.scene.draw(pixelated=True)
+        self.player_sprite.footstep_particles.draw(pixelated=True)
+        self.player_list.draw(pixelated=True)
+        self.items_sprite_list.draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
-                item.smoke_particles.draw()
+                item.smoke_particles.draw(pixelated=True)
 
         self.gui_camera.use()
         self.draw_voice_level()
 
-        self.manager.draw()
+        self.manager.draw(pixelated=True)
 
     def on_update(self, delta_time: float) -> bool | None:
         self.mic_manager.update(delta_time)
+
         self.player_sprite.update()
+        self.player_sprite.footstep_particles.update(delta_time)
 
         from .. import Muling, Banshee, Siren
 
