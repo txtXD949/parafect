@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="1">
+ <tileset firstgid="1" source="../sprites_2/tsxs/tileset_1.tsx"/>
+ <tileset firstgid="442" source="../sprites_2/tsxs/tileset_2.tsx"/>
+ <layer id="1" name="ground" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAMBKHb37/f2ugACaumqqqqqk8f/C0zkQ==
+  </data>
+ </layer>
+ <layer id="3" name="floor" width="40" height="30" tintcolor="#6b6b6b">
+  <data encoding="base64" compression="zlib">
+   eJztldEKgCAMRfW/on2l+rv1oHQbTgrM9nAP3IeG4GHmDIEQQggh5Dl7vEeMpDO5ptTaptKrrfQr4OjNT8BLnPrp0M+/H+731g89re9Z/Wt+vbS7gfnrfK2UeM2X0vGwMtuv10cBLy/zWc869MuDdSv80CNBrb0hrX/4plg9/coP95Z4//+yWje6M4R45wCNNV4b
+  </data>
+ </layer>
+ <layer id="2" name="walls" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztlkEKwCAMBPWL/f9jehJKCXZJ0tTKDAi6aFw0hLQGAAAAq3D0mhHx94WmspO/oc/+jffT41X7u/5fppeov3s+KbXiSbPWXn/WfLYvQ1PJjqfeETm7Wv5ZmlrrvDUx6u9tTeUP/jy9SFX/AntwAq/DMPY=
+  </data>
+ </layer>
+ <layer id="7" name="carpet" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt08sJgDAQBNARUpHevfkpQiUtqA2lVDei4EGFwCZKmAcDgjAOyAJERERElNIgGSWTYpdWn7cAri50umSX9V0+8uw0OmfsG7Eqdmn1hWgM0JrEH81YjFsIJf/TPr077+p6C6WkOpJC87Lv7hZ6pZuN5e/7uq8HEGVmAwQVE5E=
+  </data>
+ </layer>
+ <layer id="8" name="doors" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt0TEKACAMQ9EeWkTEw3uBDBkUW/xvDB1CGgEAAICMxusCRbGbZxk3zcjUzSlOx2y6yKbIbu5WjftnNgP+tgFIlgWZ
+  </data>
+ </layer>
+ <layer id="6" name="closets" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt0iEOACAMBMEmfQv//yKpR5CKCphR528jAAB6Vp43/6jffc+Em860CPCuDdc3APE=
+  </data>
+ </layer>
+ <layer id="4" name="furtinure_back" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwSggHvxgZmD4CcTfmRBiX5khtCwLA8NJJDYISANpOSgbJGfGAle3ACT2DWQWEF9iQphDCeAFms3HgirGhcQ3Q5MzAPLdWRBy95gh2AYqxg2keVgwzaEmQA5LdPchA3xy1ALKSHHwlQlT/h5UPhGLW5DdZ0ddZ8FBPJY0UgkVO0kg/SC7rxuqFtmPqlRIf0A3OJwCYmSxPoT7EgjoxZC/giUOhjMAhl2CLJ50rownjkBysDjEp44SQMs82E0FN2NL45SCLmZI3jpFnfyRAKWpYh4IdEHrlQAqmGUNDT9QOQcLP2D90ACiQXWZDJ74h6VbOTR1MPdRI+2oA7EGpr0JIBpUlxnisQPmD2zqkP07CkbBYAYAaNkuAA==
+  </data>
+ </layer>
+ <layer id="5" name="furniture_front" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwWAFAszY2cMBqLMMtAsGBiDH4wMm4tQP5bhH9iOt/RFEhp79RMTBSAGE0hqy/FBOk6Ng4IDaCC33R8EoGAXUAQAO0AP+
+  </data>
+ </layer>
+</map>
