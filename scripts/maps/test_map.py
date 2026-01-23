@@ -228,6 +228,8 @@ class TestMap(arcade.View):
         if self.paper.visible:
             self.manager.remove(self.paper)
             self.paper.visible = False
+            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/close_paper.wav'))
             return
         self.manager.add(self.paper)
         self.paper.visible = True
+        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))

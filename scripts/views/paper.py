@@ -1,5 +1,5 @@
 import arcade
-from arcade.gui import UIWidget, UIBoxLayout, UIAnchorLayout, UIManager
+from arcade.gui import UIWidget, UIBoxLayout, UIAnchorLayout, UIManager, UIEvent
 from arcade.gui.widgets import UIDummy
 from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 
@@ -9,6 +9,11 @@ E = []
 
 
 class PaperButton(UITextureButton):
+    SOUNDS = [
+        arcade.load_sound('././assets/sounds/effects/click_ghost_button.wav'),
+        arcade.load_sound('././assets/sounds/effects/click_dis_ghost_button.wav'),
+        arcade.load_sound('././assets/sounds/effects/hover_paper_button.wav')
+    ]
 
     def __init__(self, text, width, height, journal_widget, type, *, ghost=None, evidence=None):
         self.journal_widget = journal_widget
@@ -50,8 +55,10 @@ class PaperButton(UITextureButton):
 
     def on_click(self, event):
         if not self.is_active:
+            arcade.play_sound(self.SOUNDS[1])
             return
 
+        arcade.play_sound(self.SOUNDS[0])
         if self.type == 'ghost':
             self.state = (self.state + 1) % 3
             self._update_visual()
@@ -89,7 +96,6 @@ class PaperButton(UITextureButton):
                         is_valid = False
                         break
 
-            # Если призрак становится неактивным, сбрасываем его состояние
             if not is_valid and ghost_btn.state != 0:
                 ghost_btn.state = 0
 
