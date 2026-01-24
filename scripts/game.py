@@ -5,8 +5,10 @@ from .ghosts import GHOSTS
 
 
 class Game:
-    def __init__(self, player, map_id='test', difficulty_id='test', inventory=None, window=None):
+    def __init__(self, player, map_id='test', difficulty_id='test', inventory=None, profile=None, account=None, window=None):
         self.player = player
+        self.profile = profile
+        self.account = account
         self.player_name = player.name
         self.map_id = map_id
         self.dif_id = difficulty_id

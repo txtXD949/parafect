@@ -98,7 +98,6 @@ class ProfileManager:
                 'dict': 0,
                 'term': 0,
                 'flash_light': 0,
-                'camera': 0,
                 'incense': 0,
                 'lighter': 0,
                 'pills': 0,

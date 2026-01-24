@@ -242,8 +242,8 @@ class TestMap(arcade.View):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
 
     def end_game(self):
-        self.game.is_win = True
-        self.game.was_death = False
+        self.game.is_win = False
+        self.game.was_death = True
         self.game.was_hunt = True
         self.game.was_zero_sanity = True
         self.game.was_first_death = True

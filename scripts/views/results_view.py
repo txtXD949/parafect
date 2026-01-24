@@ -5,6 +5,7 @@ import random
 
 from . import DIFFICULTY_DATABASE
 from . import MAP_DATABASE
+from ..ui import ITEM_DATABASE
 
 P_EXP_WIN = 100
 P_EXP_LOSE = 10
@@ -64,6 +65,7 @@ class ResultsView(arcade.View):
         self.ghost = game.ghost
         self.map_id = game.map_id
         self.dif_id = game.dif_id
+        self.inv = game.inv
 
         self.animation_timer = 0
         self.state_cord = 600
@@ -76,7 +78,13 @@ class ResultsView(arcade.View):
 
         self.new_exp = None
         self.new_cash = None
+        self.comp = None
         self.get_results()
+
+        from database import ProfileManager
+        self.profile = ProfileManager()
+
+        self.account = game.account
 
         # Кнопка
         self.can_click = False
@@ -106,7 +114,9 @@ class ResultsView(arcade.View):
         f_lose_coef = self.game.was_first_death
 
         # Компенсация
-        comp = (0, 0)[self.game.was_death]
+        default_items = ('emf', 'uf', 'dict', 'term', 'mic', 'book', 'flash_light')
+        comp = sum(map(lambda x: (self.inv[x] - (1 if x in default_items else 0)) * ITEM_DATABASE[x].price, self.inv))
+        self.comp = int((0, comp * 0.25)[self.game.was_death and comp >= 1000])
 
         # EXP
         self.new_exp = int(((P_EXP_LOSE, P_EXP_WIN)[is_win] + (0, P_HUNT)[p_hunt] + (0, P_ZERO_SAN)[p_zero_san]) * (
@@ -114,10 +124,38 @@ class ResultsView(arcade.View):
 
         # cash
         self.new_cash = int(((P_CASH_LOSE, P_CASH_WIN)[is_win] + (0, P_HUNT)[p_hunt] + (0, P_ZERO_SAN)[p_zero_san]) * (
-                map_coef * diff_coef * (1, f_lose_coef)[f_lose_coef]) + comp)
+                map_coef * diff_coef * (1, f_lose_coef)[f_lose_coef]) + self.comp)
 
     def give_away_items(self):
-        ...
+        if not self.game.was_death:
+            default_items = ('emf', 'uf', 'dict', 'term', 'mic', 'book', 'flash_light')
+            for item_id, item_count in self.inv.items():
+                if item_count > 0:
+                    self.profile.update_inventory(
+                        self.account.current_account,
+                        item_id,
+                        item_count - (1 if item_id in default_items else 0),
+                        operation='add'
+                    )
+
+        # Обновляем деньги игрока
+        total_cash = self.cash + self.new_cash
+        self.profile.update_cash(
+            self.account.current_account,
+            total_cash,
+            operation='set'
+        )
+
+        # Обновляем опыт и уровень
+        self.profile.update_experience(
+            self.account.current_account,
+            self.exp
+        )
+
+        self.profile.update_level(
+            self.account.current_account,
+            self.lvl
+        )
 
     def set_texts(self):
         # Тайтл
@@ -205,6 +243,18 @@ class ResultsView(arcade.View):
             batch=self.batch
         )
 
+        # Компенсация
+        self.comp_text = arcade.Text(
+            text=f'Компенсация: {self.comp}$.' if self.game.was_death else '',
+            x=160, y=190 + self.state_cord,
+            color=arcade.color.BLACK,
+            font_size=16,
+            font_name='Courier New',
+            anchor_x='left',
+            anchor_y='bottom',
+            batch=self.batch
+        )
+
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -236,7 +286,7 @@ class ResultsView(arcade.View):
         arcade.draw_line(625 - 5, 300 - 15, 625 + 20, 300 + 15,
                          color=arcade.color.WHITE)
 
-        # 250 385 440
+        # Полоса exp
         arcade.draw_line(249, 385 + self.state_cord, 250 + self.line_width, 385 + self.state_cord,
                          color=arcade.color.BLACK, line_width=5)
 
@@ -307,4 +357,9 @@ class ResultsView(arcade.View):
             self.on_hover = False
 
     def open_lobby(self):
+        self.give_away_items()
+
         print(':)')
+        from ..maps import LobbyView
+        lobby_view = LobbyView(self.account)
+        self.window.show_view(lobby_view)

@@ -543,7 +543,7 @@ class MainBoard(arcade.View):
 
         from .. import Player, Game
         self.player = Player(self.player_name, self.player_level, self.player_cash, self.player_exp)
-        game = Game(self.player, map_id, dif_id, inventory, self.window)
+        game = Game(self.player, map_id, dif_id, inventory, self.profile, self.account, self.window)
 
         from . import GameLoading
         loading = GameLoading(game)

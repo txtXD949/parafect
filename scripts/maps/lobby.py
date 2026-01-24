@@ -196,7 +196,6 @@ class LobbyView(arcade.View):
             'emf': 1,
             'uf': 1,
             'dict': 1,
-            'camera': 0,
             'term': 1,
             'mic': 1,
             'book': 1,
