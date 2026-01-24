@@ -241,12 +241,30 @@ class TestMap(arcade.View):
         self.paper.visible = True
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
 
+    def set_end_flags(self):
+        self.game.was_hunt = True  # TODO: убрать
+        self.game.was_zero_sanity = True  # TODO: убрать
+        self.game.was_first_death = True  # TODO: убрать
+        self.game.was_death = False  # TODO: убрать
+        selected_ghosts = self.paper.get_circled_ghosts()
+        print(*map(lambda x: x.id, selected_ghosts), ' - ', self.game.ghost.id)
+        if self.game.was_death:
+            self.game.is_win = False
+            return
+
+        if not selected_ghosts:
+            self.game.is_win = False
+            return
+        if len(selected_ghosts) != 1 or selected_ghosts[0].id != self.game.ghost.id:
+            self.game.is_win = False
+            return
+
+        self.game.is_win = True
+
     def end_game(self):
-        self.game.is_win = False
-        self.game.was_death = True
-        self.game.was_hunt = True
-        self.game.was_zero_sanity = True
-        self.game.was_first_death = True
+        self.set_end_flags()
+
+        self.open_paper()
 
         from ..views import ResultsView
         res = ResultsView(self.game)

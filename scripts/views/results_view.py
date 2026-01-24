@@ -245,7 +245,7 @@ class ResultsView(arcade.View):
 
         # Компенсация
         self.comp_text = arcade.Text(
-            text=f'Компенсация: {self.comp}$.' if self.game.was_death else '',
+            text=f'Страховка: {self.comp}$.' if self.game.was_death else '',
             x=160, y=190 + self.state_cord,
             color=arcade.color.BLACK,
             font_size=16,
