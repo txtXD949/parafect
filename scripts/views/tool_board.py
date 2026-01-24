@@ -174,7 +174,7 @@ class ToolBoard(arcade.View):
         try:
             flash_light1 = flash_lights[0]
             flash_light1.create_board_sprite()
-            flash_light1.create_sprite(1.0)
+            flash_light1.create_sprite(0.7)
             self.map.flash_light1 = flash_light1
             self.map.items_sprite_list.append(flash_light1.sprite)
             flash_light1.board_sprite.center_x, flash_light1.board_sprite.center_y = 230, 320
@@ -183,7 +183,7 @@ class ToolBoard(arcade.View):
 
             flash_light2 = flash_lights[1]
             flash_light2.create_board_sprite()
-            flash_light2.create_sprite(1.0)
+            flash_light2.create_sprite(0.7)
             self.map.flash_light2 = flash_light2
             self.map.items_sprite_list.append(flash_light2.sprite)
             flash_light2.board_sprite.center_x, flash_light2.board_sprite.center_y = 230, 370
@@ -192,7 +192,7 @@ class ToolBoard(arcade.View):
 
             flash_light3 = flash_lights[2]
             flash_light3.create_board_sprite()
-            flash_light3.create_sprite(1.0)
+            flash_light3.create_sprite(0.7)
             self.map.flash_light3 = flash_light3
             self.map.items_sprite_list.append(flash_light3.sprite)
             flash_light3.board_sprite.center_x, flash_light3.board_sprite.center_y = 320, 320
@@ -201,7 +201,7 @@ class ToolBoard(arcade.View):
 
             flash_light4 = flash_lights[3]
             flash_light4.create_board_sprite()
-            flash_light4.create_sprite(1.0)
+            flash_light4.create_sprite(0.7)
             self.map.flash_light4 = flash_light4
             self.map.items_sprite_list.append(flash_light4.sprite)
             flash_light4.board_sprite.center_x, flash_light4.board_sprite.center_y = 320, 370
