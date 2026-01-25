@@ -54,6 +54,12 @@ class TestMap(arcade.View):
         self.items_sprite_list = arcade.SpriteList()
         self.items_list = []
 
+        # Призрак
+        self.ghost = self.game.ghost
+        self.ghost.game = self.game
+        self.ghost_sprite_list = arcade.SpriteList()
+        self.ghost_sprite_list.append(self.ghost.sprite)
+
         # Сцены
         from ..views import ToolBoard
         self.tool_board = ToolBoard(self.game.inv, self, self.player)
@@ -88,6 +94,14 @@ class TestMap(arcade.View):
             self.map_height / 2
         )
 
+        self.camera_shake = arcade.camera.grips.ScreenShake2D(
+            self.world_camera.view_data,
+            max_amplitude=5.0,
+            acceleration_duration=1.0,
+            falloff_time=0.5,
+            shake_frequency=8.0
+        )
+
         self.gui_camera = arcade.Camera2D()
 
     def get_voice_level(self):
@@ -109,16 +123,20 @@ class TestMap(arcade.View):
     def on_draw(self) -> bool | None:
         self.clear()
 
+        self.camera_shake.update_camera()
         self.world_camera.use()
 
         self.scene.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
+        self.ghost_sprite_list.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
         self.items_sprite_list.draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
                 item.smoke_particles.draw(pixelated=True)
+
+        self.camera_shake.readjust_camera()
 
         self.gui_camera.use()
         self.draw_voice_level()
@@ -128,12 +146,13 @@ class TestMap(arcade.View):
     def on_update(self, delta_time: float) -> bool | None:
         self.mic_manager.update(delta_time)
 
-        self.player_sprite.update()
+        self.player_sprite.update(delta_time)
         self.player_sprite.footstep_particles.update(delta_time)
 
-        from .. import Muling, Banshee, Siren
+        from ..ghosts import Muling, Banshee, Siren
 
         self.physics_engine.update()
+        self.camera_shake.update(delta_time)
 
         pos = (
             self.player_sprite.center_x,
@@ -144,6 +163,9 @@ class TestMap(arcade.View):
             pos,
             0.5
         )
+
+        self.ghost_sprite_list.update(delta_time)
+        self.ghost.sprite.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):
             if not self.tool_board_use:

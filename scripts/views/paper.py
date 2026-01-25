@@ -3,7 +3,7 @@ from arcade.gui import UIWidget, UIBoxLayout, UIAnchorLayout, UIManager, UIEvent
 from arcade.gui.widgets import UIDummy
 from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 
-from .. import GHOSTS
+from ..ghosts import GHOSTS
 
 
 class PaperButton(UITextureButton):

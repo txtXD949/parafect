@@ -1,9 +1,49 @@
 import random
+import arcade
+
+from . import GHOST_EVENTS
+
+
+class GhostSprite(arcade.Sprite):
+    TEXTURES = [
+        arcade.load_texture('./assets/images/ghost/ghost_0.png'),
+        arcade.load_texture('./assets/images/ghost/ghost_1.png')
+    ]
+    GE_SOUNDS = [
+
+    ]
+    HUNT_SOUNDS = [
+
+    ]
+
+    def __init__(self, ghost, scale=1.0):
+        super().__init__(scale=scale)
+        self.texture = self.TEXTURES[0]
+
+        self.ghost = ghost
+
+        # Гост ивент
+        self.ghost_event = None
+        self.ge_chance = self.ghost.ghost_event_chance
+        self.is_ge = False
+        self.drop_san = self.ghost.drop_sanity
+        self.ge_timer = 0
+
+        self.visible = False
+
+    def do_ghost_event(self, player_x, player_y):
+        if not self.ghost_event:
+            self.ghost_event = random.choice(GHOST_EVENTS)(self.ghost)
+        self.ghost_event.do_ghost_event(player_x, player_y)
+
+    def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
+        if self.ghost_event and self.ghost_event.is_ge:
+            self.ghost_event.timer -= dt
 
 
 class Ghost:
     def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.02, step_loud='mid',
-                 ghost_event_chance=0.001, drop_sanity=5, speed=1.0, interaction_chance=0.01, blink_chance=0.1,
+                 ghost_event_chance=0.00005, drop_sanity=5, speed=1.0, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec=''):
         self._id = id
         self._name = name
@@ -19,6 +59,11 @@ class Ghost:
         self._boost = boost
         self._evidences = evidences[:]
         self._species = spec
+
+        self.sprite = GhostSprite(self, 1.0)
+
+        self.sound_player_g = None
+        self.sound_player_h = None
 
     @property
     def id(self):
@@ -99,7 +144,7 @@ class Phantom(Ghost):
 class Oni(Ghost):
     def __init__(self):
         super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.04,
-                         ghost_event_chance=0.05, drop_sanity=10,
+                         ghost_event_chance=0.0001, drop_sanity=10,
                          spec='много гост-ивентов, есть шанс что гост ивент снимет 20% рассудка')
 
 
@@ -136,7 +181,7 @@ class Siren(Ghost):
 class Shade(Ghost):
     def __init__(self):
         super().__init__('shade', 'Тень', evidences=['cold_temp', 'mic', 'emf5'], hunt_start=35,
-                         interaction_chance=0.005, spec='спокойный призрак')
+                         interaction_chance=0.005, ghost_event_chance=0.00002, spec='спокойный призрак')
 
 
 class Butcher(Ghost):
@@ -158,6 +203,7 @@ class Mimic(Ghost):
         Muling, Poltergeist, Siren,
         Wrath, Shade, Butcher
     ]
+
     def __init__(self):
         self.copied_ghost = None
 
