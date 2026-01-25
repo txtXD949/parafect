@@ -94,9 +94,6 @@ class PlayerSprite(arcade.Sprite):
         self.actual_direction = Direction.DOWN
         self.last_direction = Direction.DOWN
 
-        # Коэффициент скорости
-        self.speed_scale = 1
-
     def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
         is_moving = (self.change_x != 0 or self.change_y != 0)
 

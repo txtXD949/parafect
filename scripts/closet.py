@@ -19,20 +19,20 @@ class ClosetSprite(arcade.Sprite):
 
         if self.player_sprite == player_sprite:
             self.player_sprite.visible = True
-            self.player_sprite.speed_scale = 1
+            self.player_sprite.speed = 1
             self.player_sprite = None
 
         elif self.player_sprite is None:
             self.player_sprite = player_sprite
             self.player_sprite.visible = False
-            self.player_sprite.speed_scale = 0
+            self.player_sprite.speed = 0
 
         return
 
     def broke(self):
         if self.player_sprite:
             self.player_sprite.visible = True
-            self.player_sprite.speed_scale = 1
+            self.player_sprite.speed = 1
             self.player_sprite = None
 
         self.is_broken = True

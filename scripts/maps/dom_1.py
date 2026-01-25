@@ -41,7 +41,7 @@ class Dom1(arcade.View):
 
         # Игрок
         from .. import PlayerSprite, Player
-        self.player = Player()
+        self.player = self.game.player
         self.player.sanity = self.game.sanity
         self.player_sprite = PlayerSprite(scale=0.45)
 
@@ -255,15 +255,16 @@ class Dom1(arcade.View):
         self.player_sprite.is_going = True
 
         if symbol == arcade.key.UP:
-            self.player_sprite.change_y = SPEED * self.player_sprite.speed_scale
+            self.player_sprite.change_y = SPEED
 
         if symbol == arcade.key.DOWN:
-            self.player_sprite.change_y = -SPEED * self.player_sprite.speed_scale
+            self.player_sprite.change_y = -SPEED
+
         if symbol == arcade.key.LEFT:
-            self.player_sprite.change_x = -SPEED * self.player_sprite.speed_scale
+            self.player_sprite.change_x = -SPEED
 
         if symbol == arcade.key.RIGHT:
-            self.player_sprite.change_x = SPEED * self.player_sprite.speed_scale
+            self.player_sprite.change_x = SPEED
 
         if symbol == arcade.key.E:
             self.pressed_E = True
@@ -276,6 +277,9 @@ class Dom1(arcade.View):
 
         if symbol == arcade.key.J:
             self.open_paper()
+
+        if symbol == arcade.key.I:
+            self.end_game()
 
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
@@ -303,6 +307,35 @@ class Dom1(arcade.View):
         self.manager.add(self.paper)
         self.paper.visible = True
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
+
+    def set_end_flags(self):
+        self.game.was_hunt = True  # TODO: убрать
+        self.game.was_zero_sanity = True  # TODO: убрать
+        self.game.was_first_death = True  # TODO: убрать
+        self.game.was_death = False  # TODO: убрать
+        selected_ghosts = self.paper.get_circled_ghosts()
+        print(*map(lambda x: x.id, selected_ghosts), ' - ', self.game.ghost.id)
+        if self.game.was_death:
+            self.game.is_win = False
+            return
+
+        if not selected_ghosts:
+            self.game.is_win = False
+            return
+        if len(selected_ghosts) != 1 or selected_ghosts[0].id != self.game.ghost.id:
+            self.game.is_win = False
+            return
+
+        self.game.is_win = True
+
+    def end_game(self):
+        self.set_end_flags()
+
+        self.open_paper()
+
+        from ..views import ResultsView
+        res = ResultsView(self.game)
+        self.window.show_view(res)
 
     def smooth_roof(self):
         if self.is_under_roof:
