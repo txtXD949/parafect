@@ -529,11 +529,12 @@ class MainBoard(arcade.View):
         self.window.show_view(self.lobby)
 
     def start_game(self):
+        from .maps.simple_map import SimpleMapView
+        # test_view = SimpleMapView(account_manager=self.account, map_name="house1", x0=17, y0=32)
+        # self.window.show_view(test_view)
         dif_id = self.game_state.get('difficulty')
         map_id = self.game_state.get('map')
         inventory = self.game_state.get('inventory')
-
-        map_id = 'test'  # TODO: убрать
 
         if not (dif_id and map_id):
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click_bad(play).wav'), volume=0.5)
