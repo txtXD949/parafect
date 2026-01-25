@@ -102,6 +102,20 @@ class Dom1(arcade.View):
             door_sprite = DoorSprite(door.position, self.scene["collitions"], door.texture)
             self.doors_list.append(door_sprite)
 
+        # Шкафы
+        from ..closet import ClosetSprite
+        self.closets_list = arcade.SpriteList()
+        for closet in self.scene["closets"]:
+            closet_sprite = ClosetSprite(closet.position, closet.texture)
+            self.closets_list.append(closet_sprite)
+
+            clone_for_hitbox = arcade.Sprite(closet.texture, scale=0.8)
+            clone_for_hitbox.position = closet.position
+            self.scene["collitions"].append(clone_for_hitbox)
+
+        # Звуки
+        self.grass_footsteps = arcade.load_sound('././assets/sounds/effects/grass_footsteps.wav')
+        self.carpet_footsteps = arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav')
 
         self.gui_camera = arcade.Camera2D()
 
@@ -131,6 +145,7 @@ class Dom1(arcade.View):
         self.scene["carpet"].draw(pixelated=True)
         self.scene["walls"].draw(pixelated=True)
         self.doors_list.draw(pixelated=True)
+        self.closets_list.draw(pixelated=True)
         self.scene["furniture_back"].draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
@@ -207,9 +222,12 @@ class Dom1(arcade.View):
                 self.player.take_item(item._class)
 
         # Двери
-
         if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
             doors[0].change()
+
+        # Шкафы
+        if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
+            closets[0].interact(self.player_sprite)
         self.pressed_E = False
 
         # Рендер крыши
@@ -219,21 +237,33 @@ class Dom1(arcade.View):
             self.is_under_roof = False
         self.smooth_roof()
 
+        # Звук шагов
+        if self.player_sprite.is_going:
+            if self.player_sprite.animation_timer in (8,):
+                if arcade.check_for_collision_with_list(self.player_sprite, self.scene['carpet']):
+                    if self.player_sprite.bottom >= 16 * 3:
+                        arcade.play_sound(self.carpet_footsteps,
+                                          volume=0.03)
+                    else:
+                        arcade.play_sound(self.grass_footsteps,
+                                          volume=0.03)
+                elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['ground']):
+                    arcade.play_sound(self.grass_footsteps, volume=0.03)
+
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
 
         if symbol == arcade.key.UP:
-            self.player_sprite.change_y = SPEED
+            self.player_sprite.change_y = SPEED * self.player_sprite.speed_scale
 
         if symbol == arcade.key.DOWN:
-            self.player_sprite.change_y = -SPEED
-
+            self.player_sprite.change_y = -SPEED * self.player_sprite.speed_scale
         if symbol == arcade.key.LEFT:
-            self.player_sprite.change_x = -SPEED
+            self.player_sprite.change_x = -SPEED * self.player_sprite.speed_scale
 
         if symbol == arcade.key.RIGHT:
-            self.player_sprite.change_x = SPEED
+            self.player_sprite.change_x = SPEED * self.player_sprite.speed_scale
 
         if symbol == arcade.key.E:
             self.pressed_E = True
