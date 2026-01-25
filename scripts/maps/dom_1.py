@@ -18,6 +18,9 @@ class Dom1(arcade.View):
 
         self.is_under_roof = False
 
+        # В отличие от self.is_under_roof отслеживает только дом (крыши могут быть не только дома)
+        self.is_in_house = False
+
         self.evidences = self.game.ghost.evidences
         print(self.evidences, self.game.ghost)
 
@@ -47,7 +50,7 @@ class Dom1(arcade.View):
 
         self.player_sprite.hit_box = arcade.hitbox.RotatableHitBox([(-1, -14), (1, -14), (1, 0), (-1, 0)])
 
-        self.player_sprite.center_x, self.player_sprite.center_y = 18 * 16, 3 * 16
+        self.player_sprite.position = self.scene["spawn"][0].position
 
         self.player.sprite = self.player_sprite
 
@@ -76,6 +79,20 @@ class Dom1(arcade.View):
         from ..views import SanityScreen
         self.sanity_screen = SanityScreen(self.player, self, self.game)
         self.sanity_screen_use = False
+
+        # Комнаты
+        self.rooms = [
+            "corridor",
+            "wardrobe",
+            "hall",
+            "kitchen",
+            "toilet",
+            "room1",
+            "garage"
+        ]
+
+        for room in self.rooms:
+            self.scene[room].alpha_normalized = 1
 
         # Камера
         self.world_camera = arcade.Camera2D()
@@ -114,8 +131,19 @@ class Dom1(arcade.View):
             self.scene["collitions"].append(clone_for_hitbox)
 
         # Звуки
-        self.grass_footsteps = arcade.load_sound('././assets/sounds/effects/grass_footsteps.wav')
-        self.carpet_footsteps = arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav')
+        self.sound_grass_footsteps = arcade.load_sound('././assets/sounds/effects/grass_footsteps.wav')
+        self.sound_carpet_footsteps = arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav')
+        self.sound_floor_footsteps = arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav')
+        self.sound_door = arcade.load_sound('././assets/sounds/effects/door.wav')
+        self.sound_closet = arcade.load_sound('././assets/sounds/effects/closet.wav')
+
+        # Виньетка
+        self.scene["dark"].alpha_normalized = 0
+
+        self.vignette_list = arcade.SpriteList()
+        self.vignette1 = arcade.Sprite()
+        self.vignette1.texture = arcade.load_texture("././assets/images/vignettes/vignette1.png")
+        self.vignette_list.append(self.vignette1)
 
         self.gui_camera = arcade.Camera2D()
 
@@ -151,12 +179,15 @@ class Dom1(arcade.View):
         self.player_list.draw(pixelated=True)
         self.items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
-        self.scene["roof"].draw(pixelated=True)
-
 
         for item in self.items_list:
             if item.id == 'incense':
                 item.smoke_particles.draw(pixelated=True)
+
+        self.scene["roof"].draw(pixelated=True)
+        self.scene["dark"].draw(pixelated=True)
+        self.vignette_list.draw(pixelated=True)
+
 
         self.gui_camera.use()
         self.draw_voice_level()
@@ -224,10 +255,12 @@ class Dom1(arcade.View):
         # Двери
         if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
             doors[0].change()
+            arcade.play_sound(self.sound_door, volume=0.03)
 
         # Шкафы
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
             closets[0].interact(self.player_sprite)
+            arcade.play_sound(self.sound_closet, volume=0.03)
         self.pressed_E = False
 
         # Рендер крыши
@@ -237,34 +270,42 @@ class Dom1(arcade.View):
             self.is_under_roof = False
         self.smooth_roof()
 
+        # Рендер тьмы
+        self.smooth_house_dark()
+
+        # Виньетка
+        self.vignette1.position = self.player_sprite.position
+
         # Звук шагов
         if self.player_sprite.is_going:
             if self.player_sprite.animation_timer in (8,):
                 if arcade.check_for_collision_with_list(self.player_sprite, self.scene['carpet']):
                     if self.player_sprite.bottom >= 16 * 3:
-                        arcade.play_sound(self.carpet_footsteps,
+                        arcade.play_sound(self.sound_carpet_footsteps,
                                           volume=0.03)
                     else:
-                        arcade.play_sound(self.grass_footsteps,
+                        arcade.play_sound(self.sound_floor_footsteps,
                                           volume=0.03)
+                elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['floor']):
+                    arcade.play_sound(self.sound_floor_footsteps, volume=0.03)
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['ground']):
-                    arcade.play_sound(self.grass_footsteps, volume=0.03)
+                    arcade.play_sound(self.sound_grass_footsteps, volume=0.03)
 
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
 
         if symbol == arcade.key.UP:
-            self.player_sprite.change_y = SPEED
+            self.player_sprite.change_y = SPEED * self.player_sprite.speed
 
         if symbol == arcade.key.DOWN:
-            self.player_sprite.change_y = -SPEED
+            self.player_sprite.change_y = -SPEED * self.player_sprite.speed
 
         if symbol == arcade.key.LEFT:
-            self.player_sprite.change_x = -SPEED
+            self.player_sprite.change_x = -SPEED * self.player_sprite.speed
 
         if symbol == arcade.key.RIGHT:
-            self.player_sprite.change_x = SPEED
+            self.player_sprite.change_x = SPEED * self.player_sprite.speed
 
         if symbol == arcade.key.E:
             self.pressed_E = True
@@ -339,8 +380,16 @@ class Dom1(arcade.View):
 
     def smooth_roof(self):
         if self.is_under_roof:
-            if self.scene["roof"].alpha_normalized > 0:
+            if self.scene["roof"].alpha_normalized >= 0:
                 self.scene["roof"].alpha_normalized -= 0.05
         else:
-            if self.scene["roof"].alpha_normalized < 1:
+            if self.scene["roof"].alpha_normalized <= 1:
                 self.scene["roof"].alpha_normalized += 0.05
+
+    def smooth_house_dark(self):
+        if self.is_under_roof:
+            if self.scene["dark"].alpha_normalized <= 0.4:
+                self.scene["dark"].alpha_normalized += 0.1
+        else:
+            if self.scene["dark"].alpha_normalized >= 0:
+                self.scene["dark"].alpha_normalized -= 0.1
