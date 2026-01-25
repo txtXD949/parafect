@@ -1,8 +1,9 @@
+from arcade.future.light import LightLayer, Light
+
 from .. import Game
 
 import arcade
 from arcade.gui import UIManager
-from arcade.future.light import Light, LightLayer
 
 SPEED = 1
 
@@ -94,17 +95,15 @@ class Dom1(arcade.View):
             self.map_height / 2
         )
 
+        # Двери
+        from ..door import DoorSprite
+        self.doors_list = arcade.SpriteList()
+        for door in self.scene["doors"]:
+            door_sprite = DoorSprite(door.position, self.scene["collitions"], door.texture)
+            self.doors_list.append(door_sprite)
+
+
         self.gui_camera = arcade.Camera2D()
-
-        # Свет
-        self.light_layer = LightLayer( 1920, 1080)
-        self.light_layer.set_background_color(arcade.color.BLACK)
-
-        radius = 10000
-        mode = 'soft'
-        color = arcade.csscolor.WHITE
-        base_light = Light(0, 0, 5, (255, 255, 255), "hard")
-        self.light_layer.add(base_light)
 
     def get_voice_level(self):
         return min(5, max(1, int(self.mic_manager.voice_volume * 5)))
@@ -127,18 +126,17 @@ class Dom1(arcade.View):
 
         self.world_camera.use()
 
-        with self.light_layer:
-            self.scene["ground"].draw(pixelated=True)
-            self.scene["floor"].draw(pixelated=True)
-            self.scene["carpet"].draw(pixelated=True)
-            self.scene["walls"].draw(pixelated=True)
-            self.scene["doors"].draw(pixelated=True)
-            self.scene["furniture_back"].draw(pixelated=True)
-            self.player_sprite.footstep_particles.draw(pixelated=True)
-            self.player_list.draw(pixelated=True)
-            self.items_sprite_list.draw(pixelated=True)
-            self.scene["furniture_front"].draw(pixelated=True)
-            self.scene["roof"].draw(pixelated=True)
+        self.scene["ground"].draw(pixelated=True)
+        self.scene["floor"].draw(pixelated=True)
+        self.scene["carpet"].draw(pixelated=True)
+        self.scene["walls"].draw(pixelated=True)
+        self.doors_list.draw(pixelated=True)
+        self.scene["furniture_back"].draw(pixelated=True)
+        self.player_sprite.footstep_particles.draw(pixelated=True)
+        self.player_list.draw(pixelated=True)
+        self.items_sprite_list.draw(pixelated=True)
+        self.scene["furniture_front"].draw(pixelated=True)
+        self.scene["roof"].draw(pixelated=True)
 
 
         for item in self.items_list:
@@ -207,6 +205,11 @@ class Dom1(arcade.View):
         for item in item_grab:
             if self.pressed_E and not (any(item._class is it for it in self.player.inventory)):
                 self.player.take_item(item._class)
+
+        # Двери
+
+        if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
+            doors[0].change()
         self.pressed_E = False
 
         # Рендер крыши
@@ -216,8 +219,6 @@ class Dom1(arcade.View):
             self.is_under_roof = False
         self.smooth_roof()
 
-        # Свет
-        # self.base_light.position = self.player_sprite.position
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True

@@ -6,6 +6,7 @@ from .ghosts import GHOSTS
 
 class Game:
     def __init__(self, player_name, map_id='test', difficulty_id='test', inventory=None, window=None):
+        print(map_id)
         self.player_name = player_name
         self.map_id = map_id
         self.dif_id = difficulty_id

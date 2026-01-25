@@ -22,6 +22,14 @@
         "C:/python_projects/parafect/assets/sprites_2/tsxs/tileset_2.tsx": {
             "scaleInDock": 2
         },
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vignette.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vingette.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "cafe.tmx": {
             "scale": 1.5,
             "selectedLayer": 1,
@@ -39,11 +47,11 @@
             }
         },
         "house1.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 19,
+            "scale": 3,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 164,
-                "y": 268.6666666666667
+                "x": 213,
+                "y": 95.33333333333334
             }
         },
         "house2.tmx": {
@@ -63,19 +71,19 @@
             }
         },
         "hrush.tmx": {
-            "scale": 1.5,
+            "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 330.6666666666667,
-                "y": 341.33333333333326
+                "x": 303.25,
+                "y": 278.25
             }
         },
         "lobby.tmx": {
             "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 115.33333333333333,
-                "y": 87.83333333333331
+                "x": 115.33333333333334,
+                "y": 87.66666666666667
             }
         },
         "test_map.tmx": {
@@ -88,7 +96,7 @@
         }
     },
     "last.externalTilesetPath": "C:/python_projects/parafect/assets/sprites_2/tsxs",
-    "last.imagePath": "C:/python_projects/parafect/assets/sprites/pngs",
+    "last.imagePath": "C:/python_projects/parafect/assets/sprites_2/pngs",
     "map.height": 30,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
@@ -103,6 +111,8 @@
     ],
     "project": "house1.tiled-project",
     "recentFiles": [
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vignette.tsx",
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vingette.tsx",
         "house1.tmx",
         "lobby.tmx",
         "house3.tmx",
@@ -113,9 +123,9 @@
     ],
     "tileset.lastUsedFilter": "Файлы набора тайлов Tiled (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
-    "tileset.margin": 24,
+    "tileset.margin": 0,
     "tileset.tileSize": {
-        "height": 16,
-        "width": 16
+        "height": 144,
+        "width": 256
     }
 }
