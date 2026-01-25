@@ -49,8 +49,9 @@ class Game:
 
     def choose_map(self, map_id):
         from .maps.test_map import TestMap
+        from .maps.dom_1 import Dom1
         maps = {
-            'dom_1': ...,
+            'dom_1': Dom1,
             'dom_3': ...,
             'kv_no96': ...,
             'caffe': ...,

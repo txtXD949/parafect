@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="28" height="39" tilewidth="16" tileheight="16" infinite="0" nextlayerid="29" nextobjectid="1">
+ <tileset firstgid="1" source="../sprites_2/tsxs/tileset_1.tsx"/>
+ <tileset firstgid="442" source="../sprites_2/tsxs/tileset_2.tsx"/>
+ <tileset firstgid="1492" source="../sprites/tsxs/tileset_1.tsx"/>
+ <layer id="28" name="dark" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztwwENAAAMw6D6lzsFF3JIWDVVVVXVRw/McAiF
+  </data>
+ </layer>
+ <layer id="2" name="ground" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJzllkGOgzAMRTuLrHrtOU1ToIimUtS79CwzSP7qH9cOSUNXs7BAJPjl/ziGRzgcHoVYNsYRY+U8ndd7b3Gu7wQYx8NrLOFvJLrHuHXVYXGZkSn//BsXiUjMJM+y4q9zBsrnebaOZZmfhXOnnLNiI2aKKOxzqNM30rrvxJsdn3Qwl/31aiILryZ3ialzsKdcL/BoDx57WtJX650XF+El0unt37IDDzU9icbJ8BL6UB+9PNTc2dGH52kHHs4M14zVk7B/vTzewyhavHoZd+LhHKLPWL2Y97qXl8KzV3n1uY7dVH/q4UV63+qh6/Ob1GgvM0keqz4H8hXepwae7tvoGbo+ve9RDs9A7y2xdT9hXTU85L8Jc5QewR5/fz3vwcG3Jco98nn/DthXMPX9RCwEWFl0ZVmn9qCkD3uo+Ty+suADz8tqHp5v8Tgi1XYkfS31WuKx94Ohj3mjsc7hDT+RS9fkydAXjTW18Nacp/C61lFpZD2Y530/W/YP+TwexyR1rP9DW3jX8Lp/fGUPvH6/VS/QY9XDVugzUqNvoHdOaqx0FrjXtPA8XVfVX2r11uzfteBl65lvqRfvbDFPe97K4/c9bz+hD3Vj9ajSWnr99Nbxqf3rjf/C+wG8oqgG
+  </data>
+ </layer>
+ <layer id="14" name="corridor" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzbEJAAAIwDD/P9cLfEAcRSSBzo0AuCOHvv02+PkBANArhBweQQ==
+  </data>
+ </layer>
+ <layer id="15" name="wardrobe" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzbEJAAAIBLHff1wnsHUCQUng6ksA4IYaffwBALCnAYHnBa0=
+  </data>
+ </layer>
+ <layer id="16" name="hall" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzbEJAAAMw7D8f24v6AVdCwEJPDsB+DdHfh0/AABot7gzFrE=
+  </data>
+ </layer>
+ <layer id="17" name="kitchen" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzaENAAAIBLHff1wmwKPQ0CanLwE2anTtBwAA8EkDTnkHkQ==
+  </data>
+ </layer>
+ <layer id="18" name="toilet" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzTENAAAMw7DyhzsEe3oPwGRLuZPAH9P8AAAAuCxiCgWt
+  </data>
+ </layer>
+ <layer id="19" name="room1" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzbEJAAAMw7D8f24vKNl7QZHAsxP4aY78AAAAqAXcNg4v
+  </data>
+ </layer>
+ <layer id="20" name="garage" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzTENAAAMw7DyhzsE+0uhtpQ7CQArrvIDAGDVA+MoC1k=
+  </data>
+ </layer>
+ <layer id="4" name="floor" width="28" height="39" tintcolor="#bfbfbf">
+  <data encoding="base64" compression="zlib">
+   eJzt09EKwCAIheF6y55sve6IEKTtotLGkP8DL4LwIGhKQBxX7tWU/CyLt16R8qTnytuatVrR8vRfq9k82SG9S57GvKqy6uE5G8nxmm/s73lvO/lfOLEXAAAAf3QD74Yqgw==
+  </data>
+ </layer>
+ <layer id="5" name="carpet" width="28" height="39" tintcolor="#e8e8e8">
+  <data encoding="base64" compression="zlib">
+   eJztzsERABAQBMF7XD7IATkg/zxsDB4opqvmvWsGYFV0s+SnX7wlqKjSpr2siqrssXfhXlNdjU17AAAAP5m+OQbi
+  </data>
+ </layer>
+ <layer id="3" name="walls" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztlMsJgDAQRMeCrMIOrMBzYtGW4kG8hOyymSQgMg/2sIHMC/kBQsxhX2LVk73hqTLLyu3xeWNW7srpaF8CLtb3ZpZn4/Xsfp7Awa6TIX/U5+1zC6nBFxmL5ETe8yhfdO5sX60f9adZeZ5/NLX7KIQQQgjxZ25/IBzV
+  </data>
+ </layer>
+ <layer id="7" name="furniture_back" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4A+QJCZgeEBE23tkGZhYJBhQfC/Au2zAtr7DYi/M1NmthXUXFkgfZKAWdxANTws+NWQAu4h2ecONbebQv8MNVDJzNBAqRmgeDMDht8pIN1FwLw+KtgHiiNQ3BETV0LMEDwK8AMBEsIokYp5kJpmjYJRMJzBUlYGhmWsA+2KUTAKRsEooA4wYoW0B0FtSFD70YhO5Ruo/XifDu1CmP+Q+CMOAADLWxXf
+  </data>
+ </layer>
+ <layer id="8" name="closets" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJzt0DEKACAMBMFA3mL8/w8t7G0NYQa2Py4CZqr8vQD62nnjbfkIAGCsA4aJAKY=
+  </data>
+ </layer>
+ <layer id="10" name="furniture_front" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzbEJACAMBdEIuoadG7iEM+kQurG2QmwEA8K9Lp/AiQB/Sl7f42F/Kbr9zk7/e6UY9wAAd2oQacGu11drGPYAAPjJBJIVAxY=
+  </data>
+ </layer>
+ <layer id="6" name="doors" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJzt0KERADAIADGmZn5EJygHisS9/QiAJz+bGb72+LbDVwDgigIqsALF
+  </data>
+ </layer>
+ <layer id="11" name="generator" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6Bbwf5hjeF0kIAEAH7o2h4AAHDFANODABQ=
+  </data>
+ </layer>
+ <layer id="12" name="roof" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztz0EKgDAMRNEpeBfP4428tVupiEqKFNI2LvwPBsRFPpWAMZYkzUnrufx9/LPz3rZ7tK6eXUvP3LejR69Lz9P09lreWOkO6WXRvZc3drldE90DAAClbboX2fqi+Uc7q49OFA==
+  </data>
+ </layer>
+ <layer id="13" name="collitions" width="28" height="39" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztllEKwCAMQ91xd/8L7GswhJguTcGxBgQVzbNV0TH+o/OoK4hXFccXeGruIryor5s3eyIP5Vys/J597NypPOTPcqry3srBi9xbN4/NYfvqzGcknuz9q+CxsfO6UDvDQ15KDlY8xUvlIf5cr+Ipat7+vOz751Tzmte85mV56C3u+Lxif+WKcusCmytdKw==
+  </data>
+ </layer>
+ <layer id="21" name="tool_board" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzjERAAAIBKC3if1TmsDRc4EEJAAAAMCm63vAhQFN5wAi
+  </data>
+ </layer>
+ <layer id="22" name="sanity" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzjERAAAIBKC3iv1DWsDVc4EEJAAAAMCm63vAlQFSIwAk
+  </data>
+ </layer>
+ <layer id="25" name="spawn" width="28" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6CbxP4tjaGbkIAEAAAAuKBre/DHAD6PACE=
+  </data>
+ </layer>
+</map>
