@@ -85,7 +85,7 @@
  </layer>
  <layer id="11" name="generator" width="28" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzgENAAAIA6Bbwf5hjeF0kIAEAH7o2h4AAHDFANODABQ=
+   eJztzkENADAIBLCbhfn3hR007EXCWgVNAGCHe6YHAABvajrwsQYSxQDr
   </data>
  </layer>
  <layer id="12" name="roof" width="28" height="39">
@@ -95,10 +95,10 @@
  </layer>
  <layer id="13" name="collitions" width="28" height="39" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztllEKwCAMQ91xd/8L7GswhJguTcGxBgQVzbNV0TH+o/OoK4hXFccXeGruIryor5s3eyIP5Vys/J597NypPOTPcqry3srBi9xbN4/NYfvqzGcknuz9q+CxsfO6UDvDQ15KDlY8xUvlIf5cr+Ipat7+vOz751Tzmte85mV56C3u+Lxif+WKcusCmytdKw==
+   eJzt1lEKgDAMA9B5XO9/Ab8EGaSpWQoTWxiIaB6rG3OM/9R51A3kVc3jC57au4yXzXV7cybKUNZFlPe8x9ad6qF81lPVe1sOL7Nv3R57h31XZz8z81ndfxUeezbKdnkoS+lB5ClZqof8+brKU6q9/b3V889Z7bXXXnurHjqLe37eYv/KFeOuC14YXME=
   </data>
  </layer>
- <layer id="21" name="tool_board" width="28" height="39">
+ <layer id="21" name="tool_board" width="28" height="39" locked="1">
   <data encoding="base64" compression="zlib">
    eJztzjERAAAIBKC3if1TmsDRc4EEJAAAAMCm63vAhQFN5wAi
   </data>

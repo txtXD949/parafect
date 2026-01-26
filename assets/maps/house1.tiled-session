@@ -50,8 +50,8 @@
             "scale": 1.5,
             "selectedLayer": 21,
             "viewCenter": {
-                "x": 251.3333333333333,
-                "y": 309.33333333333326
+                "x": 254,
+                "y": 311.66666666666663
             }
         },
         "house2.tmx": {
@@ -66,16 +66,16 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 204.5,
-                "y": 217
+                "x": 208,
+                "y": 304.25
             }
         },
         "hrush.tmx": {
             "scale": 2,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 331.25,
-                "y": 312
+                "x": 320,
+                "y": 240.25
             }
         },
         "lobby.tmx": {

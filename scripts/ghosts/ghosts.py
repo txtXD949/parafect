@@ -93,6 +93,10 @@ class Ghost:
     def ghost_event_chance(self):
         return self._ghost_event_chance
 
+    @ghost_event_chance.setter
+    def ghost_event_chance(self, val):
+        self._ghost_event_chance = val
+
     @property
     def drop_sanity(self):
         return self._drop_sanity

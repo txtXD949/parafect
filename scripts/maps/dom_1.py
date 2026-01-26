@@ -4,6 +4,7 @@ from .. import Game
 
 import arcade
 from arcade.gui import UIManager
+from math import atan, degrees
 
 SPEED = 1
 
@@ -64,6 +65,14 @@ class Dom1(arcade.View):
         self.items_sprite_list = arcade.SpriteList()
         self.items_list = []
 
+        # Призрак
+        self.ghost = self.game.ghost
+        self.ghost.game = self.game
+        self.ghost_sprite_list = arcade.SpriteList()
+        self.ghost_sprite_list.append(self.ghost.sprite)
+        self.ghost.ghost_event_chance = 0
+        # TODO: UBRAT CHORTOV CHANCE 0
+
         # Сцены
         from ..views import ToolBoard
         self.tool_board = ToolBoard(self.game.inv, self, self.player)
@@ -112,6 +121,14 @@ class Dom1(arcade.View):
             self.map_height / 2
         )
 
+        self.camera_shake = arcade.camera.grips.ScreenShake2D(
+            self.world_camera.view_data,
+            max_amplitude=5.0,
+            acceleration_duration=1.0,
+            falloff_time=0.5,
+            shake_frequency=8.0
+        )
+
         # Двери
         from ..door import DoorSprite
         self.doors_list = arcade.SpriteList()
@@ -130,12 +147,19 @@ class Dom1(arcade.View):
             clone_for_hitbox.position = closet.position
             self.scene["collitions"].append(clone_for_hitbox)
 
+        # Генератор
+        generator = self.scene["generator"][0]
+        clone_for_hitbox = arcade.Sprite(generator.texture, scale=0.8)
+        clone_for_hitbox.position = generator.position
+        self.scene["collitions"].append(clone_for_hitbox)
+
         # Звуки
         self.sound_grass_footsteps = arcade.load_sound('././assets/sounds/effects/grass_footsteps.wav')
         self.sound_carpet_footsteps = arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav')
         self.sound_floor_footsteps = arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav')
         self.sound_door = arcade.load_sound('././assets/sounds/effects/door.wav')
         self.sound_closet = arcade.load_sound('././assets/sounds/effects/closet.wav')
+        self.sound_generator = arcade.load_sound('././assets/sounds/effects/generator.wav')
 
         # Виньетка
         self.scene["dark"].alpha_normalized = 0
@@ -144,6 +168,12 @@ class Dom1(arcade.View):
         self.vignette1 = arcade.Sprite()
         self.vignette1.texture = arcade.load_texture("././assets/images/vignettes/vignette1.png")
         self.vignette_list.append(self.vignette1)
+
+        # Свет
+        self.is_lightning = False
+        self.threshold_max = 225
+        self.threshold_min = 0
+        self.threshold = self.threshold_max
 
         self.gui_camera = arcade.Camera2D()
 
@@ -166,6 +196,7 @@ class Dom1(arcade.View):
     def on_draw(self) -> bool | None:
         self.clear()
 
+        self.camera_shake.update_camera()
         self.world_camera.use()
 
         self.scene["ground"].draw(pixelated=True)
@@ -175,19 +206,22 @@ class Dom1(arcade.View):
         self.doors_list.draw(pixelated=True)
         self.closets_list.draw(pixelated=True)
         self.scene["furniture_back"].draw(pixelated=True)
+        self.scene["generator"].draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
         self.items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
+        self.ghost_sprite_list.draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
                 item.smoke_particles.draw(pixelated=True)
 
+        self.camera_shake.readjust_camera()
+
         self.scene["roof"].draw(pixelated=True)
         self.scene["dark"].draw(pixelated=True)
         self.vignette_list.draw(pixelated=True)
-
 
         self.gui_camera.use()
         self.draw_voice_level()
@@ -200,9 +234,10 @@ class Dom1(arcade.View):
         self.player_sprite.update()
         self.player_sprite.footstep_particles.update(delta_time)
 
-        from .. import Muling, Banshee, Siren
+        from ..ghosts import Muling, Banshee, Siren
 
         self.physics_engine.update()
+        self.camera_shake.update(delta_time)
 
         pos = (
             self.player_sprite.center_x,
@@ -213,6 +248,9 @@ class Dom1(arcade.View):
             pos,
             0.5
         )
+
+        self.ghost_sprite_list.update(delta_time)
+        self.ghost.sprite.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):
             if not self.tool_board_use:
@@ -228,12 +266,12 @@ class Dom1(arcade.View):
         else:
             self.sanity_screen_use = False
 
-        # for item in self.items_sprite_list:
-        #     item._class.update_item(self.player_sprite)
-        #     if arcade.check_for_collision_with_list(item, self.scene['room']):
-        #         item._class.in_room = True
-        #     else:
-        #         item._class.in_room = False
+        for item in self.items_sprite_list:
+            item._class.update_item(self.player_sprite)
+            if arcade.check_for_collision_with_list(item, self.scene['room1']):
+                item._class.in_room = True
+            else:
+                item._class.in_room = False
 
         for item in self.items_list:
             if item.id in ('emf', 'book', 'term'):
@@ -261,6 +299,16 @@ class Dom1(arcade.View):
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
             closets[0].interact(self.player_sprite)
             arcade.play_sound(self.sound_closet, volume=0.03)
+
+        # Генератор
+        if self.pressed_E and (arcade.check_for_collision_with_list(self.player_sprite, self.scene["generator"])):
+            self.is_lightning = not self.is_lightning
+            if self.threshold == self.threshold_max:
+                self.threshold = self.threshold_min
+            else:
+                self.threshold = self.threshold_max
+            arcade.play_sound(self.sound_generator, volume=0.03)
+
         self.pressed_E = False
 
         # Рендер крыши
@@ -290,7 +338,6 @@ class Dom1(arcade.View):
                     arcade.play_sound(self.sound_floor_footsteps, volume=0.03)
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['ground']):
                     arcade.play_sound(self.sound_grass_footsteps, volume=0.03)
-
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
@@ -338,6 +385,8 @@ class Dom1(arcade.View):
     def open_sanity_screen(self):
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.sanity_screen)
+
+
 
     def open_paper(self):
         if self.paper.visible:
@@ -388,8 +437,12 @@ class Dom1(arcade.View):
 
     def smooth_house_dark(self):
         if self.is_under_roof:
-            if self.scene["dark"].alpha_normalized <= 0.4:
-                self.scene["dark"].alpha_normalized += 0.1
+            if self.scene["dark"].alpha == self.threshold:
+                pass
+            elif self.scene["dark"].alpha > self.threshold:
+                self.scene["dark"].alpha -= 5
+            elif self.scene["dark"].alpha < self.threshold:
+                self.scene["dark"].alpha += 5
         else:
-            if self.scene["dark"].alpha_normalized >= 0:
-                self.scene["dark"].alpha_normalized -= 0.1
+            if self.scene["dark"].alpha >= 0:
+                self.scene["dark"].alpha -= 5
