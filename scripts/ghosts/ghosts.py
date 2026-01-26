@@ -22,23 +22,11 @@ class GhostSprite(arcade.Sprite):
 
         self.ghost = ghost
 
-        # Гост ивент
-        self.ghost_event = None
-        self.ge_chance = self.ghost.ghost_event_chance
-        self.is_ge = False
-        self.drop_san = self.ghost.drop_sanity
-        self.ge_timer = 0
-
         self.visible = False
 
-    def do_ghost_event(self, player_x, player_y):
-        if not self.ghost_event:
-            self.ghost_event = random.choice(GHOST_EVENTS)(self.ghost)
-        self.ghost_event.do_ghost_event(player_x, player_y)
-
     def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
-        if self.ghost_event and self.ghost_event.is_ge:
-            self.ghost_event.timer -= dt
+        if self.ghost.ghost_event and self.ghost.ghost_event.is_ge:
+            self.ghost.ghost_event.timer -= dt
 
 
 class Ghost:
@@ -61,6 +49,17 @@ class Ghost:
         self._species = spec
 
         self.sprite = GhostSprite(self, 1.0)
+
+        # Охота
+        self.is_hunt = False
+        self.hunt_timer = 0
+        self.stop_timer = 0
+        self.hunt_state: 'chase' or 'seek' or None = None
+
+        # Гост ивент
+        self.ghost_event = None
+        self.is_ge = False
+        self.ge_timer = 0
 
         self.sound_player_g = None
         self.sound_player_h = None
@@ -120,6 +119,22 @@ class Ghost:
     @property
     def species(self):
         return self._species
+
+    def start_hunt(self):
+        if self.is_hunt or self.ghost_event or self.stop_timer:
+            return
+        self.is_hunt = True
+        self.hunt_timer = 25 + random.uniform(-5.5, 5.5)
+        self.hunt_state = 'seek'
+
+    def hunting(self):
+        if self.is_hunt and self.hunt_timer:
+            ...
+
+    def do_ghost_event(self, player_x, player_y):
+        if not self.ghost_event:
+            self.ghost_event = random.choice(GHOST_EVENTS)(self)
+        self.ghost_event.do_ghost_event(player_x, player_y)
 
     def __str__(self):
         return self.name

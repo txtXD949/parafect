@@ -165,7 +165,7 @@ class TestMap(arcade.View):
         )
 
         self.ghost_sprite_list.update(delta_time)
-        self.ghost.sprite.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
+        self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):
             if not self.tool_board_use:
