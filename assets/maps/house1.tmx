@@ -93,9 +93,9 @@
    eJztz0EKgDAMRNEpeBfP4428tVupiEqKFNI2LvwPBsRFPpWAMZYkzUnrufx9/LPz3rZ7tK6eXUvP3LejR69Lz9P09lreWOkO6WXRvZc3drldE90DAAClbboX2fqi+Uc7q49OFA==
   </data>
  </layer>
- <layer id="13" name="collitions" width="28" height="39" visible="0">
+ <layer id="13" name="collitions" width="28" height="39">
   <data encoding="base64" compression="zlib">
-   eJzt1lEKgDAMA9B5XO9/Ab8EGaSpWQoTWxiIaB6rG3OM/9R51A3kVc3jC57au4yXzXV7cybKUNZFlPe8x9ad6qF81lPVe1sOL7Nv3R57h31XZz8z81ndfxUeezbKdnkoS+lB5ClZqof8+brKU6q9/b3V889Z7bXXXnurHjqLe37eYv/KFeOuC14YXME=
+   eJzt1lEKgDAMA9B5XO9/gX3tZ5C2y1KYroWBoObR6tDW7qn3yVvIy+rjCx47u4gXzVV7cybKUHjo/Gr2bn/eTFlvtRReZN+qPe8e77kq5xnpZ3f/ZXjetVa2ykNZzAwsj8liPeTPx1keU+Wd71nvzh/6K6+88u7y0Le4+tOW96+csUZ1hhtdlQ==
   </data>
  </layer>
  <layer id="21" name="tool_board" width="28" height="39" locked="1">

@@ -5,6 +5,7 @@ from .. import Game
 import arcade
 from arcade.gui import UIManager
 from math import atan, degrees
+from random import choice
 
 SPEED = 1
 
@@ -65,6 +66,17 @@ class Dom1(arcade.View):
         self.items_sprite_list = arcade.SpriteList()
         self.items_list = []
 
+        # Комнаты
+        self.rooms = [
+            "corridor",
+            "wardrobe",
+            "hall",
+            "kitchen",
+            "toilet",
+            "room1",
+            "garage"
+        ]
+
         # Призрак
         self.ghost = self.game.ghost
         self.ghost.game = self.game
@@ -72,6 +84,7 @@ class Dom1(arcade.View):
         self.ghost_sprite_list.append(self.ghost.sprite)
         self.ghost.ghost_event_chance = 0
         # TODO: UBRAT CHORTOV CHANCE 0
+        self.ghost.room = self.scene[choice(self.rooms)]
 
         # Сцены
         from ..views import ToolBoard
@@ -88,17 +101,6 @@ class Dom1(arcade.View):
         from ..views import SanityScreen
         self.sanity_screen = SanityScreen(self.player, self, self.game)
         self.sanity_screen_use = False
-
-        # Комнаты
-        self.rooms = [
-            "corridor",
-            "wardrobe",
-            "hall",
-            "kitchen",
-            "toilet",
-            "room1",
-            "garage"
-        ]
 
         for room in self.rooms:
             self.scene[room].alpha_normalized = 1
@@ -209,7 +211,8 @@ class Dom1(arcade.View):
         self.scene["generator"].draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
-        self.items_sprite_list.draw(pixelated=True)
+        if self.player_sprite.visible:
+            self.items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
         self.ghost_sprite_list.draw(pixelated=True)
 
@@ -268,7 +271,7 @@ class Dom1(arcade.View):
 
         for item in self.items_sprite_list:
             item._class.update_item(self.player_sprite)
-            if arcade.check_for_collision_with_list(item, self.scene['room1']):
+            if arcade.check_for_collision_with_list(item, self.ghost.room):
                 item._class.in_room = True
             else:
                 item._class.in_room = False
@@ -446,3 +449,20 @@ class Dom1(arcade.View):
         else:
             if self.scene["dark"].alpha >= 0:
                 self.scene["dark"].alpha -= 5
+    #
+    # def on_mouse_motion(self, x: int, y: int, dx: int, dy: int) -> bool | None:
+    #     if False:
+    #         return
+    #     width, height = arcade.get_display_size()
+    #     x0 = x - width // 2 + 0.001
+    #     y0 = y - height // 2 + 0.001
+    #
+    #     deg = 0
+    #
+    #     if x0 >= 0:
+    #         deg = degrees(atan(y0 / x0))
+    #     else:
+    #         deg = degrees(atan(y0 / x0)) + 180
+    #
+    #     deg %= 360
+    #     print((deg + 25) // 45, deg)
