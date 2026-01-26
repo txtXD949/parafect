@@ -22,7 +22,7 @@ class GhostEvent:
                 self.ghost.sound_player_h = arcade.play_sound(arcade.load_sound('././assets/sounds/effects/heartbeat.wav'), loop=True)
                 self.is_played = True
             if self.timer <= 0:
-                self.ghost.game.player.sanity -= self.ghost.drop_sanity
+                self.ghost.game.player.sanity = max(self.ghost.game.player.sanity - self.ghost.drop_sanity)
                 self.is_ge = False
                 self.ghost.sprite.visible = False
                 self.ghost.sprite.color = (255, 255, 255, 255)

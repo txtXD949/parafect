@@ -4,6 +4,7 @@ import arcade
 from . import GHOST_EVENTS
 
 
+
 class GhostSprite(arcade.Sprite):
     TEXTURES = [
         arcade.load_texture('./assets/images/ghost/ghost_0.png'),
@@ -50,7 +51,14 @@ class Ghost:
 
         self.sprite = GhostSprite(self, 1.0)
 
+        # Физика
+        from . import GhostPhysics
+        self.physics = GhostPhysics(speed=speed, boost=boost)
+
         # Охота
+        self.detection_radius = 300.0
+        self.last_seen_player = None
+
         self.is_hunt = False
         self.hunt_timer = 0
         self.stop_timer = 0
@@ -92,6 +100,10 @@ class Ghost:
     def ghost_event_chance(self):
         return self._ghost_event_chance
 
+    @ghost_event_chance.setter
+    def ghost_event_chance(self, val):
+        self._ghost_event_chance = val
+
     @property
     def drop_sanity(self):
         return self._drop_sanity
@@ -127,9 +139,40 @@ class Ghost:
         self.hunt_timer = 25 + random.uniform(-5.5, 5.5)
         self.hunt_state = 'seek'
 
-    def hunting(self):
-        if self.is_hunt and self.hunt_timer:
-            ...
+    def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None):
+        """Обновляет позицию призрака во время охоты"""
+        if not self.is_hunt:
+            return
+
+        if player_in_closet:
+            target_x, target_y = self.physics.x, self.physics.y
+        else:
+            dx = player_x - self.physics.x
+            dy = player_y - self.physics.y
+            distance = math.sqrt(dx * dx + dy * dy)
+
+            if distance < self.detection_radius:
+                target_x, target_y = player_x, player_y
+                self.last_seen_player = (player_x, player_y)
+            elif self.last_seen_player:
+                target_x, target_y = self.last_seen_player
+            else:
+                target_x, target_y = self.physics.x, self.physics.y
+
+        x, y, angle = self.physics.update(
+            target_x,
+            target_y,
+            dt,
+            walls=walls_layer,
+            sprite_width=self.sprite.width,
+            sprite_height=self.sprite.height
+        )
+
+        self.sprite.center_x = x
+        self.sprite.center_y = y
+        self.sprite.angle = math.degrees(angle)
+
+        return x, y
 
     def do_ghost_event(self, player_x, player_y):
         if not self.ghost_event:

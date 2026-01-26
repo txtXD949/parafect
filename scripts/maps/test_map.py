@@ -1,3 +1,5 @@
+import random
+
 from .. import Game
 
 import arcade
@@ -59,6 +61,12 @@ class TestMap(arcade.View):
         self.ghost.game = self.game
         self.ghost_sprite_list = arcade.SpriteList()
         self.ghost_sprite_list.append(self.ghost.sprite)
+
+        # ДОБАВИЛ: Устанавливаем начальную позицию призрака
+        self.ghost.physics.x = random.uniform(100, self.map_width - 100)
+        self.ghost.physics.y = random.uniform(100, self.map_height - 100)
+        self.ghost.sprite.center_x = self.ghost.physics.x
+        self.ghost.sprite.center_y = self.ghost.physics.y
 
         # Сцены
         from ..views import ToolBoard
@@ -164,7 +172,27 @@ class TestMap(arcade.View):
             0.5
         )
 
+        # ДОБАВИЛ: Обновление призрака во время охоты
+        if self.ghost.is_hunt:
+            # TODO: Получить реальное значение player_in_closet
+            player_in_closet = False  # Заглушка, нужно реализовать
+
+            # Получаем слой стен
+            walls_layer = self.scene['walls'] if 'walls' in self.scene else None
+
+            # Обновляем позицию призрака
+            self.ghost.update_hunt(
+                delta_time,
+                self.player_sprite.center_x,
+                self.player_sprite.center_y,
+                player_in_closet,
+                walls_layer
+            )
+
+        # Обновляем спрайт призрака
         self.ghost_sprite_list.update(delta_time)
+
+        # Существующий вызов гост-ивента (оставляем как было)
         self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):
@@ -235,6 +263,9 @@ class TestMap(arcade.View):
 
         if symbol == arcade.key.I:
             self.end_game()
+
+        if symbol == arcade.key.H:
+            self.ghost.start_hunt()
 
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
