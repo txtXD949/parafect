@@ -47,11 +47,11 @@
             }
         },
         "house1.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 21,
+            "scale": 4,
+            "selectedLayer": 16,
             "viewCenter": {
-                "x": 254,
-                "y": 311.66666666666663
+                "x": 235.25,
+                "y": 311.875
             }
         },
         "house2.tmx": {
