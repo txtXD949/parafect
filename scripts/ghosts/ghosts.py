@@ -155,6 +155,9 @@ class Ghost:
         self.is_blinking = False
         self.blink_timer = 0
 
+        if hasattr(self, 'hunt_initialized'):
+            del self.hunt_initialized
+
     def end_hunt(self):
         self.is_hunt = False
         self.hunt_timer = 0

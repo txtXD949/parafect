@@ -62,10 +62,12 @@ class TestMap(arcade.View):
         self.ghost_sprite_list = arcade.SpriteList()
         self.ghost_sprite_list.append(self.ghost.sprite)
 
+        self.spawn_ghost_in_room()
+
         # TODO: убрать
         self.ghost.ghost_event_chance = 0.0
 
-        # ДОБАВИЛ: Устанавливаем начальную позицию призрака
+        # Устанавливаем начальную позицию призрака
         self.ghost.physics.x = random.uniform(30, self.map_width - 30)
         self.ghost.physics.y = random.uniform(250, self.map_height - 30)
         self.ghost.sprite.center_x = self.ghost.physics.x
@@ -114,6 +116,22 @@ class TestMap(arcade.View):
         )
 
         self.gui_camera = arcade.Camera2D()
+
+    def spawn_ghost_in_room(self):
+        ghost_room = self.scene['room'][0]
+
+        if ghost_room:
+            padding = 20
+            x = random.uniform(ghost_room.left + padding, ghost_room.right - padding)
+            y = random.uniform(ghost_room.bottom + padding, ghost_room.top - padding)
+        else:
+            x = random.uniform(100, self.map_width - 100)
+            y = random.uniform(100, self.map_height - 100)
+
+        self.ghost.physics.x = x
+        self.ghost.physics.y = y
+        self.ghost.sprite.center_x = x
+        self.ghost.sprite.center_y = y
 
     def get_voice_level(self):
         return min(5, max(1, int(self.mic_manager.voice_volume * 5)))
@@ -177,6 +195,10 @@ class TestMap(arcade.View):
 
         # ДОБАВИЛ: Обновление призрака во время охоты
         if self.ghost.is_hunt:
+            if not hasattr(self.ghost, 'hunt_initialized'):
+                self.ghost.hunt_initialized = True
+                self.spawn_ghost_in_room()
+
             # TODO: Получить реальное значение player_in_closet
             player_in_closet = True  # Заглушка, нужно реализовать
 
