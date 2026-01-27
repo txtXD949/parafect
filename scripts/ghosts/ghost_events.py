@@ -13,20 +13,21 @@ class GhostEvent:
 
         self.is_played = False
 
-    def do_ghost_event(self, player_x, player_y):
+    def do_ghost_event(self, player_x, player_y, color=(230, 255)):
         if self.is_ge:
-            color = random.randint(230, 255)
-            self.ghost.sprite.color = (color, color, color)
+            c = random.randint(*color)
+            self.ghost.sprite.color = (c, c, c)
             if not self.is_played:
                 self.ghost.sound_player_g = arcade.play_sound(self.sound)
-                self.ghost.sound_player_h = arcade.play_sound(arcade.load_sound('././assets/sounds/effects/heartbeat.wav'), loop=True)
+                self.ghost.sound_player_h = arcade.play_sound(
+                    arcade.load_sound('././assets/sounds/effects/heartbeat.wav'), loop=True)
                 self.is_played = True
             if self.timer <= 0:
-                self.ghost.game.player.sanity = max(self.ghost.game.player.sanity - self.ghost.drop_sanity)
+                self.ghost.game.player.sanity = max(0, self.ghost.game.player.sanity - self.ghost.drop_sanity)
                 self.is_ge = False
                 self.ghost.sprite.visible = False
                 self.ghost.sprite.color = (255, 255, 255, 255)
-                self.ghost.sprite.ghost_event = None
+                self.ghost.ghost_event = None
                 self.ghost.sound_player_h.pause()
             return
         if random.random() <= self.ghost.ghost_event_chance:
@@ -53,7 +54,6 @@ class SuddenGhostEvent(GhostEvent):
 
         if self.is_ge and not self.is_played:
             self.ghost.game.map.camera_shake.start()
-
 
 
 class BreathGhostEvent(GhostEvent):
@@ -91,26 +91,7 @@ class WheezingGhostEvenShadow(GhostEvent):
         super().__init__(timer=4.5, sound=random.choice(self.SOUNDS), ghost=ghost)
 
     def do_ghost_event(self, player_x, player_y):
-        if self.is_ge:
-            color = random.randint(0, 40)
-            self.ghost.sprite.color = (color, color, color)
-            if not self.is_played:
-                self.ghost.sound_player = arcade.play_sound(self.sound)
-                self.is_played = True
-            if self.timer <= 0:
-                self.ghost.game.player.sanity -= self.ghost.drop_sanity
-                self.is_ge = False
-                self.ghost.sprite.visible = False
-                self.ghost.sprite.color = (255, 255, 255, 255)
-                self.ghost.sprite.ghost_event = None
-            return
-        if random.random() <= self.ghost.ghost_event_chance:
-            self.timer = self.ge_timer
-            self.ghost.sprite.center_x = player_x + random.uniform(-5.0, 5.0)
-            self.ghost.sprite.center_y = player_y + random.uniform(-5.0, 5.0)
-            self.is_ge = True
-            self.ghost.sprite.visible = True
-            self.is_played = False
+        super().do_ghost_event(player_x, player_y, (0, 40))
 
 
 class WhisperGhostEvent(GhostEvent):

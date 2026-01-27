@@ -62,9 +62,12 @@ class TestMap(arcade.View):
         self.ghost_sprite_list = arcade.SpriteList()
         self.ghost_sprite_list.append(self.ghost.sprite)
 
+        # TODO: убрать
+        self.ghost.ghost_event_chance = 0.0
+
         # ДОБАВИЛ: Устанавливаем начальную позицию призрака
-        self.ghost.physics.x = random.uniform(100, self.map_width - 100)
-        self.ghost.physics.y = random.uniform(100, self.map_height - 100)
+        self.ghost.physics.x = random.uniform(30, self.map_width - 30)
+        self.ghost.physics.y = random.uniform(250, self.map_height - 30)
         self.ghost.sprite.center_x = self.ghost.physics.x
         self.ghost.sprite.center_y = self.ghost.physics.y
 
@@ -175,10 +178,10 @@ class TestMap(arcade.View):
         # ДОБАВИЛ: Обновление призрака во время охоты
         if self.ghost.is_hunt:
             # TODO: Получить реальное значение player_in_closet
-            player_in_closet = False  # Заглушка, нужно реализовать
+            player_in_closet = True  # Заглушка, нужно реализовать
 
             # Получаем слой стен
-            walls_layer = self.scene['walls'] if 'walls' in self.scene else None
+            walls_layer = self.scene['ghost_walls']
 
             # Обновляем позицию призрака
             self.ghost.update_hunt(
