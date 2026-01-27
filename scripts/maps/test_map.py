@@ -200,7 +200,7 @@ class TestMap(arcade.View):
                 self.spawn_ghost_in_room()
 
             # TODO: Получить реальное значение player_in_closet
-            player_in_closet = True  # Заглушка, нужно реализовать
+            player_in_closet = False  # Заглушка, нужно реализовать
 
             # Получаем слой стен
             walls_layer = self.scene['ghost_walls']

@@ -56,7 +56,7 @@ class Ghost:
         self.physics = GhostPhysics(speed=speed, boost=boost)
 
         # Охота
-        self.detection_radius = 300.0
+        self.detection_radius = 80.0
         self.last_seen_player = None
 
         self.is_hunt = False
