@@ -64,6 +64,7 @@ class Dom1(arcade.View):
 
         # Предметы
         self.items_sprite_list = arcade.SpriteList()
+        self.free_items_sprite_list = arcade.SpriteList()
         self.items_list = []
 
         # Комнаты
@@ -88,7 +89,7 @@ class Dom1(arcade.View):
 
         # Сцены
         from ..views import ToolBoard
-        self.tool_board = ToolBoard(self.game.inv, self, self.player)
+        self.tool_board = ToolBoard(self.game.inv, self, self.player, bias_scale=0.7)
         self.tool_board_use = False
 
         from ..views import Paper
@@ -213,6 +214,8 @@ class Dom1(arcade.View):
         self.player_list.draw(pixelated=True)
         if self.player_sprite.visible:
             self.items_sprite_list.draw(pixelated=True)
+        else:
+            self.free_items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
         self.ghost_sprite_list.draw(pixelated=True)
 
@@ -293,6 +296,12 @@ class Dom1(arcade.View):
             if self.pressed_E and not (any(item._class is it for it in self.player.inventory)):
                 self.player.take_item(item._class)
 
+        # Обновление списка предметов, не используемых игроком
+        self.free_items_sprite_list.clear()
+        for item in self.items_sprite_list:
+            if item._class not in self.player.inventory and item not in self.free_items_sprite_list:
+                self.free_items_sprite_list.append(item)
+
         # Двери
         if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
             doors[0].change()
@@ -300,7 +309,7 @@ class Dom1(arcade.View):
 
         # Шкафы
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
-            closets[0].interact(self.player_sprite)
+            closets[0].interact(self.player_sprite, self.items_list)
             arcade.play_sound(self.sound_closet, volume=0.03)
 
         # Генератор
@@ -388,8 +397,6 @@ class Dom1(arcade.View):
     def open_sanity_screen(self):
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.sanity_screen)
-
-
 
     def open_paper(self):
         if self.paper.visible:
