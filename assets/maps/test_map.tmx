@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="30" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="30" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="1">
  <tileset firstgid="1" source="../sprites/tsxs/tileset_2.tsx"/>
  <tileset firstgid="4636" source="../sprites/tsxs/tileset_1.tsx"/>
  <layer id="2" name="ground" width="30" height="40" tintcolor="#6a6a6a">
@@ -9,7 +9,12 @@
  </layer>
  <layer id="1" name="walls" width="30" height="40">
   <data encoding="base64" compression="zlib">
-   eJzt1UsKACAIAFHvD965bYvAT0pg86BVwWyyVET00bJ4zkTO0qU7sbv3PTOXndXo/Faje96vfns93Qy6s7uW2/vc2e3wa7fy36l4zwAAwCwLwPZgZA==
+   eJzt1EEKACAIAEH/D/65u0SaKUHtQKeCPZSpiOil5Ymc2TlLl+6LXduPzFxmTnfntxrd+X713xvpZtB9u+s5fc+d3Q6/du2d6WK/agEAgH8MteteMA==
+  </data>
+ </layer>
+ <layer id="9" name="ghost_walls" width="30" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt1jERAAAIAzE0oBnhqAAG8neds7Yyoo62HZfL5XK5XC53xv3wJSVJ0l0NIF07xQ==
   </data>
  </layer>
  <layer id="3" name="tree" width="30" height="40">

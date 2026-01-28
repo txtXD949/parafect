@@ -201,7 +201,7 @@ class ResultsView(arcade.View):
             text=f'exp: {self.exp}/{LEVEL_EXP * self.lvl} ',
             x=160, y=375 + self.state_cord,
             color=arcade.color.BLACK,
-            font_size=9 if 0 <= self.exp <= 999 else 8 if 1000 <= self.lvl <= 9990 else 7,
+            font_size=9 if 0 <= self.lvl * LEVEL_EXP <= 999 else 8 if 1000 <= self.lvl * LEVEL_EXP <= 9990 else 7,
             font_name='Courier New',
             anchor_x='left',
             anchor_y='bottom',
