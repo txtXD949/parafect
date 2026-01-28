@@ -32,7 +32,7 @@ class GhostSprite(arcade.Sprite):
 
 class Ghost:
     def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.02, step_loud='mid',
-                 ghost_event_chance=0.00005, drop_sanity=5, speed=1.0, interaction_chance=0.01, blink_chance=0.1,
+                 ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec=''):
         self._id = id
         self._name = name
@@ -44,8 +44,8 @@ class Ghost:
         self._drop_sanity = drop_sanity
         self._interaction_chance = interaction_chance
         self._blink_chance = blink_chance
-        self._speed = speed
-        self._boost = boost
+        self.speed = speed
+        self.boost = boost
         self._evidences = evidences[:]
         self._species = spec
 
@@ -53,10 +53,10 @@ class Ghost:
 
         # Физика
         from . import GhostPhysics
-        self.physics = GhostPhysics(speed=speed, boost=boost)
+        self.physics = GhostPhysics(speed=self.speed, boost=self.boost)
 
         # Охота
-        self.detection_radius = 65.0
+        self.detection_radius = 170.0
         self.last_seen_player = None
 
         self.is_hunt = False
@@ -133,14 +133,6 @@ class Ghost:
         return self._blink_chance
 
     @property
-    def speed(self):
-        return self._speed
-
-    @property
-    def boost(self):
-        return self._boost
-
-    @property
     def evidences(self):
         return self._evidences
 
@@ -194,6 +186,8 @@ class Ghost:
 
         self.update_blinking(dt)
 
+        sees_player = False
+
         if player_in_closet:
             target_x, target_y = self.get_wander_target(dt)
         else:
@@ -205,6 +199,7 @@ class Ghost:
                 target_x, target_y = player_x, player_y
                 self.last_seen_player = (player_x, player_y)
                 self.wander_target = None
+                sees_player = True
             elif self.last_seen_player:
                 target_x, target_y = self.last_seen_player
                 dist_to_last = math.sqrt((target_x - self.physics.x) ** 2 + (target_y - self.physics.y) ** 2)
@@ -213,6 +208,8 @@ class Ghost:
                     self.last_seen_player = None
             else:
                 target_x, target_y = self.get_wander_target(dt)
+
+        self.physics.set_boosted(sees_player)
 
         x, y, angle = self.physics.update(
             target_x,
@@ -268,7 +265,7 @@ class Ghost:
                 self.blink_timer = 0
         else:
             if self.blink_timer >= self.blink_interval:
-                if random.random() < self.blink_chance:
+                if random.random() < self._blink_chance:
                     self.original_visible = self.sprite.visible
                     self.sprite.visible = False
                     self.is_blinking = True
@@ -292,10 +289,10 @@ class Demon(Ghost):
 
 class Phantom(Ghost):
     def __init__(self):
-        super().__init__('phantom', 'Фантом', evidences=['book', 'dict', 'uf'], blink_chance=0.05,
+        super().__init__('phantom', 'Фантом', evidences=['book', 'dict', 'uf'], blink_chance=0.5,
                          spec='редко мерцает(почти невидимый), умеет телепортироваться по карте')
-        self.blink_interval = 0.3
-        self.blink_duration = 0.2
+        self.blink_interval = 0.1
+        self.blink_duration = 0.6
 
 
 class Oni(Ghost):
@@ -303,8 +300,9 @@ class Oni(Ghost):
         super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.04,
                          ghost_event_chance=0.0001, drop_sanity=10, blink_chance=0.02,
                          spec='много гост-ивентов, есть шанс что гост ивент снимет 20% рассудка')
-        self.blink_interval = 0.02
-        self.blink_duration = 0.1
+
+        self.blink_interval = 0.3
+        self.blink_duration = 0.2
 
 
 class Banshee(Ghost):
@@ -315,7 +313,7 @@ class Banshee(Ghost):
 
 class Reverent(Ghost):
     def __init__(self):
-        super().__init__('reverent', 'Ревенант', evidences=['cold_temp', 'dict', 'book'], speed=0.3, boost=1,
+        super().__init__('reverent', 'Ревенант', evidences=['cold_temp', 'dict', 'book'], speed=0.05, boost=10.0,
                          spec='при виде игрока очень быстро ускоряется')
 
 
@@ -345,8 +343,8 @@ class Shade(Ghost):
 
 class Butcher(Ghost):
     def __init__(self):
-        super().__init__('butcher', 'Мясник', evidences=['hot_temp', 'dict', 'book'], step_loud='high', speed=0.6,
-                         spec='хуже реагирует на войс-чат. Противоположность Мюллингу')
+        super().__init__('butcher', 'Мясник', evidences=['hot_temp', 'dict', 'book'], step_loud='high', speed=0.1,
+                         boost=0.1, spec='хуже реагирует на войс-чат. Противоположность Мюллингу')
 
 
 class Wrath(Ghost):
@@ -377,8 +375,12 @@ class Mimic(Ghost):
         self.change_chance = 0.7
 
     def change_ghost(self):
-        self.copied_ghost = random.choice(self.GHOSTS[:-1])
+        self.copied_ghost = random.choice(self.GHOSTS[:-1])()
         return self.copied_ghost
+
+    def start_hunt(self):
+        super().start_hunt()
+        self.change_ghost()
 
 
 GHOSTS = [

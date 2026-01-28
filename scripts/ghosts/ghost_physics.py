@@ -10,11 +10,14 @@ class GhostPhysics:
         self.velocity_x = 0.0
         self.velocity_y = 0.0
 
-        self.base_speed = speed
         self.acceleration = 0.5
         self.max_speed = 8.0
         self.friction = 0.92
+
         self.boost = boost
+        self.base_speed = speed
+        self.boost_multiplier = 1 + boost
+        self.current_speed = speed
 
         self.angle = 0
         self.target_angle = 0
@@ -22,6 +25,12 @@ class GhostPhysics:
 
         self.last_dx = 0
         self.last_dy = 0
+
+    def set_boosted(self, boosted):
+        if boosted:
+            self.current_speed = self.base_speed * self.boost_multiplier
+        else:
+            self.current_speed = self.base_speed
 
     def check_wall_collision(self, new_x, new_y, sprite_width, sprite_height, walls):
         """Проверяет столкновение со стенами"""
@@ -62,8 +71,8 @@ class GhostPhysics:
 
         self.angle += angle_diff * self.rotation_speed
 
-        move_x = math.cos(self.angle) * self.acceleration * self.base_speed
-        move_y = math.sin(self.angle) * self.acceleration * self.base_speed
+        move_x = math.cos(self.angle) * self.acceleration * self.current_speed
+        move_y = math.sin(self.angle) * self.acceleration * self.current_speed
 
         self.velocity_x += move_x
         self.velocity_y += move_y
