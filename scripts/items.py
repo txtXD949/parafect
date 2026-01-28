@@ -17,7 +17,7 @@ class Item:
     ]
 
     def __init__(self, id, name, is_stationary=False, is_grabbed=False, in_inventory=False, is_turn_on=False,
-                 sprite=None, board_scale=5.0):
+                 sprite=None, board_scale=5.0, bias_scale=1):
         self._id = id
         self._name = name
         self._is_stationary = is_stationary
@@ -25,6 +25,7 @@ class Item:
         self._in_inventory = in_inventory
         self._is_turn_on = is_turn_on
         self._sprite = sprite
+        self.bias_scale = bias_scale
 
         self.board_sprite = None
         self.board_scale = board_scale
@@ -102,13 +103,13 @@ class Item:
         if not self.is_grabbed:
             if self.in_inventory:
                 self.sprite.visible = False
-                self.sprite.center_x = player_sprite.center_x - 10
-                self.sprite.center_y = player_sprite.center_y - 10
+                self.sprite.center_x = player_sprite.center_x - 10 * self.bias_scale
+                self.sprite.center_y = player_sprite.center_y - 10 * self.bias_scale
             return
 
         self.sprite.visible = True
-        self.sprite.center_x = player_sprite.center_x - 10
-        self.sprite.center_y = player_sprite.center_y - 10
+        self.sprite.center_x = player_sprite.center_x - 10 * self.bias_scale
+        self.sprite.center_y = player_sprite.center_y - 10 * self.bias_scale
 
     def create_sprite(self, scale):
         self.sprite = arcade.Sprite(self.TEXTURES[0], scale)
@@ -140,8 +141,8 @@ class EMF(Item):
         arcade.load_sound('./assets/sounds/effects/emf_5.wav'),
     ]
 
-    def __init__(self):
-        super().__init__('emf', 'ЭМП', False, sprite=None)
+    def __init__(self,  bias_scale=1):
+        super().__init__('emf', 'ЭМП', False, sprite=None, bias_scale=bias_scale)
 
         self.is_working = False
 
@@ -213,8 +214,8 @@ class FlashLight(Item):
         ...
     ]
 
-    def __init__(self):
-        super().__init__('flash-light', 'Фонарик', sprite=None, board_scale=2.8)
+    def __init__(self, bias_scale=1):
+        super().__init__('flash-light', 'Фонарик', sprite=None, board_scale=2.8, bias_scale=bias_scale)
 
 
 class UF(Item):
@@ -229,8 +230,8 @@ class UF(Item):
         ...
     ]
 
-    def __init__(self):
-        super().__init__('uf', 'УФ-фонарик', sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('uf', 'УФ-фонарик', sprite=None, bias_scale=bias_scale)
 
 
 class Book(Item):
@@ -242,8 +243,8 @@ class Book(Item):
         arcade.load_sound('././assets/sounds/effects/book_writing.wav')
     ]
 
-    def __init__(self):
-        super().__init__('book', 'Блокнот', is_stationary=True, sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('book', 'Блокнот', is_stationary=True, sprite=None, bias_scale=bias_scale)
 
         self.is_dropped = False
         self.wrote = False
@@ -289,8 +290,8 @@ class Microphone(Item):
         arcade.load_sound('./assets/sounds/effects/whisper_muling.wav')
     ]
 
-    def __init__(self):
-        super().__init__('mic', 'Направленный микрофон', sprite=None, board_scale=4.0)
+    def __init__(self, bias_scale=1):
+        super().__init__('mic', 'Направленный микрофон', sprite=None, board_scale=4.0, bias_scale=bias_scale)
 
     def use_item(self, evidence, ghost, sound_players=None):
         if not sound_players:
@@ -334,8 +335,8 @@ class Dictaphone(Item):
         arcade.load_sound(f'././assets/sounds/effects/dict_say{i}.wav') for i in range(1, 18)
     ] + [arcade.load_sound('././assets/sounds/effects/dict_siren.wav')]
 
-    def __init__(self):
-        super().__init__('dict', 'Диктофон', sprite=None, board_scale=3.0)
+    def __init__(self, bias_scale=1):
+        super().__init__('dict', 'Диктофон', sprite=None, board_scale=3.0, bias_scale=bias_scale)
 
         self.pa = pa.PyAudio()
         self.stream = False
@@ -449,8 +450,8 @@ class Thermometer(Item):
         './assets/images/itms/term_hot.png'
     ]
 
-    def __init__(self):
-        super().__init__('term', 'Термометр', sprite=None, board_scale=3.1)
+    def __init__(self, bias_scale=1):
+        super().__init__('term', 'Термометр', sprite=None, board_scale=3.1, bias_scale=bias_scale)
 
     def use_item(self, evidences):
         if not self.in_room:
@@ -475,8 +476,8 @@ class Thermometer(Item):
 class PhotoCamera(Item):
     TEXTURES = []
 
-    def __init__(self):
-        super().__init__('camera', 'Фотокамера', sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('camera', 'Фотокамера', sprite=None, bias_scale=bias_scale)
 
 
 class Incense(Item):
@@ -491,8 +492,8 @@ class Incense(Item):
         arcade.load_sound('./assets/sounds/effects/smoke_incense.wav')
     ]
 
-    def __init__(self):
-        super().__init__('incense', 'Благовония', sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('incense', 'Благовония', sprite=None, bias_scale=bias_scale)
 
         # состояние горения
         self.phase = 0  # 0-4
@@ -599,8 +600,8 @@ class Lighter(Item):
         '././assets/images/itms/light.png'
     ]
 
-    def __init__(self):
-        super().__init__('lighter', 'Зажигалка', sprite=None, board_scale=1.0)
+    def __init__(self, bias_scale=1):
+        super().__init__('lighter', 'Зажигалка', sprite=None, board_scale=1.0, bias_scale=bias_scale)
 
     def use_item(self, player):
         if player.has_lighter:
@@ -623,8 +624,8 @@ class Pills(Item):
         arcade.load_sound('./assets/sounds/effects/pills.wav')
     ]
 
-    def __init__(self, reg_sanity):
-        super().__init__('pills', 'Успокоительное', sprite=None, board_scale=2.0)
+    def __init__(self, reg_sanity, bias_scale=1):
+        super().__init__('pills', 'Успокоительное', sprite=None, board_scale=2.0, bias_scale=bias_scale)
 
         self._reg_sanity = reg_sanity
 

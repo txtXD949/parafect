@@ -1,116 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="28" height="39" tilewidth="16" tileheight="16" infinite="0" nextlayerid="29" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-down" width="36" height="39" tilewidth="16" tileheight="16" infinite="0" nextlayerid="35" nextobjectid="1">
  <tileset firstgid="1" source="../sprites_2/tsxs/tileset_1.tsx"/>
  <tileset firstgid="442" source="../sprites_2/tsxs/tileset_2.tsx"/>
  <tileset firstgid="1492" source="../sprites/tsxs/tileset_1.tsx"/>
- <layer id="28" name="dark" width="28" height="39">
+ <layer id="28" name="dark" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztwwENAAAMw6D6lzsFF3JIWDVVVVXVRw/McAiF
+   eJztzjENAAAMw7Dyh1sEg7Bvx+RI+d0kPXzr0sLDw8PDw8PDw8PDw8PDw8PDw8PD88kzHJoIhQ==
   </data>
  </layer>
- <layer id="2" name="ground" width="28" height="39">
+ <layer id="2" name="ground" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJzllkGOgzAMRTuLrHrtOU1ToIimUtS79CwzSP7qH9cOSUNXs7BAJPjl/ziGRzgcHoVYNsYRY+U8ndd7b3Gu7wQYx8NrLOFvJLrHuHXVYXGZkSn//BsXiUjMJM+y4q9zBsrnebaOZZmfhXOnnLNiI2aKKOxzqNM30rrvxJsdn3Qwl/31aiILryZ3ialzsKdcL/BoDx57WtJX650XF+El0unt37IDDzU9icbJ8BL6UB+9PNTc2dGH52kHHs4M14zVk7B/vTzewyhavHoZd+LhHKLPWL2Y97qXl8KzV3n1uY7dVH/q4UV63+qh6/Ob1GgvM0keqz4H8hXepwae7tvoGbo+ve9RDs9A7y2xdT9hXTU85L8Jc5QewR5/fz3vwcG3Jco98nn/DthXMPX9RCwEWFl0ZVmn9qCkD3uo+Ty+suADz8tqHp5v8Tgi1XYkfS31WuKx94Ohj3mjsc7hDT+RS9fkydAXjTW18Nacp/C61lFpZD2Y530/W/YP+TwexyR1rP9DW3jX8Lp/fGUPvH6/VS/QY9XDVugzUqNvoHdOaqx0FrjXtPA8XVfVX2r11uzfteBl65lvqRfvbDFPe97K4/c9bz+hD3Vj9ajSWnr99Nbxqf3rjf/C+wG8oqgG
+   eJy1lluOwjAMRZmPfM22ZzWEBqpSpIi9sJaZSL7iYpKQh+fDaqGJfXL9aB/ucHhUbPvwHBYa130f6qbjlvxuhWuvtfCEytrNvdpO93ieu5bO3aoPr00+I8Vf/+wi5olpl/+i4ktrFvIXMjFaeaL4i8Jxp5irYoOtZF7YTs5Gn0DnvhPP2uArGXNx/kZ4kKe9MXaNSfuo1WitnpEDCx7O2Yw+rbkp2UV4dtJptH42Ax705Fk0Onf0V1D6oH5nedATp0F9sG834MFM4JrGeUfqZ5aHa8jLWUfrORjxYA5hTvfwbLQWtTjLs7vnrB+pn4fsvan5P8PjaX/PPGT2m/TYLNMufkb6a3Gv9Y/52sqj36uYqbq/Rr83onsa3o01Nj2PWRcLHsS/CVOQGcs5/Pl63oMD3wZe7uGPvz17ebCHfXrFlFhgYImiS5RzlOKM6IMa0nz8PLFAR14X1Tr8P8vD5ql3PenT028zPJznJaMP8+RqYvmHfCGW7qljRh+fYbbkSTGP7v2sQWnEemBd6fvJsn4Qr8TDdpY+1N8WljxX914/fGUNS+/j2XqGHi0zTJueARb6LOTzqJ7Vep1ntSVPSZerms+telnUz7Wyv3cmWtZzstxsYR6dU2se9l/KXU/erPRBXefeAYmjtf8QQ7Pr3635KnG21JLWUV8teGpnLLHkuPRZLHhybDpOukeMGr81z6c4n9b9ArtGvhQ=
   </data>
  </layer>
- <layer id="14" name="corridor" width="28" height="39">
+ <layer id="14" name="corridor" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzbEJAAAIwDD/P9cLfEAcRSSBzo0AuCOHvv02+PkBANArhBweQQ==
+   eJztzrENAEAIAzH2H/cnoP8iLQjZUupcFQBXvDA98/8/PZmebFsPAACwQwPQyR5B
   </data>
  </layer>
- <layer id="15" name="wardrobe" width="28" height="39">
+ <layer id="15" name="wardrobe" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzbEJAAAIBLHff1wnsHUCQUng6ksA4IYaffwBALCnAYHnBa0=
+   eJztzqENAAAIBDH2H5cJsEgcL9rk/FUBAPzrVYK0HwAAgIsBMQYFrQ==
   </data>
  </layer>
- <layer id="16" name="hall" width="28" height="39">
+ <layer id="16" name="hall" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzbEJAAAMw7D8f24v6AVdCwEJPDsB+DdHfh0/AABot7gzFrE=
+   eJztzkENAAAIA7H5l4sCFEwAoU3ufwkA10zJjx8AAAB+W76lFrE=
   </data>
  </layer>
- <layer id="17" name="kitchen" width="28" height="39">
+ <layer id="17" name="kitchen" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzaENAAAIBLHff1wmwKPQ0CanLwE2anTtBwAA8EkDTnkHkQ==
+   eJztzrEJAAAIBLHff1wnsHcBFRK4/hKApEbbrv0AAAAAfNAcGweR
   </data>
  </layer>
- <layer id="18" name="toilet" width="28" height="39">
+ <layer id="18" name="toilet" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzTENAAAMw7DyhzsEe3oPwGRLuZPAH9P8AAAAuCxiCgWt
+   eJztzrEJAAAMw7D8f24v6NIjUpDAuxOgxVwt/AAAAAD8shhDBa0=
   </data>
  </layer>
- <layer id="19" name="room1" width="28" height="39">
+ <layer id="19" name="room1" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzbEJAAAMw7D8f24vKNl7QZHAsxP4aY78AAAAqAXcNg4v
+   eJztzjENAAAMw7DyhzsEI7B/PWwpfxKg0Rx98gMAAADQbwGcbQ4v
   </data>
  </layer>
- <layer id="20" name="garage" width="28" height="39">
+ <layer id="20" name="garage" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzTENAAAMw7DyhzsE+0uhtpQ7CQArrvIDAGDVA+MoC1k=
+   eJztzrEJAAAIBLHff1wnsHcBFRK4/hIA4IIabfMDAADwTwNdJAtZ
   </data>
  </layer>
- <layer id="4" name="floor" width="28" height="39" tintcolor="#bfbfbf">
+ <layer id="4" name="floor" width="36" height="39" tintcolor="#bfbfbf">
   <data encoding="base64" compression="zlib">
-   eJzt09EKwCAIheF6y55sve6IEKTtotLGkP8DL4LwIGhKQBxX7tWU/CyLt16R8qTnytuatVrR8vRfq9k82SG9S57GvKqy6uE5G8nxmm/s73lvO/lfOLEXAAAAf3QD74Yqgw==
+   eJzt1DsKACEMAFG9pSfT60oQIX4KLYwp5kGKrTJI2BAAeJFjG5HiOi/tdtGzNt18v265HXr2+61u56Sn37i+dUtzT1Et5fM7id5h9T7zfsv/zQlvPeLH3QIAAAAYVRlyKoM=
   </data>
  </layer>
- <layer id="5" name="carpet" width="28" height="39" tintcolor="#e8e8e8">
+ <layer id="5" name="carpet" width="36" height="39" tintcolor="#e8e8e8">
   <data encoding="base64" compression="zlib">
-   eJztzsERABAQBMF7XD7IATkg/zxsDB4opqvmvWsGYFV0s+SnX7wlqKjSpr2siqrssXfhXlNdjU17AAAAP5m+OQbi
+   eJztzrENABAUBuFX2Ac7YAfsv4e/UIpE9RT3JdefGQCcpWCWg/cFXkSVVPYe2YqqqnmPbPzc8XP3209XQ03vEQAAAABfWc/DBuI=
   </data>
  </layer>
- <layer id="3" name="walls" width="28" height="39">
+ <layer id="3" name="walls" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztlMsJgDAQRMeCrMIOrMBzYtGW4kG8hOyymSQgMg/2sIHMC/kBQsxhX2LVk73hqTLLyu3xeWNW7srpaF8CLtb3ZpZn4/Xsfp7Awa6TIX/U5+1zC6nBFxmL5ETe8yhfdO5sX60f9adZeZ5/NLX7KIQQQgjxZ25/IBzV
+   eJztlcsJgDAQRMeCrMIOrMBztGhL8SBeQnZZo5MgzoM9bCCZB/kBQvyTeYgVM3vCWXmWlcv08cas3JGjU+2TgJ3lc2XmZ8PrWfu1AUvNPJbP+lEfbx/fJN3wiYw9JfretfKJrt3bp9S3+jOsPM+vNaX7JIQQQgghhOjDAX2LHNU=
   </data>
  </layer>
- <layer id="7" name="furniture_back" width="28" height="39">
+ <layer id="7" name="furniture_back" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo4A+QJCZgeEBE23tkGZhYJBhQfC/Au2zAtr7DYi/M1NmthXUXFkgfZKAWdxANTws+NWQAu4h2ecONbebQv8MNVDJzNBAqRmgeDMDht8pIN1FwLw+KtgHiiNQ3BETV0LMEDwK8AMBEsIokYp5kJpmjYJRMJzBUlYGhmWsA+2KUTAKRsEooA4wYoW0B0FtSFD70YhO5Ruo/XifDu1CmP+Q+CMOAADLWxXf
+   eJxjYBgFxIL3LAwMH4D4IxB/ogB/RKPFWclzDxOZ+giBkeoeQWYGhgdMA+seaWB6kGFB8L8C3WMFdNc3IP7OTFv3WEHtlQXSJ3HYBQPcQDU8LNjlaBE+95Dc4w61t5uAG2npHkrAQLmnkpmhAZs4Nd0DSjdmwPg5BaS7cNgHA310cA8ojYDSDjFpRYgZgmnpHmqA4e4eASLzNQgkYimDaBU+2OwiBgz3+KIUjLoHPxh1D34wEO5ZCtS7DIf+0fDBD0bdgx+Mugc/GHUPfjDqHvxgoNxjxArp74D6SKD+kRGF5lErfED9o/sktLlxAWqFDxKfIkCr9EMu0GGlPtZlJS09AwAMqjPD
   </data>
  </layer>
- <layer id="8" name="closets" width="28" height="39">
+ <layer id="8" name="closets" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJzt0DEKACAMBMFA3mL8/w8t7G0NYQa2Py4CZqr8vQD62nnjbfkIAGCsA4aJAKY=
+   eJzt0cEJACAQA8GDq0Xtv0MfFpETZmD/gVQBE+1OLwBSTr/IWj4AAAA+dAG4pwCm
   </data>
  </layer>
- <layer id="10" name="furniture_front" width="28" height="39">
+ <layer id="10" name="furniture_front" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzbEJACAMBdEIuoadG7iEM+kQurG2QmwEA8K9Lp/AiQB/Sl7f42F/Kbr9zk7/e6UY9wAAd2oQacGu11drGPYAAPjJBJIVAxY=
+   eJztzsENABAMRuFKWMPNBpYwE0OwMTeR1Lkk77v1Tw9PBICF5PU9XnZL0Z13dvqflfJYDwAAP6pBpAXriq2vlvFQDwAAwC8m+S0DFg==
   </data>
  </layer>
- <layer id="6" name="doors" width="28" height="39">
+ <layer id="6" name="doors" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJzt0KERADAIADGmZn5EJygHisS9/QiAJz+bGb72+LbDVwDgigIqsALF
+   eJzt0bERAAAEADFTm98KVLhLuq8/AoCOHDY/+HaTLz/5BgAA+wqFlwLF
   </data>
  </layer>
- <layer id="11" name="generator" width="28" height="39">
+ <layer id="11" name="generator" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzgENAAAIA6Bbwf5hjeF0kIAEAH7o2h4AAHDFANODABQ=
+   eJztzjEBAAAIA6BZwf5hjeEOSEACANBv53sAAADQ7wARcgAU
   </data>
  </layer>
- <layer id="12" name="roof" width="28" height="39">
+ <layer id="12" name="roof" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztz0EKgDAMRNEpeBfP4428tVupiEqKFNI2LvwPBsRFPpWAMZYkzUnrufx9/LPz3rZ7tK6eXUvP3LejR69Lz9P09lreWOkO6WXRvZc3drldE90DAAClbboX2fqi+Uc7q49OFA==
+   eJzt0GEGwDAQROHJaXqe3qhHj1RUDRHKNkvex1D9s08kYE9nkY6iq6993/98Ubd9r5anxxfZY/d99NCzRU9E09eeyDeadC3pabL1DN7ol9sz2XoAAAAA5FEB/iBDSw==
   </data>
  </layer>
- <layer id="13" name="collitions" width="28" height="39">
+ <layer id="33" name="roof_tent" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJzt1lEKgDAMA9B5XO9/gX3tZ5C2y1KYroWBoObR6tDW7qn3yVvIy+rjCx47u4gXzVV7cybKUHjo/Gr2bn/eTFlvtRReZN+qPe8e77kq5xnpZ3f/ZXjetVa2ykNZzAwsj8liPeTPx1keU+Wd71nvzh/6K6+88u7y0Le4+tOW96+csUZ1hhtdlQ==
+   eJztzrEJACAMAMEILuj+g9haSRxAiMIdfP8RwDZa9QEAAADwu9mzaufLi0/ctwDdVQsc
   </data>
  </layer>
- <layer id="21" name="tool_board" width="28" height="39" locked="1">
+ <layer id="13" name="collitions" width="36" height="39" visible="0">
   <data encoding="base64" compression="zlib">
-   eJztzjERAAAIBKC3if1TmsDRc4EEJAAAAMCm63vAhQFN5wAi
+   eJztl0EOwCAIBO1z+/8P9N4URWDWQyHhUsPuBKzGMTq8cV9cRnmI+AtPdDYVPF5fNc/b0/JQ8Fjru950f1Yzo3gi9TTPzrmm4plprvZ9Nc9OjfWNPn9O8Hi1rHNIwWN5RXqY4cl6kff71/90kkep2zxMHaWb4Znt7e4Po9s8TB2lW8HjeYuoeKx7t+fF6JI83qzkyepV82Sj+zMP71tBmQ+/wGjD
   </data>
  </layer>
- <layer id="22" name="sanity" width="28" height="39">
+ <layer id="21" name="tool_board" width="36" height="39" locked="1">
   <data encoding="base64" compression="zlib">
-   eJztzjERAAAIBKC3iv1DWsDVc4EEJAAAAMCm63vAlQFSIwAk
+   eJztzkENAAAIBKCzif1TWsLNh5CABAAAAADY1nU94KMBZ2cAIg==
   </data>
  </layer>
- <layer id="25" name="spawn" width="28" height="39">
+ <layer id="22" name="sanity" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJztzgENAAAIA6CbxP4tjaGbkIAEAAAAuKBre/DHAD6PACE=
+   eJztzkENAAAIBKCziv1DWsLNh5CABAAAAADY1HU94KsBbOMAJA==
+  </data>
+ </layer>
+ <layer id="25" name="spawn" width="36" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzgENAAAIA6CbxP4tbaGbgwQkAAAAAMBnXdcDtgxTbwAh
+  </data>
+ </layer>
+ <layer id="29" name="main_door" width="36" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztzjEBAAAIA6AZxP41F8LDBxKQAADA3c73AAAAKHHOAB8=
+  </data>
+ </layer>
+ <layer id="34" name="ghost_wall" width="36" height="39" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt1UEOABAQQ9FxHfc/oBOQMdKS+C+xnCoWIoA/9ZZbzr0zc6o+zjlVLn00c6rcF/soOp1kqvpUz6p6s2r2zT7OP2O2305fNeddAAAAAFgblNgJaQ==
+  </data>
+ </layer>
+ <layer id="30" name="exit" width="36" height="39">
+  <data encoding="base64" compression="zlib">
+   eJztziEBADAIADCo+/4BUAjMLYgtwSIAAAAAgG0vtweTz9+1Tyt9SgGt
   </data>
  </layer>
 </map>
