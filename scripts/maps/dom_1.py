@@ -294,6 +294,9 @@ class Dom1(arcade.View):
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['roof']):
 
+            # Пытаемся сменить комнату призрака
+            self.ghost.try_change_room(self.scene, self.rooms, delta_time)
+
             self.ghost_sprite_list.update(delta_time)
             self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
@@ -305,7 +308,7 @@ class Dom1(arcade.View):
                     self.ghost.hunt_initialized = True
                     self.spawn_ghost_in_room()
 
-                player_in_closet = True  # not self.player_sprite.visible
+                player_in_closet = True # not self.player_sprite.visible
                 # Данные об игроке
                 voice_level = self.get_voice_level()  # 1-5
                 is_mic_on = voice_level > 0

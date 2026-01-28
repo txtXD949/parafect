@@ -260,7 +260,11 @@ class Ghost:
         if self.game.player.sanity > self.hunt_start:
             return False
 
-        if self.is_hunt or self.is_charging or self.stop_timer or self.ghost_event.is_ge:
+        if self.ghost_event:
+            if self.ghost_event.is_ge:
+                return
+
+        if self.is_hunt or self.is_charging or self.stop_timer:
             return
 
         sanity_factor = 1.0 - (self.game.player.sanity / self.hunt_start)
@@ -426,6 +430,54 @@ class Ghost:
                     self.blink_timer = 0
                 else:
                     self.blink_timer = 0
+
+    def try_change_room(self, scene, rooms_list, delta_time=1 / 60):
+        if self.is_hunt or self.is_charging:
+            return False
+
+        if random.random() < self.game.roomchange_chance * delta_time:
+            return self.change_room_random(scene, rooms_list)
+
+        return False
+
+    def change_room_random(self, scene, rooms_list):
+        if not rooms_list:
+            return False
+
+        new_room_name = random.choice(rooms_list)
+
+        if new_room_name in scene:
+            self.room = scene[new_room_name]
+
+            self.move_to_random_position_in_room()
+
+            return True
+
+        return False
+
+    def move_to_random_position_in_room(self):
+        if not self.room or len(self.room) == 0:
+            return
+
+        room_sprite = self.room[0]
+        padding = 20
+
+        if room_sprite.right - room_sprite.left > padding * 2:
+            x = random.uniform(
+                room_sprite.left + padding,
+                room_sprite.right - padding
+            )
+            y = random.uniform(
+                room_sprite.bottom + padding,
+                room_sprite.top - padding
+            )
+
+            self.physics.x = x
+            self.physics.y = y
+            self.sprite.center_x = x
+            self.sprite.center_y = y
+
+            self.sprite.particles.clear()
 
     def __str__(self):
         return self.name
