@@ -301,6 +301,10 @@ class Dom1(arcade.View):
             self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
             self.ghost.start_hunt(delta_time)
+
+            if self.ghost.is_charging:
+                self.close_main_door()
+
             if self.ghost.is_hunt or self.ghost.is_charging:
                 self.game.was_hunt = True
 
@@ -338,6 +342,9 @@ class Dom1(arcade.View):
                     if not player_in_closet and not self.player.is_unhittable:
                         if arcade.check_for_collision(self.player_sprite, self.ghost.sprite):
                             self.player_die()
+
+            if not (self.ghost.is_hunt or self.ghost.is_charging):
+                self.open_main_door()
 
         if self.player.sanity == 0:
             self.game.was_zero_sanity = True
@@ -628,3 +635,25 @@ class Dom1(arcade.View):
 
     def do_light_blinking(self, time_blinking):
         self.time_blinking = time_blinking * 60
+
+    def close_main_door(self):
+        door = arcade.get_sprites_at_point(
+            self.scene["main_door"][0].position,
+            self.doors_list
+        )[0]
+
+        # Если дверь открыта - закрываем
+        if not door.closed:
+            door.change()
+            arcade.play_sound(self.sound_door, volume=0.03)
+
+        # Блокируем от открывания
+        door.block()
+
+    def open_main_door(self):
+        door = arcade.get_sprites_at_point(
+            self.scene["main_door"][0].position,
+            self.doors_list
+        )[0]
+
+        door.unblock()
