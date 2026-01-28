@@ -48,42 +48,42 @@
         },
         "house1.tmx": {
             "scale": 4,
-            "selectedLayer": 16,
+            "selectedLayer": 19,
             "viewCenter": {
-                "x": 235.25,
-                "y": 311.875
+                "x": 280.75,
+                "y": 210.5
             }
         },
         "house2.tmx": {
-            "scale": 1.5,
+            "scale": 1,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 304,
-                "y": 200.33333333333334
+                "x": 342,
+                "y": 235
             }
         },
         "house3.tmx": {
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 19,
             "viewCenter": {
-                "x": 208,
-                "y": 304.25
+                "x": 350,
+                "y": 540
             }
         },
         "hrush.tmx": {
-            "scale": 2,
-            "selectedLayer": 4,
+            "scale": 5.5,
+            "selectedLayer": 11,
             "viewCenter": {
-                "x": 320,
-                "y": 240.25
+                "x": 178.1818181818182,
+                "y": 428.1818181818182
             }
         },
         "lobby.tmx": {
             "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 115.33333333333333,
-                "y": 87.83333333333331
+                "x": 115.33333333333334,
+                "y": 87.66666666666667
             }
         },
         "test_map.tmx": {

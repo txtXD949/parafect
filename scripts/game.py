@@ -50,6 +50,7 @@ class Game:
     def choose_map(self, map_id):
         from .maps.test_map import TestMap
         from .maps.dom_1 import Dom1
+        from .maps.dom_3 import Dom3
         maps = {
             'dom_1': Dom1,
             'dom_3': ...,
