@@ -16,7 +16,7 @@ class TestMap(arcade.View):
 
         self.pressed_E = False
 
-        self.evidences = self.game.ghost.evidences
+        self.evidences = self.game.evidences
         print(self.evidences, self.game.ghost)
 
         self.setup()
@@ -194,7 +194,6 @@ class TestMap(arcade.View):
             0.5
         )
 
-        # ДОБАВИЛ: Обновление призрака во время охоты
         if self.ghost.is_hunt or self.ghost.is_charging:
             self.game.was_hunt = True
             if not hasattr(self.ghost, 'hunt_initialized'):
@@ -202,12 +201,10 @@ class TestMap(arcade.View):
                 self.spawn_ghost_in_room()
 
             # TODO: Получить реальное значение player_in_closet
-            player_in_closet = False
+            player_in_closet = True
 
-            # Получаем слой стен
             walls_layer = self.scene['ghost_walls']
 
-            # Обновляем позицию призрака
             self.ghost.update_hunt(
                 delta_time,
                 self.player_sprite.center_x,
@@ -223,10 +220,8 @@ class TestMap(arcade.View):
             if self.player.sanity == 0:
                 self.game.was_zero_sanity = True
 
-        # Обновляем спрайт призрака
         self.ghost_sprite_list.update(delta_time)
 
-        # Существующий вызов гост-ивента (оставляем как было)
         self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):

@@ -428,14 +428,14 @@ class Dictaphone(Item):
             self.sound_player.pause()
 
     def use_item(self, _, ghost, evidences):
-        if 'dict' not in evidences:
-            return
-
         if not self.is_turn_on or not self.in_room:
             return
 
         if ghost.id == 'siren' and random.random() < 0.0001:
             self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
+            return
+
+        if 'dict' not in evidences:
             return
 
         if self.voice_detected and random.random() < 0.0003:

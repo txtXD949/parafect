@@ -135,7 +135,7 @@ class GhostSprite(arcade.Sprite):
 class Ghost:
     def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.02, step_loud='mid',
                  ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
-                 boost=0.07, spec=''):
+                 boost=0.07, spec='', main_evidence=None):
         self._id = id
         self._name = name
         self._description = desc
@@ -148,6 +148,7 @@ class Ghost:
         self._blink_chance = blink_chance
         self.speed = speed
         self.boost = boost
+        self._main_evidence = main_evidence
         self._evidences = evidences[:]
         self._species = spec
 
@@ -237,6 +238,10 @@ class Ghost:
     @property
     def evidences(self):
         return self._evidences
+
+    @property
+    def main_evidence(self):
+        return self._main_evidence
 
     @property
     def species(self):
@@ -411,7 +416,7 @@ class Oni(Ghost):
 
 class Banshee(Ghost):
     def __init__(self):
-        super().__init__('banshee', 'Банши', evidences=['uf', 'book', 'mic'],
+        super().__init__('banshee', 'Банши', evidences=['uf', 'book', 'mic'], main_evidence='mic',
                          spec='умеет ходить к игроку, есть шанс услышать особый крик банши на микрофоне, снимает 10% рассудка')
 
 
@@ -424,7 +429,7 @@ class Reverent(Ghost):
 class Muling(Ghost):
     def __init__(self):
         super().__init__('muling', 'Мюллинг', evidences=['hot_temp', 'mic', 'uf'], step_loud='low',
-                         spec='лучше реагирует на войс-чат')
+                         spec='лучше реагирует на войс-чат', main_evidence='mic')
 
 
 class Poltergeist(Ghost):
@@ -435,7 +440,7 @@ class Poltergeist(Ghost):
 
 class Siren(Ghost):
     def __init__(self):
-        super().__init__('siren', 'Сирена', evidences=['dict', 'cold_temp', 'uf'],
+        super().__init__('siren', 'Сирена', evidences=['dict', 'cold_temp', 'uf'], main_evidence='dict',
                          spec='в диктофоне можно услышать пение снимает 10% рассудка')
 
 
