@@ -30,11 +30,11 @@ class Game:
         self.choose_map(map_id)
 
         # Конец игры
-        self.is_win = None
-        self.was_death = None
-        self.was_hunt = None
-        self.was_zero_sanity = None
-        self.was_first_death = None
+        self.is_win = False
+        self.was_death = False
+        self.was_hunt = False
+        self.was_zero_sanity = False
+        self.was_first_death = False
 
     def choose_difficult(self, dif_id):
         from .views import DIFFICULTY_DATABASE

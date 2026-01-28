@@ -56,13 +56,17 @@ class Ghost:
         self.physics = GhostPhysics(speed=speed, boost=boost)
 
         # Охота
-        self.detection_radius = 80.0
+        self.detection_radius = 65.0
         self.last_seen_player = None
 
         self.is_hunt = False
         self.hunt_timer = 0
         self.stop_timer = 0
         self.hunt_state: 'chase' or 'seek' or None = None
+
+        # Таймер зарядки перед охотой
+        self.charge_timer = 0
+        self.is_charging = False
 
         # Для блуждания
         self.wander_target = None
@@ -147,27 +151,39 @@ class Ghost:
     def start_hunt(self):
         if self.is_hunt or self.ghost_event.is_ge or self.stop_timer:
             return
-        self.is_hunt = True
-        self.hunt_timer = 25 + random.uniform(-5.5, 5.5)
-        self.hunt_state = 'seek'
+
+        # ЗАПУСКАЕМ ЗАРЯДКУ
+        self.is_charging = True
+        self.charge_timer = random.uniform(1.5, 2.0)
         self.sprite.visible = True
-        self.original_visible = True
-        self.is_blinking = False
-        self.blink_timer = 0
 
         if hasattr(self, 'hunt_initialized'):
             del self.hunt_initialized
 
     def end_hunt(self):
         self.is_hunt = False
+        self.is_charging = False
         self.hunt_timer = 0
         self.stop_timer = 0
         self.hunt_state = None
         self.sprite.visible = False
         self.is_blinking = False
         self.blink_timer = 0
+        self.sprite.angle = 0
 
     def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None):
+        if self.is_charging:
+            self.charge_timer -= dt
+            if self.charge_timer <= 0:
+                self.is_charging = False
+                self.is_hunt = True
+                self.hunt_timer = 25 + random.uniform(-5.5, 5.5)
+                self.hunt_state = 'seek'
+
+                self.update_blinking(dt)
+
+            return
+
         if not self.is_hunt:
             return
 

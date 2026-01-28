@@ -194,13 +194,14 @@ class TestMap(arcade.View):
         )
 
         # ДОБАВИЛ: Обновление призрака во время охоты
-        if self.ghost.is_hunt:
+        if self.ghost.is_hunt or self.ghost.is_charging:
+            self.game.was_hunt = True
             if not hasattr(self.ghost, 'hunt_initialized'):
                 self.ghost.hunt_initialized = True
                 self.spawn_ghost_in_room()
 
             # TODO: Получить реальное значение player_in_closet
-            player_in_closet = False  # Заглушка, нужно реализовать
+            player_in_closet = False
 
             # Получаем слой стен
             walls_layer = self.scene['ghost_walls']
@@ -213,6 +214,13 @@ class TestMap(arcade.View):
                 player_in_closet,
                 walls_layer
             )
+
+            if self.ghost.is_hunt and not self.ghost.is_charging:
+                if arcade.check_for_collision(self.player_sprite, self.ghost.sprite):
+                    self.player_die()
+
+            if self.player.sanity == 0:
+                self.game.was_zero_sanity = True
 
         # Обновляем спрайт призрака
         self.ghost_sprite_list.update(delta_time)
@@ -320,10 +328,6 @@ class TestMap(arcade.View):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
 
     def set_end_flags(self):
-        self.game.was_hunt = True  # TODO: убрать
-        self.game.was_zero_sanity = True  # TODO: убрать
-        self.game.was_first_death = True  # TODO: убрать
-        self.game.was_death = False  # TODO: убрать
         selected_ghosts = self.paper.get_circled_ghosts()
         print(*map(lambda x: x.id, selected_ghosts), ' - ', self.game.ghost.id)
         if self.game.was_death:
@@ -347,3 +351,7 @@ class TestMap(arcade.View):
         from ..views import ResultsView
         res = ResultsView(self.game)
         self.window.show_view(res)
+
+    def player_die(self):
+        self.game.was_death = True
+        self.end_game()
