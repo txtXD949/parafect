@@ -33,7 +33,6 @@ class GhostPhysics:
             self.current_speed = self.base_speed
 
     def check_wall_collision(self, new_x, new_y, sprite_width, sprite_height, walls):
-        """Проверяет столкновение со стенами"""
         if not walls:
             return False
 

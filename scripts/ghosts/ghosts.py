@@ -5,6 +5,76 @@ import arcade
 from . import GHOST_EVENTS
 
 
+class GhostParticle(arcade.SpriteSolidColor):
+    """Частицы дыма/тумана для призрака"""
+
+    def __init__(self, x, y, ghost, direction_angle):
+        # Размер
+        width = random.randint(4, 8)
+        height = random.randint(4, 8)
+
+        # Цвет
+        if ghost.is_charging:
+            color = (100, 100, 255, 150)  # Синий при зарядке
+        elif ghost.is_hunt:
+            color = (150, 150, 255, 120)  # Голубой при охоте
+        else:
+            color = (255, 255, 255, 170)  # Светло-синий обычно
+
+        super().__init__(width, height, color)
+
+        self.color = color
+        self.ghost = ghost
+
+        self.center_x = x
+        self.center_y = y
+
+        # Движение
+        speed = random.uniform(0.1, 0.3)
+        self.change_x = -math.cos(direction_angle) * speed
+        self.change_y = -math.sin(direction_angle) * speed
+
+        self.change_x += random.uniform(-0.05, 0.05)
+        self.change_y += random.uniform(-0.05, 0.05)
+
+        # Вращение
+        self.change_angle = random.uniform(-10, 10)
+
+        # Свойства
+        self.alpha = color[3] if len(color) > 3 else 150
+        self.lifetime = random.uniform(0.5, 1.0)
+        self.time_alive = 0
+
+    def update(self, delta_time):
+        # Движение
+        self.center_x += self.change_x
+        self.center_y += self.change_y
+
+        # Вращение
+        self.angle += self.change_angle * delta_time
+
+        # Замедление
+        self.change_x *= 0.92
+        self.change_y *= 0.92
+        self.change_angle *= 0.9
+
+        # Исчезание и уменьшение
+        self.alpha = max(0, self.alpha - 2)
+        self.scale_x *= 0.97
+        self.scale_y *= 0.97
+
+        # Обновляем цвет с новой прозрачностью
+        if len(self.color) == 4:
+            self.color = (self.color[0], self.color[1], self.color[2], int(self.alpha))
+        else:
+            self.color = (self.color[0], self.color[1], self.color[2], int(self.alpha))
+
+        # Время жизни
+        self.time_alive += delta_time
+        if self.time_alive >= self.lifetime or self.alpha <= 10:
+            self.remove_from_sprite_lists()
+
+
 class GhostSprite(arcade.Sprite):
     TEXTURES = [
         arcade.load_texture('./assets/images/ghost/ghost_0.png'),
@@ -20,14 +90,46 @@ class GhostSprite(arcade.Sprite):
     def __init__(self, ghost, scale=1.0):
         super().__init__(scale=scale)
         self.texture = self.TEXTURES[0]
-
         self.ghost = ghost
-
         self.visible = False
+
+        # Частицы
+        self.particles = arcade.SpriteList()
+        self.particle_timer = 0
+        self.particle_interval = 0.03
+        self.last_direction = 0
 
     def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
         if self.ghost.ghost_event and self.ghost.ghost_event.is_ge:
             self.ghost.ghost_event.timer -= dt
+
+        self.last_direction = self.ghost.physics.angle
+        if self.visible:
+            self.update_particles(dt)
+
+        self.particles.update(dt)
+
+    def update_particles(self, delta_time):
+        self.particle_timer += delta_time
+
+        if self.particle_timer >= self.particle_interval:
+            for _ in range(random.randint(1, 5)):
+                self.create_particle()
+            self.particle_timer = 0
+
+    def create_particle(self):
+        offset_distance = random.uniform(5, 15)
+
+        x = self.center_x - math.cos(self.last_direction) * offset_distance
+        y = self.center_y - math.sin(self.last_direction) * offset_distance
+
+        # Небольшой разброс
+        side_offset = random.uniform(-8, 8)
+        x += math.cos(self.last_direction + math.pi / 2) * side_offset
+        y += math.sin(self.last_direction + math.pi / 2) * side_offset
+
+        particle = GhostParticle(x, y, self.ghost, self.last_direction)
+        self.particles.append(particle)
 
 
 class Ghost:
@@ -144,7 +246,6 @@ class Ghost:
         if self.is_hunt or self.ghost_event.is_ge or self.stop_timer:
             return
 
-        # ЗАПУСКАЕМ ЗАРЯДКУ
         self.is_charging = True
         self.charge_timer = random.uniform(1.5, 2.0)
         self.sprite.visible = True

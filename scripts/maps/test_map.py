@@ -156,6 +156,7 @@ class TestMap(arcade.View):
         self.world_camera.use()
 
         self.scene.draw(pixelated=True)
+        self.ghost.sprite.particles.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
         self.ghost_sprite_list.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
