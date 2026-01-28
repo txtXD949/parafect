@@ -266,6 +266,17 @@ class TestMap(arcade.View):
             else:
                 item._class.in_room = False
 
+        is_hunt_active = self.ghost.is_hunt or self.ghost.is_charging
+
+        # Сбои
+        for item in self.items_list:
+            if hasattr(item, 'update_malfunction'):
+                item.update_malfunction(is_hunt_active, delta_time)
+
+        for item in self.player.inventory:
+            if hasattr(item, 'update_malfunction'):
+                item.update_malfunction(is_hunt_active, delta_time)
+
         for item in self.items_list:
             if item.id in ('emf', 'book', 'term'):
                 item.use_item(self.evidences)

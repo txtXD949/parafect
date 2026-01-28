@@ -34,6 +34,11 @@ class Item:
 
         self.sound_player = None
 
+        # Для сбоев при охоте
+        self.is_malfunctioning = False
+        self.malfunction_timer = 0
+        self.malfunction_duration = random.uniform(3.0, 8.0)
+
     @property
     def id(self):
         return self._id
@@ -121,6 +126,28 @@ class Item:
     def use_item(self, *args):
         ...
 
+    def update_malfunction(self, is_hunt_active, delta_time):
+        if is_hunt_active and not self.is_malfunctioning:
+            if random.random() < 0.1:
+                self.start_malfunction()
+
+        if self.is_malfunctioning:
+            self.malfunction_timer -= delta_time
+            if self.malfunction_timer <= 0:
+                self.stop_malfunction()
+
+    def start_malfunction(self):
+        self.is_malfunctioning = True
+        self.malfunction_timer = self.malfunction_duration
+
+    def stop_malfunction(self):
+        self.is_malfunctioning = False
+        self.malfunction_timer = 0
+
+    def is_working_correctly(self):
+        """Проверяет работает ли предмет нормально"""
+        return not self.is_malfunctioning
+
     def __str__(self):
         return self.id + ' ' + self.name
 
@@ -150,6 +177,27 @@ class EMF(Item):
 
     def use_item(self, evidences):
         now = time.time()
+
+        if self.is_malfunctioning:
+            if not self.is_turn_on:
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
+                return
+
+            if random.random() < 0.3:
+                false_level = random.choice([2, 3, 4])
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[false_level])
+
+                if false_level in [3, 4, 5] and self.SOUNDS[false_level]:
+                    if self.sound_player:
+                        self.sound_player.pause()
+                    self.sound_player = arcade.play_sound(self.SOUNDS[false_level], loop=True)
+                    self.is_working = True
+                    self.active_level_index = false_level
+                    self.active_until = now + random.uniform(3.0, 8.0)
+            else:
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
+
+            return
 
         if not self.is_turn_on:
             self.is_working = False
@@ -296,6 +344,18 @@ class Microphone(Item):
         if not sound_players:
             sound_players = []
 
+        if self.is_malfunctioning:
+            if not self.is_turn_on:
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
+                return
+
+            self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
+
+            if random.random() < 0.25:
+                self.sound_player = arcade.play_sound(random.choice(self.SOUNDS))
+
+            return
+
         if not self.is_turn_on:
             if self.sound_player:
                 self.sound_player.pause()
@@ -428,6 +488,18 @@ class Dictaphone(Item):
             self.sound_player.pause()
 
     def use_item(self, _, ghost, evidences):
+        if self.is_malfunctioning:
+            if not self.is_turn_on or not self.in_room:
+                return
+
+            if random.random() < 0.2:
+                if random.random() < 0.7:
+                    self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]))
+                else:
+                    self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
+
+            return
+
         if not self.is_turn_on or not self.in_room:
             return
 
