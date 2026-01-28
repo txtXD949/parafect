@@ -500,6 +500,12 @@ class Incense(Item):
         self.is_burning = False
         self.sound_player = None
 
+        # Замедление призрака
+        self.slow_duration = 10.0
+        self.slow_power = 0.3
+        self.protection_duration = 90.0
+        self.ghost_slowed = False
+
         # частицы дыма
         self.smoke_particles = arcade.SpriteList()
 
@@ -521,7 +527,6 @@ class Incense(Item):
         player.is_unhittable = True
 
         self.sound_player = arcade.play_sound(self.SOUNDS[0])
-
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
     def update_smoke(self, delta_time):
@@ -548,6 +553,41 @@ class Incense(Item):
 
             if smoke.life <= 0:
                 smoke.kill()
+
+    def check_ghost_collision(self, ghost_sprite):
+        if not self.is_burning or not ghost_sprite.visible:
+            return False
+
+        for smoke in self.smoke_particles:
+            if arcade.check_for_collision(smoke, ghost_sprite):
+                return True
+
+        return False
+
+    def apply_slow_to_ghost(self, ghost):
+        if self.ghost_slowed:
+            return
+
+        # Определяем длительность защиты
+        if ghost.id == 'spirit':
+            protection = 180.0  # 3 минуты для Духа
+        else:
+            protection = self.protection_duration  # 1.5 минуты для остальных
+
+        # Замедляем призрака
+        original_speed = ghost.physics.base_speed
+        ghost.physics.base_speed *= self.slow_power
+
+        # Восстанавливаем через slow_duration секунд
+        arcade.schedule(
+            lambda dt: setattr(ghost.physics, 'base_speed', original_speed),
+            self.slow_duration
+        )
+
+        # Останавливаем охоту
+        ghost.stop_timer = max(ghost.stop_timer, self.protection_duration)
+
+        self.ghost_slowed = True
 
     def update_phase(self, delta_time):
         if not self.is_burning:

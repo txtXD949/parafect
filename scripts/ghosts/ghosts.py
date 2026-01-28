@@ -191,6 +191,9 @@ class Ghost:
         self.sound_player_g = None
         self.sound_player_h = None
 
+        # Для благовония
+        self.stop_timer = 0
+
     @property
     def id(self):
         return self._id
@@ -248,6 +251,9 @@ class Ghost:
         return self._species
 
     def start_hunt(self):
+        if self.stop_timer > 0:
+            return
+
         if self.game.dif_id == 'peaceful':
             return
 
@@ -273,6 +279,9 @@ class Ghost:
         self.sprite.angle = 0
 
     def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None):
+        if self.stop_timer > 0:
+            self.stop_timer -= dt
+
         if self.is_charging:
             self.charge_timer -= dt
             if self.charge_timer <= 0:
@@ -389,6 +398,11 @@ class Ghost:
 class Spirit(Ghost):
     def __init__(self):
         super().__init__('spirit', 'Дух', evidences=['emf5', 'hot_temp', 'dict'])
+
+        self.incense_protection_duration = 180.0
+
+    def apply_incense_slow(self, slow_power, protection_duration):
+        super().apply_incense_slow(slow_power, self.incense_protection_duration)
 
 
 class Demon(Ghost):

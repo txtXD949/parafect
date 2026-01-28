@@ -53,7 +53,6 @@ class Game:
         if self.evidence_count < 3:
             self.remove_evidences()
 
-
     def remove_evidences(self):
         new_evidences = []
         if self.evidence_count in (1, 2):

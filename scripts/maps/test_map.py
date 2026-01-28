@@ -201,7 +201,7 @@ class TestMap(arcade.View):
                 self.spawn_ghost_in_room()
 
             # TODO: Получить реальное значение player_in_closet
-            player_in_closet = True
+            player_in_closet = False
 
             walls_layer = self.scene['ghost_walls']
 
@@ -214,8 +214,9 @@ class TestMap(arcade.View):
             )
 
             if self.ghost.is_hunt and not self.ghost.is_charging:
-                if arcade.check_for_collision(self.player_sprite, self.ghost.sprite):
-                    self.player_die()
+                if not player_in_closet and not self.player.is_unhittable:
+                    if arcade.check_for_collision(self.player_sprite, self.ghost.sprite):
+                        self.player_die()
 
             if self.player.sanity == 0:
                 self.game.was_zero_sanity = True
@@ -239,6 +240,10 @@ class TestMap(arcade.View):
             self.sanity_screen_use = False
 
         for item in self.items_sprite_list:
+            if item._class.id == 'incense' and item._class.is_burning:
+                if item._class.check_ghost_collision(self.ghost.sprite):
+                    item._class.apply_slow_to_ghost(self.ghost)
+
             item._class.update_item(self.player_sprite)
             if arcade.check_for_collision_with_list(item, self.scene['room']):
                 item._class.in_room = True
