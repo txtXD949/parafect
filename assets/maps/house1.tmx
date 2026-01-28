@@ -98,7 +98,7 @@
    eJztzrEJACAMAMEILuj+g9haSRxAiMIdfP8RwDZa9QEAAADwu9mzaufLi0/ctwDdVQsc
   </data>
  </layer>
- <layer id="13" name="collitions" width="36" height="39" visible="0">
+ <layer id="13" name="collitions" width="36" height="39">
   <data encoding="base64" compression="zlib">
    eJztl0EOwCAIBO1z+/8P9N4URWDWQyHhUsPuBKzGMTq8cV9cRnmI+AtPdDYVPF5fNc/b0/JQ8Fjru950f1Yzo3gi9TTPzrmm4plprvZ9Nc9OjfWNPn9O8Hi1rHNIwWN5RXqY4cl6kff71/90kkep2zxMHaWb4Znt7e4Po9s8TB2lW8HjeYuoeKx7t+fF6JI83qzkyepV82Sj+zMP71tBmQ+/wGjD
   </data>
@@ -123,9 +123,9 @@
    eJztzjEBAAAIA6AZxP41F8LDBxKQAADA3c73AAAAKHHOAB8=
   </data>
  </layer>
- <layer id="34" name="ghost_wall" width="36" height="39" visible="0">
+ <layer id="34" name="ghost_wall" width="36" height="39">
   <data encoding="base64" compression="zlib">
-   eJzt1UEOABAQQ9FxHfc/oBOQMdKS+C+xnCoWIoA/9ZZbzr0zc6o+zjlVLn00c6rcF/soOp1kqvpUz6p6s2r2zT7OP2O2305fNeddAAAAAFgblNgJaQ==
+   eJzt1jEOACAIQ1E8jfe/oasLiYSCDP8lblI7mKgZUG+v2Oo4OzKv7vNzXp1Hn9p5dd7EPspOiiz61GfcWdk7UPVmZObVXjM73lTvHG/fD13/CwAAAGCqA5WECik=
   </data>
  </layer>
  <layer id="30" name="exit" width="36" height="39">

@@ -64,9 +64,6 @@ class TestMap(arcade.View):
 
         self.spawn_ghost_in_room()
 
-        # TODO: убрать
-        self.ghost.ghost_event_chance = 0.0
-
         # Устанавливаем начальную позицию призрака
         self.ghost.physics.x = random.uniform(30, self.map_width - 30)
         self.ghost.physics.y = random.uniform(250, self.map_height - 30)
@@ -201,7 +198,6 @@ class TestMap(arcade.View):
                 self.ghost.hunt_initialized = True
                 self.spawn_ghost_in_room()
 
-            # TODO: Получить реальное значение player_in_closet
             player_in_closet = False
 
             # Данные об игроке
@@ -238,7 +234,6 @@ class TestMap(arcade.View):
                 self.game.was_zero_sanity = True
 
         self.ghost_sprite_list.update(delta_time)
-
         self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):

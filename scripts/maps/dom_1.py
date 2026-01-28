@@ -6,6 +6,8 @@ import arcade
 from arcade.gui import UIManager
 from math import atan, degrees
 from random import choice, randint
+import random
+import math
 
 SPEED = 1
 
@@ -22,12 +24,9 @@ class Dom1(arcade.View):
 
         self.is_under_roof_tent = False
 
-        # В отличие от self.is_under_roof отслеживает только дом (крыши могут быть не только дома)
-        self.is_in_house = False
-
         self.time_blinking = 0
 
-        self.evidences = self.game.ghost.evidences
+        self.evidences = self.game.evidences
         print(self.evidences, self.game.ghost)
 
         self.setup()
@@ -86,10 +85,19 @@ class Dom1(arcade.View):
         self.ghost = self.game.ghost
         self.ghost.game = self.game
         self.ghost_sprite_list = arcade.SpriteList()
+        self.ghost.sprite.scale = 0.7
         self.ghost_sprite_list.append(self.ghost.sprite)
-        self.ghost.ghost_event_chance = 0
-        # TODO: UBRAT CHORTOV CHANCE 0
-        self.ghost.room = self.scene[choice(self.rooms)]
+        choice_ = choice(self.rooms)
+        self.ghost.room = self.scene[choice_]
+        print(choice_)
+
+        self.spawn_ghost_in_room()
+
+        # Устанавливаем начальную позицию призрака
+        self.ghost.physics.x = random.uniform(30, self.map_width - 30)
+        self.ghost.physics.y = random.uniform(250, self.map_height - 30)
+        self.ghost.sprite.center_x = self.ghost.physics.x
+        self.ghost.sprite.center_y = self.ghost.physics.y
 
         # Сцены
         from ..views import ToolBoard
@@ -106,9 +114,6 @@ class Dom1(arcade.View):
         from ..views import SanityScreen
         self.sanity_screen = SanityScreen(self.player, self, self.game)
         self.sanity_screen_use = False
-
-        for room in self.rooms:
-            self.scene[room].alpha_normalized = 1
 
         # Камера
         self.world_camera = arcade.Camera2D()
@@ -194,6 +199,22 @@ class Dom1(arcade.View):
 
         self.gui_camera = arcade.Camera2D()
 
+    def spawn_ghost_in_room(self):
+        ghost_room = self.ghost.room[0]
+
+        if ghost_room:
+            padding = 20
+            x = random.uniform(ghost_room.left + padding, ghost_room.right - padding)
+            y = random.uniform(ghost_room.bottom + padding, ghost_room.top - padding)
+        else:
+            x = random.uniform(100, self.map_width - 100)
+            y = random.uniform(100, self.map_height - 100)
+
+        self.ghost.physics.x = x
+        self.ghost.physics.y = y
+        self.ghost.sprite.center_x = x
+        self.ghost.sprite.center_y = y
+
     def get_voice_level(self):
         return min(5, max(1, int(self.mic_manager.voice_volume * 5)))
 
@@ -224,14 +245,15 @@ class Dom1(arcade.View):
         self.closets_list.draw(pixelated=True)
         self.scene["furniture_back"].draw(pixelated=True)
         self.scene["generator"].draw(pixelated=True)
+        self.ghost.sprite.particles.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
+        self.ghost_sprite_list.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
         if self.player_sprite.visible:
             self.items_sprite_list.draw(pixelated=True)
         else:
             self.free_items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
-        self.ghost_sprite_list.draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
@@ -270,8 +292,52 @@ class Dom1(arcade.View):
             0.5
         )
 
-        self.ghost_sprite_list.update(delta_time)
-        self.ghost.sprite.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
+        if arcade.check_for_collision_with_list(self.player_sprite, self.scene['roof']):
+
+            self.ghost_sprite_list.update(delta_time)
+            self.ghost.do_ghost_event(self.player_sprite.center_x, self.player_sprite.center_y)
+
+            self.ghost.start_hunt(delta_time)
+            if self.ghost.is_hunt or self.ghost.is_charging:
+                self.game.was_hunt = True
+
+                if not hasattr(self.ghost, 'hunt_initialized'):
+                    self.ghost.hunt_initialized = True
+                    self.spawn_ghost_in_room()
+
+                player_in_closet = True  # not self.player_sprite.visible
+                # Данные об игроке
+                voice_level = self.get_voice_level()  # 1-5
+                is_mic_on = voice_level > 0
+
+                # Проверка электронных предметов
+                is_using_electronic = False
+                for item in self.player.inventory:
+                    if item.id in ('emf', 'mic', 'dict', 'term', 'flash-light', 'uf', 'camera'):
+                        if item.is_turn_on:
+                            is_using_electronic = True
+                            break
+
+                walls_layer = self.scene['ghost_wall']
+
+                self.ghost.update_hunt(
+                    delta_time,
+                    self.player_sprite.center_x,
+                    self.player_sprite.center_y,
+                    player_in_closet,
+                    walls_layer,
+                    voice_level=voice_level,
+                    is_mic_on=is_mic_on,
+                    is_using_electronic=is_using_electronic
+                )
+
+                if self.ghost.is_hunt and not self.ghost.is_charging:
+                    if not player_in_closet and not self.player.is_unhittable:
+                        if arcade.check_for_collision(self.player_sprite, self.ghost.sprite):
+                            self.player_die()
+
+        if self.player.sanity == 0:
+            self.game.was_zero_sanity = True
 
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene['tool_board']):
             if not self.tool_board_use:
@@ -288,11 +354,26 @@ class Dom1(arcade.View):
             self.sanity_screen_use = False
 
         for item in self.items_sprite_list:
+            if item._class.id == 'incense' and item._class.is_burning:
+                if item._class.check_ghost_collision(self.ghost.sprite):
+                    item._class.apply_slow_to_ghost(self.ghost)
+
             item._class.update_item(self.player_sprite)
             if arcade.check_for_collision_with_list(item, self.ghost.room):
                 item._class.in_room = True
             else:
                 item._class.in_room = False
+
+        is_hunt_active = self.ghost.is_hunt or self.ghost.is_charging
+
+        # Сбои
+        for item in self.items_list:
+            if hasattr(item, 'update_malfunction'):
+                item.update_malfunction(is_hunt_active, delta_time)
+
+        for item in self.player.inventory:
+            if hasattr(item, 'update_malfunction'):
+                item.update_malfunction(is_hunt_active, delta_time)
 
         for item in self.items_list:
             if item.id in ('emf', 'book', 'term'):
@@ -400,6 +481,7 @@ class Dom1(arcade.View):
                     sound = choice(
                         [self.sound_lightning_blink1, self.sound_lightning_blink2, self.sound_lightning_blink3])
                     arcade.play_sound(sound, volume=0.03)
+                    print(':)')
                 self.scene["dark"].alpha = self.threshold_max * is_blink
 
         # Падение рассудка
@@ -408,7 +490,6 @@ class Dom1(arcade.View):
         if self.sanity_timer == 0:
             self.sanity_timer = 5 * 60
             self.player.sanity = max(0, self.player.sanity - 1)
-
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
@@ -436,9 +517,6 @@ class Dom1(arcade.View):
 
         if symbol == arcade.key.J:
             self.open_paper()
-
-        if symbol == arcade.key.I:
-            self.do_light_blinking(10)
 
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
@@ -468,10 +546,6 @@ class Dom1(arcade.View):
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
 
     def set_end_flags(self):
-        self.game.was_hunt = True  # TODO: убрать
-        self.game.was_zero_sanity = True  # TODO: убрать
-        self.game.was_first_death = True  # TODO: убрать
-        self.game.was_death = False  # TODO: убрать
         selected_ghosts = self.paper.get_circled_ghosts()
         print(*map(lambda x: x.id, selected_ghosts), ' - ', self.game.ghost.id)
         if self.game.was_death:
@@ -495,6 +569,10 @@ class Dom1(arcade.View):
         from ..views import ResultsView
         res = ResultsView(self.game)
         self.window.show_view(res)
+
+    def player_die(self):
+        self.game.was_death = True
+        self.end_game()
 
     def smooth_roof(self):
         if self.is_under_roof:

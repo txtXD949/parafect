@@ -133,7 +133,7 @@ class GhostSprite(arcade.Sprite):
 
 
 class Ghost:
-    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.02, step_loud='mid',
+    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.0001, step_loud='mid',
                  ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec='', main_evidence=None):
         self._id = id
@@ -250,14 +250,22 @@ class Ghost:
     def species(self):
         return self._species
 
-    def start_hunt(self):
+    def start_hunt(self, dt):
         if self.stop_timer > 0:
             return
 
         if self.game.dif_id == 'peaceful':
             return
 
-        if self.is_hunt or self.ghost_event.is_ge or self.stop_timer:
+        if self.game.player.sanity > self.hunt_start:
+            return False
+
+        if self.is_hunt or self.is_charging or self.stop_timer or self.ghost_event.is_ge:
+            return
+
+        sanity_factor = 1.0 - (self.game.player.sanity / self.hunt_start)
+        current_probability = self.hunt_chance * (1.0 + sanity_factor * 4.0)
+        if not (random.random() < current_probability * dt):
             return
 
         self.is_charging = True
@@ -435,7 +443,7 @@ class Spirit(Ghost):
 
 class Demon(Ghost):
     def __init__(self):
-        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.05)
+        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.0005)
 
 
 class Phantom(Ghost):
@@ -448,7 +456,7 @@ class Phantom(Ghost):
 
 class Oni(Ghost):
     def __init__(self):
-        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.04,
+        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.0004,
                          ghost_event_chance=0.0001, drop_sanity=10, blink_chance=0.02,
                          spec='много гост-ивентов, есть шанс что гост ивент снимет 20% рассудка')
 
@@ -515,7 +523,7 @@ class Siren(Ghost):
 class Shade(Ghost):
     def __init__(self):
         super().__init__('shade', 'Тень', evidences=['cold_temp', 'mic', 'emf5'], hunt_start=35,
-                         interaction_chance=0.005, ghost_event_chance=0.00002, spec='спокойный призрак')
+                         interaction_chance=0.005, ghost_event_chance=0.00008, spec='спокойный призрак')
 
 
 class Butcher(Ghost):
