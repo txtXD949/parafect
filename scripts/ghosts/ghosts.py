@@ -243,6 +243,9 @@ class Ghost:
         return self._species
 
     def start_hunt(self):
+        if self.game.dif_id == 'peaceful':
+            return
+
         if self.is_hunt or self.ghost_event.is_ge or self.stop_timer:
             return
 
