@@ -196,6 +196,7 @@ class TestMap(arcade.View):
 
         if self.ghost.is_hunt or self.ghost.is_charging:
             self.game.was_hunt = True
+
             if not hasattr(self.ghost, 'hunt_initialized'):
                 self.ghost.hunt_initialized = True
                 self.spawn_ghost_in_room()
@@ -203,14 +204,29 @@ class TestMap(arcade.View):
             # TODO: Получить реальное значение player_in_closet
             player_in_closet = False
 
+            # Данные об игроке
+            voice_level = self.get_voice_level()  # 1-5
+            is_mic_on = voice_level > 0
+
+            # Проверка электронных предметов
+            is_using_electronic = False
+            for item in self.player.inventory:
+                if item.id in ('emf', 'mic', 'dict', 'term', 'flash-light', 'uf', 'camera'):
+                    if item.is_turn_on:
+                        is_using_electronic = True
+                        break
+
             walls_layer = self.scene['ghost_walls']
 
             self.ghost.update_hunt(
                 delta_time,
                 self.player_sprite.center_x,
                 self.player_sprite.center_y,
-                player_in_closet,
-                walls_layer
+                player_in_closet,  # TODO: нужно реализовать
+                walls_layer,
+                voice_level=voice_level,
+                is_mic_on=is_mic_on,
+                is_using_electronic=is_using_electronic
             )
 
             if self.ghost.is_hunt and not self.ghost.is_charging:

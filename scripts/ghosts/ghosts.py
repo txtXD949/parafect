@@ -278,7 +278,8 @@ class Ghost:
         self.blink_timer = 0
         self.sprite.angle = 0
 
-    def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None):
+    def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None, voice_level=0, is_mic_on=True,
+                    is_using_electronic=False):
         if self.stop_timer > 0:
             self.stop_timer -= dt
 
@@ -289,9 +290,6 @@ class Ghost:
                 self.is_hunt = True
                 self.hunt_timer = 25 + random.uniform(-5.5, 5.5)
                 self.hunt_state = 'seek'
-
-                self.update_blinking(dt)
-
             return
 
         if not self.is_hunt:
@@ -304,31 +302,61 @@ class Ghost:
 
         self.update_blinking(dt)
 
+        # Расстояние до игрока
+        dx = player_x - self.physics.x
+        dy = player_y - self.physics.y
+        distance = math.sqrt(dx * dx + dy * dy)
+
+        detects_player = False
         sees_player = False
 
-        if player_in_closet:
-            target_x, target_y = self.get_wander_target(dt)
+        # Прямая видимость
+        if not player_in_closet and distance < self.detection_radius:
+            detects_player = True
+            sees_player = True
+            detection_reason = "видит"
+
+        # Слух
+        elif not is_mic_on or voice_level >= 5:
+            hearing_radius = 400.0
+            if distance < hearing_radius:
+                detects_player = True
+                detection_reason = "слышит" if voice_level >= 5 else "слышит тишину"
+
+        # Электроника
+        elif is_using_electronic:
+            electronic_radius = 350.0
+            if distance < electronic_radius:
+                detects_player = True
+                detection_reason = "чувствует электронику"
+
+        # Логика преследования
+        if detects_player:
+            target_x, target_y = player_x, player_y
+            self.last_seen_player = (player_x, player_y)
+            self.wander_target = None
+
+            if not hasattr(self, 'last_detection_reason') or self.last_detection_reason != detection_reason:
+                self.last_detection_reason = detection_reason
+        elif self.last_seen_player:
+            # Идет к последней позиции
+            target_x, target_y = self.last_seen_player
+            dist_to_last = math.sqrt((target_x - self.physics.x) ** 2 + (target_y - self.physics.y) ** 2)
+
+            if dist_to_last < 50:
+                self.last_seen_player = None
+                if hasattr(self, 'last_detection_reason'):
+                    del self.last_detection_reason
         else:
-            dx = player_x - self.physics.x
-            dy = player_y - self.physics.y
-            distance = math.sqrt(dx * dx + dy * dy)
+            # Блуждает
+            target_x, target_y = self.get_wander_target(dt)
+            if hasattr(self, 'last_detection_reason'):
+                del self.last_detection_reason
 
-            if distance < self.detection_radius:
-                target_x, target_y = player_x, player_y
-                self.last_seen_player = (player_x, player_y)
-                self.wander_target = None
-                sees_player = True
-            elif self.last_seen_player:
-                target_x, target_y = self.last_seen_player
-                dist_to_last = math.sqrt((target_x - self.physics.x) ** 2 + (target_y - self.physics.y) ** 2)
-
-                if dist_to_last < 50:
-                    self.last_seen_player = None
-            else:
-                target_x, target_y = self.get_wander_target(dt)
-
+        # Ускорение
         self.physics.set_boosted(sees_player)
 
+        # Движение
         x, y, angle = self.physics.update(
             target_x,
             target_y,
@@ -444,6 +472,32 @@ class Muling(Ghost):
     def __init__(self):
         super().__init__('muling', 'Мюллинг', evidences=['hot_temp', 'mic', 'uf'], step_loud='low',
                          spec='лучше реагирует на войс-чат', main_evidence='mic')
+
+        self.hearing_radius = 500.0
+        self.electronic_radius = 400.0
+
+    def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None,
+                    voice_level=0, is_mic_on=True, is_using_electronic=False):
+        dx = player_x - self.physics.x
+        dy = player_y - self.physics.y
+        distance = math.sqrt(dx * dx + dy * dy)
+
+        if voice_level >= 3 and distance < self.hearing_radius:
+            # Типа голос на максимуме
+            return super().update_hunt(dt, player_x, player_y, player_in_closet, walls_layer,
+                                       voice_level=5, is_mic_on=True,
+                                       is_using_electronic=is_using_electronic)
+
+        # Используем увеличенные радиусы для электроники
+        if is_using_electronic and distance < self.electronic_radius:
+            return super().update_hunt(dt, player_x, player_y, player_in_closet, walls_layer,
+                                       voice_level=voice_level, is_mic_on=is_mic_on,
+                                       is_using_electronic=True)
+
+        # Обычная логика
+        return super().update_hunt(dt, player_x, player_y, player_in_closet, walls_layer,
+                                   voice_level=voice_level, is_mic_on=is_mic_on,
+                                   is_using_electronic=is_using_electronic)
 
 
 class Poltergeist(Ghost):
