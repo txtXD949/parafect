@@ -474,7 +474,7 @@ class Dom3(arcade.View):
         if gripped_item is not None and gripped_item.is_turn_on:
             if gripped_item.id == "flash-light":
                 self.vignette.texture = self.vignette_flashlight_texture
-            elif gripped_item.id == "uf":
+            elif gripped_item.id == "low_light":
                 self.vignette.texture = self.vignette_uf_texture
         else:
             self.vignette.texture = self.vignette1_texture
