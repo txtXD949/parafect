@@ -566,12 +566,19 @@ class Kv96(arcade.View):
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.sanity_screen)
 
-    def open_paper(self):
+    def open_paper(self, end=False):
+        if end:
+            self.manager.remove(self.paper)
+            self.paper.visible = False
+            self.manager.disable()
+            return
         if self.paper.visible:
             self.manager.remove(self.paper)
             self.paper.visible = False
+            self.manager.disable()
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/close_paper.wav'))
             return
+        self.manager.enable()
         self.manager.add(self.paper)
         self.paper.visible = True
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
@@ -595,7 +602,7 @@ class Kv96(arcade.View):
     def end_game(self):
         self.set_end_flags()
 
-        self.open_paper()
+        self.open_paper(end=True)
 
         from ..views import ResultsView
         res = ResultsView(self.game)
