@@ -325,7 +325,7 @@ class Dom3(arcade.View):
                     self.ghost.hunt_initialized = True
                     self.spawn_ghost_in_room()
 
-                player_in_closet = True # not self.player_sprite.visible
+                player_in_closet = not self.player_sprite.visible
                 # Данные об игроке
                 voice_level = self.get_voice_level()  # 1-5
                 is_mic_on = voice_level > 0
@@ -333,7 +333,7 @@ class Dom3(arcade.View):
                 # Проверка электронных предметов
                 is_using_electronic = False
                 for item in self.player.inventory:
-                    if item.id in ('emf', 'mic', 'dict', 'term', 'flash-light', 'uf', 'camera'):
+                    if item.id in ('emf', 'mic', 'dict', 'flash-light', 'low_light'):
                         if item.is_turn_on:
                             is_using_electronic = True
                             break

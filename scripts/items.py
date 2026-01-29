@@ -307,7 +307,7 @@ class Book(Item):
         if not self.in_room:
             return
 
-        if not self.wrote and random.random() < 0.00007:
+        if not self.wrote and random.random() < 0.00009:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
             self.sound_player = arcade.play_sound(self.SOUNDS[0])
             self.wrote = True
@@ -504,14 +504,14 @@ class Dictaphone(Item):
         if not self.is_turn_on or not self.in_room:
             return
 
-        if ghost.id == 'siren' and random.random() < 0.0001:
+        if ghost.id == 'siren' and random.random() < 0.0002:
             self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
             return
 
         if 'dict' not in evidences:
             return
 
-        if self.voice_detected and random.random() < 0.0003:
+        if self.voice_detected and random.random() < 0.0006:
             self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]))
 
 
@@ -530,11 +530,11 @@ class Thermometer(Item):
             self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
             return
 
-        if 'cold_temp' in evidences and random.random() < 0.00007:
+        if 'cold_temp' in evidences and random.random() < 0.00009:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
             return
 
-        if 'hot_temp' in evidences and random.random() < 0.00007:
+        if 'hot_temp' in evidences and random.random() < 0.00009:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[2])
             return
 
