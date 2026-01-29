@@ -68,12 +68,13 @@ class Game:
 
     def choose_map(self, map_id):
         from .maps.test_map import TestMap
-        from .maps.dom_1 import Dom1
-        from .maps.dom_3 import Dom3
+        from .maps import Dom1
+        from .maps import Dom3
+        from .maps import Kv96
         maps = {
             'dom_1': Dom1,
             'dom_3': Dom3,
-            'kv_no96': ...,
+            'kv_no96': Kv96,
             'caffe': ...,
             'school': ...,
             'bunker': ...,
