@@ -194,7 +194,7 @@ class LobbyView(arcade.View):
         game_inventory = {
             'flash_light': 1,
             'emf': 1,
-            'uf': 1,
+            'low_light': 1,
             'dict': 1,
             'term': 1,
             'mic': 1,

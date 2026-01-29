@@ -109,9 +109,9 @@ class MarketView(arcade.View):
         self.update_items_from_temp_inventory()
 
         items_to_show = [
-            ('flash_light', 'ФОНАРИК', 150),
+            ('flash_light', 'ФОНАРИК', 350),
             ('emf', 'ЭМП', 200),
-            ('uf', 'УФ-ФОНАРИК', 150),
+            ('uf', 'СЛАБЫЙ ФОНАРИК', 100),
             ('dict', 'РАДИОПРИЕМНИК', 200),
             ('term', 'ТЕРМОМЕТР', 150),
             ('mic', 'НАПРВЛЕННЫЙ МИКРОФОН', 200),

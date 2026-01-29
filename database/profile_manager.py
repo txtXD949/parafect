@@ -92,7 +92,7 @@ class ProfileManager:
             'experience': 0,
             'inventory': {
                 'emf': 0,
-                'uf': 0,
+                'low_light': 0,
                 'book': 0,
                 'mic': 0,
                 'dict': 0,
