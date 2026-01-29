@@ -44,7 +44,7 @@ class Game:
 
         self.dif = DIFFICULTY_DATABASE[dif_id]
 
-        self.sanity = int(self.dif.sanity[:-1]) - 80
+        self.sanity = int(self.dif.sanity[:-1])
         self.add_sanity = int(self.dif.add_sanity[:-1])
         self.broke_chance = int(self.dif.broke_chance[:-1]) / 100_000
         self.roomchange_chance = int(self.dif.roomchange_chance[:-1]) / 100_000
@@ -72,7 +72,7 @@ class Game:
         from .maps.dom_3 import Dom3
         maps = {
             'dom_1': Dom1,
-            'dom_3': ...,
+            'dom_3': Dom3,
             'kv_no96': ...,
             'caffe': ...,
             'school': ...,
