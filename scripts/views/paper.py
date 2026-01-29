@@ -51,6 +51,9 @@ class PaperButton(UITextureButton):
         )
 
     def on_click(self, event):
+        if not self.journal_widget.visible:
+            return
+
         if not self.is_active:
             arcade.play_sound(self.SOUNDS[1])
             return

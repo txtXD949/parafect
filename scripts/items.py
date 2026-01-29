@@ -232,8 +232,8 @@ class EMF(Item):
 
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
-        if random.random() < 0.00015:
-            if 'emf5' in evidences and random.random() < 0.2:
+        if random.random() < 0.0003:
+            if 'emf5' in evidences and random.random() < 0.3:
                 level_index = 4
             else:
                 level_index = random.choice((2, 3))

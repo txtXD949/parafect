@@ -1,9 +1,5 @@
 #  Запуск программы отсюда
 from scripts.views import Screensaver
-from scripts.views import LoginMenu
-from scripts.views import GameLoading
-from scripts.maps.test_map import TestMap
-from scripts import MicManager
 import arcade
 import os
 
@@ -14,6 +10,7 @@ class GameWindow(arcade.Window):
             title='Parafect',
             fullscreen=True
         )
+
         self.center_window()
 
     def on_close(self):
@@ -21,14 +18,13 @@ class GameWindow(arcade.Window):
         if os.path.exists(game_state_file):
             os.remove(game_state_file)
 
-
         super().on_close()
 
 
 def main():
     window = GameWindow()
 
-    screensaver = LoginMenu(None)
+    screensaver = Screensaver()
     window.show_view(screensaver)
 
     arcade.run()
