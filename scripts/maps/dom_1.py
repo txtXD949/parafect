@@ -70,6 +70,11 @@ class Dom1(arcade.View):
         self.free_items_sprite_list = arcade.SpriteList()
         self.items_list = []
 
+        # Система отпечатков
+        self.footprints_list = arcade.SpriteList()
+        self.footprint_timer = 0
+        self.footprint_interval = 1.0
+
         # Комнаты
         self.rooms = [
             "corridor",
@@ -255,6 +260,8 @@ class Dom1(arcade.View):
             self.free_items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
 
+        self.footprints_list.draw(pixelated=True)
+
         for item in self.items_list:
             if item.id == 'incense':
                 item.smoke_particles.draw(pixelated=True)
@@ -276,6 +283,10 @@ class Dom1(arcade.View):
 
         self.player_sprite.update()
         self.player_sprite.footstep_particles.update(delta_time)
+
+        # Обновляем отпечатки
+        self.footprints_list.update(delta_time)
+        self.check_footprint_spawning(delta_time)
 
         from ..ghosts import Muling, Banshee, Siren
 
@@ -342,6 +353,9 @@ class Dom1(arcade.View):
                     if not player_in_closet and not self.player.is_unhittable:
                         if arcade.check_for_collision(self.player_sprite, self.ghost.sprite):
                             self.player_die()
+
+                if self.ghost.is_hunt and not self.ghost.is_charging:
+                    self.check_closet_breaking(delta_time)
 
             if not (self.ghost.is_hunt or self.ghost.is_charging):
                 self.open_main_door()
@@ -642,12 +656,10 @@ class Dom1(arcade.View):
             self.doors_list
         )[0]
 
-        # Если дверь открыта - закрываем
         if not door.closed:
             door.change()
             arcade.play_sound(self.sound_door, volume=0.03)
 
-        # Блокируем от открывания
         door.block()
 
     def open_main_door(self):
@@ -657,3 +669,73 @@ class Dom1(arcade.View):
         )[0]
 
         door.unblock()
+
+    def check_closet_breaking(self, delta_time):
+        BASE_BREAK_CHANCE_PER_SECOND = 0.15
+
+        for closet in self.closets_list:
+            if closet.is_broken:
+                continue
+
+            if arcade.check_for_collision(self.ghost.sprite, closet):
+                chance_per_frame = BASE_BREAK_CHANCE_PER_SECOND * delta_time
+
+                if random.random() < chance_per_frame:
+                    self.break_closet(closet)
+                    return
+
+    def break_closet(self, closet):
+        closet.broke()
+
+        if closet.player_sprite:
+            closet.player_sprite.visible = True
+            closet.player_sprite.speed = 1
+            closet.player_sprite = None
+
+        arcade.play_sound(self.sound_closet, volume=0.05)
+
+    def check_footprint_spawning(self, delta_time):
+        if 'uf' not in self.evidences:
+            return
+        self.footprint_timer += delta_time
+
+        if self.footprint_timer >= self.footprint_interval:
+            self.footprint_timer = 0
+
+            if random.random() < 0.0007 * 60:
+                self.spawn_footprint_in_ghost_room()
+
+            if self.ghost.is_hunt and not self.ghost.is_charging:
+                self.spawn_footprint_near_broken_closets()
+
+    def spawn_footprint_in_ghost_room(self):
+        if not self.ghost.room or len(self.ghost.room) == 0:
+            return
+
+        room = self.ghost.room[0]
+
+        padding = 50
+        x = random.uniform(room.left + padding, room.right - padding)
+        y = random.uniform(room.bottom + padding, room.top - padding)
+
+        from .. import Footprint
+        footprint = Footprint(x, y, lifetime=random.uniform(25, 30))
+        self.footprints_list.append(footprint)
+
+    def spawn_footprint_near_broken_closets(self):
+        broken_closets = [c for c in self.closets_list if c.is_broken]
+
+        if not broken_closets:
+            return
+
+        if random.random() < 0.1:
+            closet = random.choice(broken_closets)
+
+            offset_x = random.uniform(-40, 40)
+            offset_y = random.uniform(-40, 40)
+
+            x = closet.center_x + offset_x
+            y = closet.center_y + offset_y
+
+            footprint = Footprint(x, y, lifetime=random.uniform(25, 30))
+            self.footprints_list.append(footprint)
