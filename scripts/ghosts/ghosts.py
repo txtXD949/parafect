@@ -4,7 +4,6 @@ import arcade
 
 from . import GHOST_EVENTS
 
-
 HUNT_SOUND = arcade.load_sound('./assets/sounds/effects/ghosthunt.wav')
 
 
@@ -136,7 +135,7 @@ class GhostSprite(arcade.Sprite):
 
 
 class Ghost:
-    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.001, step_loud='mid',
+    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.0001, step_loud='mid',
                  ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec='', main_evidence=None):
         self._id = id
@@ -270,9 +269,8 @@ class Ghost:
         if self.is_hunt or self.is_charging or self.stop_timer:
             return
 
-        sanity_factor = 1.0 - (self.game.player.sanity / self.hunt_start)
-        current_probability = self.hunt_chance * (1.0 + sanity_factor * 4.0)
-        if not (random.random() < current_probability * dt):
+        if random.random() > self.hunt_chance:
+            print('no', self.hunt_chance)
             return
 
         self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True)
@@ -500,7 +498,7 @@ class Spirit(Ghost):
 
 class Demon(Ghost):
     def __init__(self):
-        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.005)
+        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.0002)
 
 
 class Phantom(Ghost):
@@ -513,7 +511,7 @@ class Phantom(Ghost):
 
 class Oni(Ghost):
     def __init__(self):
-        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.004,
+        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.00016,
                          ghost_event_chance=0.0001, drop_sanity=10, blink_chance=0.02,
                          spec='много гост-ивентов, есть шанс что гост ивент снимет 20% рассудка')
 
@@ -580,7 +578,8 @@ class Siren(Ghost):
 class Shade(Ghost):
     def __init__(self):
         super().__init__('shade', 'Тень', evidences=['cold_temp', 'mic', 'emf5'], hunt_start=35,
-                         interaction_chance=0.005, ghost_event_chance=0.00008, spec='спокойный призрак')
+                         interaction_chance=0.005, ghost_event_chance=0.00008, spec='спокойный призрак',
+                         hunt_chance=0.00008)
 
 
 class Butcher(Ghost):
@@ -620,8 +619,8 @@ class Mimic(Ghost):
         self.copied_ghost = random.choice(self.GHOSTS[:-1])()
         return self.copied_ghost
 
-    def start_hunt(self):
-        super().start_hunt()
+    def start_hunt(self, dt):
+        super().start_hunt(dt)
         self.change_ghost()
 
 

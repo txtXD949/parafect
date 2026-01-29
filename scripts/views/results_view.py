@@ -49,7 +49,7 @@ class ResultsView(arcade.View):
     def __init__(self, game):
         super().__init__()
 
-        if game.ghost.sound_player_g:
+        if game.ghost.sound_player_h:
             game.ghost.sound_player_h.pause()
         if game.ghost.sound_player_g:
             game.ghost.sound_player_g.pause()

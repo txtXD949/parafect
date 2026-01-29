@@ -279,7 +279,7 @@ class UF(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('uf', 'УФ-фонарик', sprite=None, bias_scale=bias_scale)
+        super().__init__('low_light', 'УФ-фонарик', sprite=None, bias_scale=bias_scale)
 
 
 class Book(Item):
