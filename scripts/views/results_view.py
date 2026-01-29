@@ -37,10 +37,6 @@ MAP_SIZE_COEFS = {
 LEVEL_EXP = 50
 
 
-class YesNoWidget():
-    ...
-
-
 class ResultsView(arcade.View):
     SOUNDS = [
         arcade.load_sound('././assets/sounds/effects/print.wav'),
@@ -52,6 +48,12 @@ class ResultsView(arcade.View):
 
     def __init__(self, game):
         super().__init__()
+
+        if game.ghost.sound_player_g:
+            game.ghost.sound_player_h.pause()
+        if game.ghost.sound_player_g:
+            game.ghost.sound_player_g.pause()
+
         self.batch = Batch()
         self.camera = arcade.Camera2D(
             projection=arcade.rect.XYWH(0, 0, 800, 600),

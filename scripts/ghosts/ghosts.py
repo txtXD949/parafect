@@ -136,7 +136,7 @@ class GhostSprite(arcade.Sprite):
 
 
 class Ghost:
-    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.0001, step_loud='mid',
+    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.001, step_loud='mid',
                  ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec='', main_evidence=None):
         self._id = id
@@ -275,7 +275,7 @@ class Ghost:
         if not (random.random() < current_probability * dt):
             return
 
-        self.sound_player_h = arcade.play_sound(HUNT_SOUND)
+        self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True)
         self.is_charging = True
         self.charge_timer = random.uniform(1.5, 2.0)
         self.sprite.visible = True
@@ -500,7 +500,7 @@ class Spirit(Ghost):
 
 class Demon(Ghost):
     def __init__(self):
-        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.0005)
+        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.005)
 
 
 class Phantom(Ghost):
@@ -513,7 +513,7 @@ class Phantom(Ghost):
 
 class Oni(Ghost):
     def __init__(self):
-        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.0004,
+        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.004,
                          ghost_event_chance=0.0001, drop_sanity=10, blink_chance=0.02,
                          spec='много гост-ивентов, есть шанс что гост ивент снимет 20% рассудка')
 

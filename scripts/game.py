@@ -47,7 +47,7 @@ class Game:
         self.sanity = int(self.dif.sanity[:-1])
         self.add_sanity = int(self.dif.add_sanity[:-1])
         self.broke_chance = int(self.dif.broke_chance[:-1]) / 100_000
-        self.roomchange_chance = int(self.dif.roomchange_chance[:-1]) / 100_000
+        self.roomchange_chance = int(self.dif.roomchange_chance[:-1]) / 10_000_000
         self.evidence_count = int(self.dif.evidence_count)
 
         if self.evidence_count < 3:

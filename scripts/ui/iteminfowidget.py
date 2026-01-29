@@ -29,8 +29,8 @@ ITEM_DATABASE = {
         max_in_game=2,
         image_path='././assets/images/itms/emf_off.png',
     ),
-    'uf': ItemData(
-        item_id='uf',
+    'low_light': ItemData(
+        item_id='low_light',
         name='СЛАБЫЙ ФОНАРИК',
         price=100,
         description='Достаточно света.',
