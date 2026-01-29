@@ -114,7 +114,7 @@ class ResultsView(arcade.View):
         f_lose_coef = self.game.was_first_death
 
         # Компенсация
-        default_items = ('emf', 'uf', 'dict', 'term', 'mic', 'book', 'flash_light')
+        default_items = ('emf', 'low_light', 'dict', 'term', 'mic', 'book')
         comp = sum(map(lambda x: (self.inv[x] - (1 if x in default_items else 0)) * ITEM_DATABASE[x].price, self.inv))
         self.comp = int((0, comp * 0.25)[self.game.was_death and comp >= 1000])
 
@@ -128,7 +128,7 @@ class ResultsView(arcade.View):
 
     def give_away_items(self):
         if not self.game.was_death:
-            default_items = ('emf', 'uf', 'dict', 'term', 'mic', 'book', 'flash_light')
+            default_items = ('emf', 'low_light', 'dict', 'term', 'mic', 'book')
             for item_id, item_count in self.inv.items():
                 if item_count > 0:
                     self.profile.update_inventory(

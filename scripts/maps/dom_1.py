@@ -96,6 +96,8 @@ class Dom1(arcade.View):
         self.ghost.room = self.scene[choice_]
         print(choice_)
 
+        self.ghost._hunt_chance = 1
+
         self.spawn_ghost_in_room()
 
         # Устанавливаем начальную позицию призрака

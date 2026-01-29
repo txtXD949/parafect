@@ -57,7 +57,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        ufs = [UF(self.bias_scale) for _ in range(self.inv['uf'])]
+        ufs = [UF(self.bias_scale) for _ in range(self.inv['low_light'])]
         try:
             uf1 = ufs[0]
             uf1.create_board_sprite()

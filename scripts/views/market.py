@@ -338,7 +338,6 @@ class MarketView(arcade.View):
         self.manager.draw()
 
     def on_update(self, delta_time):
-        """Обновление анимации кнопок"""
         buttons = [
             self.market_buttons.button_buy_item,
             self.market_buttons.button_buy_all,
@@ -359,7 +358,6 @@ class MarketView(arcade.View):
             self.close_market()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        """Обработка движения мыши"""
         self.market_buttons.check_mouse_hover(x, y)
 
     def on_mouse_press(self, x, y, button, modifiers):
@@ -535,7 +533,7 @@ class MarketView(arcade.View):
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
             return
 
-        basic_items = {'flash_light', 'emf', 'uf', 'dict', 'term', 'mic', 'book'}
+        basic_items = {'emf', 'low_light', 'dict', 'term', 'mic', 'book'}
         if self.selected_item_id in basic_items and current_taken <= 1:
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
             return

@@ -5,6 +5,9 @@ import arcade
 from . import GHOST_EVENTS
 
 
+HUNT_SOUND = arcade.load_sound('./assets/sounds/effects/ghosthunt.wav')
+
+
 class GhostParticle(arcade.SpriteSolidColor):
     """Частицы дыма/тумана для призрака"""
 
@@ -272,6 +275,7 @@ class Ghost:
         if not (random.random() < current_probability * dt):
             return
 
+        self.sound_player_h = arcade.play_sound(HUNT_SOUND)
         self.is_charging = True
         self.charge_timer = random.uniform(1.5, 2.0)
         self.sprite.visible = True
@@ -289,6 +293,7 @@ class Ghost:
         self.is_blinking = False
         self.blink_timer = 0
         self.sprite.angle = 0
+        self.sound_player_h.pause()
 
     def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None, voice_level=0, is_mic_on=True,
                     is_using_electronic=False):

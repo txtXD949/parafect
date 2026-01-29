@@ -52,12 +52,12 @@
     "experience": 819,
     "inventory": {
       "emf": 4,
-      "uf": 2,
+      "low_light": 2,
       "book": 2,
       "mic": 2,
       "dict": 2,
       "term": 3,
-      "flash_light": 5,
+      "flash_light": 6,
       "incense": 4,
       "lighter": 4,
       "pills": 5
