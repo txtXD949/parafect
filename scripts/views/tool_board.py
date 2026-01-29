@@ -4,7 +4,7 @@ import arcade
 
 
 class ToolBoard(arcade.View):
-    def __init__(self, inv, map, player):
+    def __init__(self, inv, map, player, bias_scale=1):
         super().__init__()
 
         self.map = map
@@ -14,6 +14,8 @@ class ToolBoard(arcade.View):
 
         self.gui_camera = None
         self.world_camera = None
+
+        self.bias_scale = bias_scale
 
         self.setup()
         self.set_tools()
@@ -32,7 +34,7 @@ class ToolBoard(arcade.View):
 
         from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Dictaphone, FlashLight, UF
 
-        emfs = [EMF() for _ in range(self.inv['emf'])]
+        emfs = [EMF(self.bias_scale) for _ in range(self.inv['emf'])]
         try:
             emf1 = emfs[0]
             emf1.create_board_sprite()
@@ -55,7 +57,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        ufs = [UF() for _ in range(self.inv['uf'])]
+        ufs = [UF(self.bias_scale) for _ in range(self.inv['low_light'])]
         try:
             uf1 = ufs[0]
             uf1.create_board_sprite()
@@ -78,7 +80,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        books = [Book() for _ in range(self.inv['book'])]
+        books = [Book(self.bias_scale) for _ in range(self.inv['book'])]
         try:
             book1 = books[0]
             book1.create_board_sprite()
@@ -101,7 +103,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        mics = [Microphone() for _ in range(self.inv['mic'])]
+        mics = [Microphone(self.bias_scale) for _ in range(self.inv['mic'])]
         try:
             mic1 = mics[0]
             mic1.create_board_sprite()
@@ -124,7 +126,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        dicts = [Dictaphone() for _ in range(self.inv['dict'])]
+        dicts = [Dictaphone(self.bias_scale) for _ in range(self.inv['dict'])]
         try:
             dict1 = dicts[0]
             dict1.create_board_sprite()
@@ -147,7 +149,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        terms = [Thermometer() for _ in range(self.inv['term'])]
+        terms = [Thermometer(self.bias_scale) for _ in range(self.inv['term'])]
         try:
             term1 = terms[0]
             term1.create_board_sprite()
@@ -170,11 +172,11 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        flash_lights = [FlashLight() for _ in range(self.inv['flash_light'])]
+        flash_lights = [FlashLight(self.bias_scale) for _ in range(self.inv['flash_light'])]
         try:
             flash_light1 = flash_lights[0]
             flash_light1.create_board_sprite()
-            flash_light1.create_sprite(1.0)
+            flash_light1.create_sprite(0.7)
             self.map.flash_light1 = flash_light1
             self.map.items_sprite_list.append(flash_light1.sprite)
             flash_light1.board_sprite.center_x, flash_light1.board_sprite.center_y = 230, 320
@@ -183,7 +185,7 @@ class ToolBoard(arcade.View):
 
             flash_light2 = flash_lights[1]
             flash_light2.create_board_sprite()
-            flash_light2.create_sprite(1.0)
+            flash_light2.create_sprite(0.7)
             self.map.flash_light2 = flash_light2
             self.map.items_sprite_list.append(flash_light2.sprite)
             flash_light2.board_sprite.center_x, flash_light2.board_sprite.center_y = 230, 370
@@ -192,7 +194,7 @@ class ToolBoard(arcade.View):
 
             flash_light3 = flash_lights[2]
             flash_light3.create_board_sprite()
-            flash_light3.create_sprite(1.0)
+            flash_light3.create_sprite(0.7)
             self.map.flash_light3 = flash_light3
             self.map.items_sprite_list.append(flash_light3.sprite)
             flash_light3.board_sprite.center_x, flash_light3.board_sprite.center_y = 320, 320
@@ -201,7 +203,7 @@ class ToolBoard(arcade.View):
 
             flash_light4 = flash_lights[3]
             flash_light4.create_board_sprite()
-            flash_light4.create_sprite(1.0)
+            flash_light4.create_sprite(0.7)
             self.map.flash_light4 = flash_light4
             self.map.items_sprite_list.append(flash_light4.sprite)
             flash_light4.board_sprite.center_x, flash_light4.board_sprite.center_y = 320, 370
@@ -211,7 +213,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        incenses = [Incense() for _ in range(self.inv['incense'])]
+        incenses = [Incense(self.bias_scale) for _ in range(self.inv['incense'])]
         try:
             incense1 = incenses[0]
             incense1.create_board_sprite()
@@ -256,7 +258,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        lighters = [Lighter() for _ in range(self.inv['lighter'])]
+        lighters = [Lighter(self.bias_scale) for _ in range(self.inv['lighter'])]
         try:
             lighter1 = lighters[0]
             lighter1.create_board_sprite()
@@ -301,7 +303,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        pills = [Pills(self.map.game.add_sanity) for _ in range(self.inv['pills'])]
+        pills = [Pills(self.map.game.add_sanity, self.bias_scale) for _ in range(self.inv['pills'])]
         try:
             pills1 = pills[0]
             pills1.create_board_sprite()
@@ -361,6 +363,9 @@ class ToolBoard(arcade.View):
             self.gray_items.append(gray_sprite)
 
         self.map.items_list = self.tools
+
+        for item in self.map.items_sprite_list:
+            item.scale = self.bias_scale
 
     def on_draw(self) -> bool | None:
         self.clear()

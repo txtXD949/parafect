@@ -170,7 +170,7 @@ class LoginMenu(arcade.View):
             self.status_text = '> ПОДКЛЮЧЕНИЕ...'
             self.status_label.text = self.status_text
 
-            from .lobby import LobbyView
+            from scripts.maps.lobby import LobbyView
             lobby = LobbyView(account_manager=manager)
             self.window.show_view(lobby)
 

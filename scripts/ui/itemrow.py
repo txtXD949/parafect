@@ -51,7 +51,6 @@ class ItemRow(arcade.gui.UIWidget):
         return self._y - self.height
 
     def draw(self):
-        """Рисуем полосу"""
         if not self.text_label:
             return
 
@@ -73,5 +72,4 @@ class ItemRow(arcade.gui.UIWidget):
         self.text_label.draw()
 
     def check_mouse_press(self, x, y):
-        """Проверяем клик по полосе"""
         return self.left <= x <= self.right and self.bottom <= y <= self.top

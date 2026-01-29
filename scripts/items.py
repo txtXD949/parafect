@@ -17,7 +17,7 @@ class Item:
     ]
 
     def __init__(self, id, name, is_stationary=False, is_grabbed=False, in_inventory=False, is_turn_on=False,
-                 sprite=None, board_scale=5.0):
+                 sprite=None, board_scale=5.0, bias_scale=1):
         self._id = id
         self._name = name
         self._is_stationary = is_stationary
@@ -25,6 +25,7 @@ class Item:
         self._in_inventory = in_inventory
         self._is_turn_on = is_turn_on
         self._sprite = sprite
+        self.bias_scale = bias_scale
 
         self.board_sprite = None
         self.board_scale = board_scale
@@ -33,6 +34,11 @@ class Item:
         self.on_board = True
 
         self.sound_player = None
+
+        # Для сбоев при охоте
+        self.is_malfunctioning = False
+        self.malfunction_timer = 0
+        self.malfunction_duration = random.uniform(3.0, 8.0)
 
     @property
     def id(self):
@@ -102,13 +108,13 @@ class Item:
         if not self.is_grabbed:
             if self.in_inventory:
                 self.sprite.visible = False
-                self.sprite.center_x = player_sprite.center_x - 10
-                self.sprite.center_y = player_sprite.center_y - 10
+                self.sprite.center_x = player_sprite.center_x - 10 * self.bias_scale
+                self.sprite.center_y = player_sprite.center_y - 10 * self.bias_scale
             return
 
         self.sprite.visible = True
-        self.sprite.center_x = player_sprite.center_x - 10
-        self.sprite.center_y = player_sprite.center_y - 10
+        self.sprite.center_x = player_sprite.center_x - 10 * self.bias_scale
+        self.sprite.center_y = player_sprite.center_y - 10 * self.bias_scale
 
     def create_sprite(self, scale):
         self.sprite = arcade.Sprite(self.TEXTURES[0], scale)
@@ -120,6 +126,28 @@ class Item:
 
     def use_item(self, *args):
         ...
+
+    def update_malfunction(self, is_hunt_active, delta_time):
+        if is_hunt_active and not self.is_malfunctioning:
+            if random.random() < 0.1:
+                self.start_malfunction()
+
+        if self.is_malfunctioning:
+            self.malfunction_timer -= delta_time
+            if self.malfunction_timer <= 0:
+                self.stop_malfunction()
+
+    def start_malfunction(self):
+        self.is_malfunctioning = True
+        self.malfunction_timer = self.malfunction_duration
+
+    def stop_malfunction(self):
+        self.is_malfunctioning = False
+        self.malfunction_timer = 0
+
+    def is_working_correctly(self):
+        """Проверяет работает ли предмет нормально"""
+        return not self.is_malfunctioning
 
     def __str__(self):
         return self.id + ' ' + self.name
@@ -140,8 +168,8 @@ class EMF(Item):
         arcade.load_sound('./assets/sounds/effects/emf_5.wav'),
     ]
 
-    def __init__(self):
-        super().__init__('emf', 'ЭМП', False, sprite=None)
+    def __init__(self,  bias_scale=1):
+        super().__init__('emf', 'ЭМП', False, sprite=None, bias_scale=bias_scale)
 
         self.is_working = False
 
@@ -150,6 +178,27 @@ class EMF(Item):
 
     def use_item(self, evidences):
         now = time.time()
+
+        if self.is_malfunctioning:
+            if not self.is_turn_on:
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
+                return
+
+            if random.random() < 0.3:
+                false_level = random.choice([2, 3, 4])
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[false_level])
+
+                if false_level in [3, 4, 5] and self.SOUNDS[false_level]:
+                    if self.sound_player:
+                        self.sound_player.pause()
+                    self.sound_player = arcade.play_sound(self.SOUNDS[false_level], loop=True)
+                    self.is_working = True
+                    self.active_level_index = false_level
+                    self.active_until = now + random.uniform(3.0, 8.0)
+            else:
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
+
+            return
 
         if not self.is_turn_on:
             self.is_working = False
@@ -213,8 +262,8 @@ class FlashLight(Item):
         ...
     ]
 
-    def __init__(self):
-        super().__init__('flash-light', 'Фонарик', sprite=None, board_scale=2.8)
+    def __init__(self, bias_scale=1):
+        super().__init__('flash-light', 'Фонарик', sprite=None, board_scale=2.8, bias_scale=bias_scale)
 
 
 class UF(Item):
@@ -229,8 +278,8 @@ class UF(Item):
         ...
     ]
 
-    def __init__(self):
-        super().__init__('uf', 'УФ-фонарик', sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('uf', 'УФ-фонарик', sprite=None, bias_scale=bias_scale)
 
 
 class Book(Item):
@@ -242,8 +291,8 @@ class Book(Item):
         arcade.load_sound('././assets/sounds/effects/book_writing.wav')
     ]
 
-    def __init__(self):
-        super().__init__('book', 'Блокнот', is_stationary=True, sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('book', 'Блокнот', is_stationary=True, sprite=None, bias_scale=bias_scale)
 
         self.is_dropped = False
         self.wrote = False
@@ -289,12 +338,24 @@ class Microphone(Item):
         arcade.load_sound('./assets/sounds/effects/whisper_muling.wav')
     ]
 
-    def __init__(self):
-        super().__init__('mic', 'Направленный микрофон', sprite=None, board_scale=4.0)
+    def __init__(self, bias_scale=1):
+        super().__init__('mic', 'Направленный микрофон', sprite=None, board_scale=4.0, bias_scale=bias_scale)
 
     def use_item(self, evidence, ghost, sound_players=None):
         if not sound_players:
             sound_players = []
+
+        if self.is_malfunctioning:
+            if not self.is_turn_on:
+                self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
+                return
+
+            self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
+
+            if random.random() < 0.25:
+                self.sound_player = arcade.play_sound(random.choice(self.SOUNDS))
+
+            return
 
         if not self.is_turn_on:
             if self.sound_player:
@@ -334,8 +395,8 @@ class Dictaphone(Item):
         arcade.load_sound(f'././assets/sounds/effects/dict_say{i}.wav') for i in range(1, 18)
     ] + [arcade.load_sound('././assets/sounds/effects/dict_siren.wav')]
 
-    def __init__(self):
-        super().__init__('dict', 'Диктофон', sprite=None, board_scale=3.0)
+    def __init__(self, bias_scale=1):
+        super().__init__('dict', 'Диктофон', sprite=None, board_scale=3.0, bias_scale=bias_scale)
 
         self.pa = pa.PyAudio()
         self.stream = False
@@ -428,7 +489,16 @@ class Dictaphone(Item):
             self.sound_player.pause()
 
     def use_item(self, _, ghost, evidences):
-        if 'dict' not in evidences:
+        if self.is_malfunctioning:
+            if not self.is_turn_on or not self.in_room:
+                return
+
+            if random.random() < 0.2:
+                if random.random() < 0.7:
+                    self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]))
+                else:
+                    self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
+
             return
 
         if not self.is_turn_on or not self.in_room:
@@ -436,6 +506,9 @@ class Dictaphone(Item):
 
         if ghost.id == 'siren' and random.random() < 0.0001:
             self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
+            return
+
+        if 'dict' not in evidences:
             return
 
         if self.voice_detected and random.random() < 0.0003:
@@ -449,8 +522,8 @@ class Thermometer(Item):
         './assets/images/itms/term_hot.png'
     ]
 
-    def __init__(self):
-        super().__init__('term', 'Термометр', sprite=None, board_scale=3.1)
+    def __init__(self, bias_scale=1):
+        super().__init__('term', 'Термометр', sprite=None, board_scale=3.1, bias_scale=bias_scale)
 
     def use_item(self, evidences):
         if not self.in_room:
@@ -475,8 +548,8 @@ class Thermometer(Item):
 class PhotoCamera(Item):
     TEXTURES = []
 
-    def __init__(self):
-        super().__init__('camera', 'Фотокамера', sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('camera', 'Фотокамера', sprite=None, bias_scale=bias_scale)
 
 
 class Incense(Item):
@@ -491,14 +564,20 @@ class Incense(Item):
         arcade.load_sound('./assets/sounds/effects/smoke_incense.wav')
     ]
 
-    def __init__(self):
-        super().__init__('incense', 'Благовония', sprite=None)
+    def __init__(self, bias_scale=1):
+        super().__init__('incense', 'Благовония', sprite=None, bias_scale=bias_scale)
 
         # состояние горения
         self.phase = 0  # 0-4
         self.phase_timer = 0.0
         self.is_burning = False
         self.sound_player = None
+
+        # Замедление призрака
+        self.slow_duration = 10.0
+        self.slow_power = 0.3
+        self.protection_duration = 90.0
+        self.ghost_slowed = False
 
         # частицы дыма
         self.smoke_particles = arcade.SpriteList()
@@ -521,7 +600,6 @@ class Incense(Item):
         player.is_unhittable = True
 
         self.sound_player = arcade.play_sound(self.SOUNDS[0])
-
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
     def update_smoke(self, delta_time):
@@ -548,6 +626,41 @@ class Incense(Item):
 
             if smoke.life <= 0:
                 smoke.kill()
+
+    def check_ghost_collision(self, ghost_sprite):
+        if not self.is_burning or not ghost_sprite.visible:
+            return False
+
+        for smoke in self.smoke_particles:
+            if arcade.check_for_collision(smoke, ghost_sprite):
+                return True
+
+        return False
+
+    def apply_slow_to_ghost(self, ghost):
+        if self.ghost_slowed:
+            return
+
+        # Определяем длительность защиты
+        if ghost.id == 'spirit':
+            protection = 180.0  # 3 минуты для Духа
+        else:
+            protection = self.protection_duration  # 1.5 минуты для остальных
+
+        # Замедляем призрака
+        original_speed = ghost.physics.base_speed
+        ghost.physics.base_speed *= self.slow_power
+
+        # Восстанавливаем через slow_duration секунд
+        arcade.schedule(
+            lambda dt: setattr(ghost.physics, 'base_speed', original_speed),
+            self.slow_duration
+        )
+
+        # Останавливаем охоту
+        ghost.stop_timer = max(ghost.stop_timer, self.protection_duration)
+
+        self.ghost_slowed = True
 
     def update_phase(self, delta_time):
         if not self.is_burning:
@@ -599,8 +712,8 @@ class Lighter(Item):
         '././assets/images/itms/light.png'
     ]
 
-    def __init__(self):
-        super().__init__('lighter', 'Зажигалка', sprite=None, board_scale=1.0)
+    def __init__(self, bias_scale=1):
+        super().__init__('lighter', 'Зажигалка', sprite=None, board_scale=1.0, bias_scale=bias_scale)
 
     def use_item(self, player):
         if player.has_lighter:
@@ -623,8 +736,8 @@ class Pills(Item):
         arcade.load_sound('./assets/sounds/effects/pills.wav')
     ]
 
-    def __init__(self, reg_sanity):
-        super().__init__('pills', 'Успокоительное', sprite=None, board_scale=2.0)
+    def __init__(self, reg_sanity, bias_scale=1):
+        super().__init__('pills', 'Успокоительное', sprite=None, board_scale=2.0, bias_scale=bias_scale)
 
         self._reg_sanity = reg_sanity
 

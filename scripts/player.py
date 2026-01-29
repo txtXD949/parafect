@@ -1,5 +1,63 @@
 import arcade
 import enum
+import random
+import math
+
+
+class FootstepParticle(arcade.SpriteSolidColor):
+    """Квадратные черные частицы следов"""
+
+    def __init__(self, x, y):
+        # Размер
+        width = random.randint(1, 3)
+        height = random.randint(1, 3)
+
+        color = (20, 20, 20, 100)
+
+        super().__init__(width, height, color)
+
+        self.color = color
+
+        self.center_x = x
+        self.center_y = y
+
+        # Движение
+        self.change_x = random.uniform(-0.1, 0.1)
+        self.change_y = random.uniform(-0.05, 0.05)
+
+        # Вращение
+        self.change_angle = random.uniform(-20, 20)
+
+        # Свойства
+        self.alpha = 180
+        self.lifetime = random.uniform(0.3, 0.5)
+        self.time_alive = 0
+
+    def update(self, delta_time):
+        # Движение
+        self.center_x += self.change_x
+        self.center_y += self.change_y
+
+        # Вращение
+        self.angle += self.change_angle * delta_time
+
+        # Замедление
+        self.change_x *= 0.9
+        self.change_y *= 0.9
+        self.change_angle *= 0.95
+
+        # Исчезание и уменьшение
+        self.alpha = max(0, self.alpha - 3)
+        self.scale_x *= 0.98
+        self.scale_y *= 0.98
+
+        # Обновляем цвет с новой прозрачностью
+        self.color = (20, 20, 20, int(self.alpha))
+
+        # Время жизни
+        self.time_alive += delta_time
+        if self.time_alive >= self.lifetime or self.alpha <= 10:
+            self.remove_from_sprite_lists()
 
 
 class Direction(enum.Enum):
@@ -26,11 +84,25 @@ class PlayerSprite(arcade.Sprite):
         self.direction = Direction.DOWN
         self.is_going = False
 
+        self.speed = 1
+
+        # Частицы следов
+        self.footstep_particles = arcade.SpriteList()
+        self.last_step_particle_time = 0
+        self.step_particle_interval = 0.15
+
         self.actual_direction = Direction.DOWN
         self.last_direction = Direction.DOWN
 
     def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
         is_moving = (self.change_x != 0 or self.change_y != 0)
+
+        if is_moving:
+            move_vector_length = math.sqrt(self.change_x ** 2 + self.change_y ** 2)
+
+            if move_vector_length > 0:
+                self.change_x = (self.change_x / move_vector_length) * 1.0
+                self.change_y = (self.change_y / move_vector_length) * 1.0
 
         if is_moving:
             self.is_going = True
@@ -67,10 +139,38 @@ class PlayerSprite(arcade.Sprite):
 
         self.texture = self.textures[texture_index]
 
+        # Создаем частицы при движении
+        if self.is_going:
+            self.last_step_particle_time += dt
+            if self.last_step_particle_time >= self.step_particle_interval:
+                self.create_footstep_particle()
+                self.last_step_particle_time = 0
+
+        # Дополнительные частицы при звуке шага
+        if self.is_going and self.animation_timer in (8,):
+            self.create_footstep_particle()
+
+    def create_footstep_particle(self):
+        if not self.is_going:
+            return
+
+        # Позиция под ногами
+        x = self.center_x + random.uniform(-5, 5)
+        y = self.bottom - 1
+
+        for _ in range(random.randint(1, 2)):
+            particle = FootstepParticle(x, y)
+            self.footstep_particles.append(particle)
+
 
 class Player:
-    def __init__(self):
+    def __init__(self, name, lvl, cash, exp):
         from itertools import cycle
+
+        self.name = name
+        self.lvl = lvl
+        self.cash = cash
+        self.exp = exp
 
         self._inventory = []
         self._gripped_item = None

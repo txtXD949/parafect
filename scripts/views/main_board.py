@@ -62,7 +62,7 @@ DIFFICULTY_DATABASE = {
         broke_chance='50%',
         roomchange_chance='35%',
         evidence_count=3,
-        sanity_screen=True,
+        sanity_screen=False,
         on_level=10
     ),
     'nightmare': DifficultyInfo(
@@ -114,7 +114,10 @@ class MainBoard(arcade.View):
         self.profile = ProfileManager()
 
         # Игрок
+        self.player_name = None
         self.player_level = None
+        self.player_cash = None
+        self.player_exp = None
 
         # Временный выбор сложности
         self.game_state_path = '././database/_game.json'
@@ -130,6 +133,8 @@ class MainBoard(arcade.View):
         # Уровень
         profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
+        self.player_cash = profile['cash']
+        self.player_exp = profile['experience']
 
         # Ник
         self.player_name = profile['name']
@@ -172,6 +177,8 @@ class MainBoard(arcade.View):
         self.load_game_state()
         profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
+        self.player_cash = profile['cash']
+        self.exp = profile['experience']
 
         self.setup()
 
@@ -526,16 +533,15 @@ class MainBoard(arcade.View):
         map_id = self.game_state.get('map')
         inventory = self.game_state.get('inventory')
 
-        map_id = 'test'  # TODO: убрать
-
         if not (dif_id and map_id):
             arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click_bad(play).wav'), volume=0.5)
             return
 
         arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click(play).wav'))
 
-        from .. import Game
-        game = Game(self.player_name, map_id, dif_id, inventory, self.window)
+        from .. import Player, Game
+        self.player = Player(self.player_name, self.player_level, self.player_cash, self.player_exp)
+        game = Game(self.player, map_id, dif_id, inventory, self.profile, self.account, self.window)
 
         from . import GameLoading
         loading = GameLoading(game)

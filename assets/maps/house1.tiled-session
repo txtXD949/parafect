@@ -1,0 +1,131 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "house1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "C:/python_projects/parafect/assets/sprites/tsxs/tileset_1.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 2
+        },
+        "C:/python_projects/parafect/assets/sprites/tsxs/tileset_2.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 2
+        },
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/tileset_1.tsx": {
+            "scaleInDock": 2
+        },
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/tileset_2.tsx": {
+            "scaleInDock": 5.5
+        },
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vignette.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vingette.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "cafe.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 234.66666666666669,
+                "y": 212.66666666666669
+            }
+        },
+        "caffe.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 166.66666666666663,
+                "y": 214
+            }
+        },
+        "house1.tmx": {
+            "scale": 4,
+            "selectedLayer": 19,
+            "viewCenter": {
+                "x": 280.75,
+                "y": 210.5
+            }
+        },
+        "house2.tmx": {
+            "scale": 1,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 342,
+                "y": 235
+            }
+        },
+        "house3.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 19,
+            "viewCenter": {
+                "x": 350,
+                "y": 540
+            }
+        },
+        "hrush.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 11,
+            "viewCenter": {
+                "x": 178.1818181818182,
+                "y": 428.1818181818182
+            }
+        },
+        "lobby.tmx": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 115.33333333333334,
+                "y": 87.66666666666667
+            }
+        },
+        "test_map.tmx": {
+            "scale": 2,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 234.5,
+                "y": 215.5
+            }
+        }
+    },
+    "last.externalTilesetPath": "C:/python_projects/parafect/assets/sprites_2/tsxs",
+    "last.imagePath": "C:/python_projects/parafect/assets/sprites_2/pngs",
+    "map.height": 30,
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "3",
+    "map.renderOrder": "2",
+    "map.width": 40,
+    "openFiles": [
+        "house1.tmx",
+        "lobby.tmx",
+        "house3.tmx",
+        "house2.tmx",
+        "hrush.tmx"
+    ],
+    "project": "house1.tiled-project",
+    "recentFiles": [
+        "hrush.tmx",
+        "house2.tmx",
+        "house3.tmx",
+        "lobby.tmx",
+        "house1.tmx",
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vignette.tsx",
+        "C:/python_projects/parafect/assets/sprites_2/tsxs/vingette.tsx",
+        "C:/python_projects/parafect/assets/sprites/tsxs/tileset_2.tsx",
+        "C:/python_projects/parafect/assets/sprites/tsxs/tileset_1.tsx"
+    ],
+    "tileset.lastUsedFilter": "Файлы набора тайлов Tiled (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.tileSize": {
+        "height": 144,
+        "width": 256
+    }
+}
