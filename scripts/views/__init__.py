@@ -10,6 +10,7 @@ from .tool_board import ToolBoard
 from .paper import Paper
 from .sanity_screen import SanityScreen
 from .results_view import ResultsView
+from .settings import SettingsView, SettingsManager
 
 __all__ = [
     'Screensaver',
@@ -22,5 +23,7 @@ __all__ = [
     'GameLoading',
     'DIFFICULTY_DATABASE',
     'Paper',
-    'ResultsView'
+    'ResultsView',
+    'SettingsView',
+    'SettingsManager'
 ]
