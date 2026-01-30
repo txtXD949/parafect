@@ -1,6 +1,7 @@
 import random
-
 import arcade
+
+from ..views import SettingsManager
 
 CAMERA_LERP = 0.3
 
@@ -27,6 +28,9 @@ class LobbyView(arcade.View):
         self.account_manager = account_manager
         self.game_state_path = '././database/_game.json'
 
+        # Флаг для настроек
+        self.settings_open = False
+
         self.setup()
 
     def setup(self):
@@ -34,7 +38,8 @@ class LobbyView(arcade.View):
 
         # Фоновый звук
         self.sound_player = arcade.load_sound('././assets/sounds/background/lobby(1).mp3')
-        self.sound_player.play(loop=True, volume=0.2)
+        volume = SettingsManager.get_sound_volume()
+        self.sound_player.play(loop=True, volume=volume)
 
         # Файлик
         self.create_game_state_file()
@@ -126,22 +131,35 @@ class LobbyView(arcade.View):
         if random.random() < self.sound_ghost_chance:
             sound = random.randint(0, 1)
             if sound:
-                arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost1(lobby).wav'))
+                ghost_sound = arcade.load_sound('././assets/sounds/effects/sad_ghost1(lobby).wav')
+                volume = SettingsManager.get_ghost_sound_volume(1.0)
+                arcade.play_sound(ghost_sound, volume=volume)
             else:
-                arcade.play_sound(arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav'))
+                ghost_sound = arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav')
+                volume = SettingsManager.get_ghost_sound_volume(1.0)
+                arcade.play_sound(ghost_sound, volume=volume)
 
         # Звук шагов
         if self.player.is_going:
             if self.player.animation_timer in (8,):
+                volume = SettingsManager.get_sound_volume(1.0)
+
                 if arcade.check_for_collision_with_list(self.player, self.scene['carpet']):
                     if self.player.bottom >= 16 * 3:
-                        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav'),
-                                          volume=0.03)
+                        arcade.play_sound(
+                            arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav'),
+                            volume=volume
+                        )
                     else:
-                        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'),
-                                          volume=0.03)
+                        arcade.play_sound(
+                            arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'),
+                            volume=volume
+                        )
                 elif arcade.check_for_collision_with_list(self.player, self.scene['ground']):
-                    arcade.play_sound(arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'), volume=0.03)
+                    arcade.play_sound(
+                        arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'),
+                        volume=volume
+                    )
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player.is_going = True
@@ -158,6 +176,9 @@ class LobbyView(arcade.View):
         if symbol == arcade.key.RIGHT:
             self.player.change_x = self.player.speed
 
+        if symbol == arcade.key.F10:
+            self.open_settings()
+
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
             self.player.change_y = 0
@@ -165,7 +186,10 @@ class LobbyView(arcade.View):
             self.player.change_x = 0
 
     def open_main_board(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        sound = arcade.load_sound('././assets/sounds/effects/board1(lobby).wav')
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(sound, volume=volume)
+
         self.player.change_x = self.player.change_y = 0
 
         from ..views import MainBoard
@@ -173,18 +197,35 @@ class LobbyView(arcade.View):
         self.window.show_view(main_board)
 
     def open_map_board(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
+        sound = arcade.load_sound('././assets/sounds/effects/board2(lobby).wav')
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(sound, volume=volume)
+
         self.player.change_x = self.player.change_y = 0
 
         self.window.show_view(self.map_board)
 
     def open_market(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/market(lobby).wav'), volume=0.03)
+        sound = arcade.load_sound('././assets/sounds/effects/market(lobby).wav')
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(sound, volume=volume)
+
         self.player.change_x = self.player.change_y = 0
 
         from ..views import MarketView
         market = MarketView(lobby=self, account_manager=self.account_manager)
         self.window.show_view(market)
+
+    def open_settings(self):
+        sound = arcade.load_sound('././assets/sounds/effects/market(lobby).wav')
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(sound, volume=volume)
+
+        self.player.change_x = self.player.change_y = 0
+
+        from ..views.settings import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)
 
     def create_game_state_file(self):
         """Создает файл состояния игры при входе в лобби"""

@@ -84,12 +84,12 @@ class SettingsManager:
     @staticmethod
     def update_master_volume(value: float):
         """Обновляет общую громкость"""
-        constants.MASTER_VOLUME = max(0.0, min(1.0, value))
+        constants.MASTER_VOLUME = round(max(0.0, min(1.0, value)), 2)
 
     @staticmethod
     def update_ghost_volume(value: float):
         """Обновляет громкость призрака"""
-        constants.GHOST_VOLUME = max(0.0, min(1.0, value))
+        constants.GHOST_VOLUME = round(max(0.0, min(1.0, value)), 2)
 
     @staticmethod
     def update_language(lang: str):
