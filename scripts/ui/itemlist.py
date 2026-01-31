@@ -93,8 +93,10 @@ class ItemsList:
                 self.selected_item = item
 
                 try:
-                    click_sound = arcade.load_sound('././assets/sounds/effects/click.wav')
-                    arcade.play_sound(click_sound, volume=0.1)
+                    from ..sounds import CLICK_SOUND
+                    from ..views.settings import SettingsManager
+                    volume =  SettingsManager.get_sound_volume()
+                    arcade.play_sound(CLICK_SOUND, volume=volume)
                 except Exception:
                     pass
 
@@ -103,18 +105,15 @@ class ItemsList:
         return
 
     def on_mouse_press(self, x, y, button, modifiers):
-        """Начало drag для скролла"""
         if (self.x <= x <= self.x + self.width and
                 self.y - self.height <= y <= self.y):
             self.is_dragging = True
             self.last_mouse_y = y
 
     def on_mouse_release(self, x, y, button, modifiers):
-        """Конец drag"""
         self.is_dragging = False
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        """Обработка drag для скролла"""
         if self.is_dragging:
             self.scroll_offset -= dy
 
@@ -128,7 +127,6 @@ class ItemsList:
         return False
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        """Обработка колесика мыши"""
         if (self.x <= x <= self.x + self.width and
                 self.y - self.height <= y <= self.y):
             self.scroll_offset -= scroll_y * 20

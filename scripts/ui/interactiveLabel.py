@@ -1,6 +1,8 @@
 import arcade
 from typing import Optional
 
+from ..sounds import HOVER_SOUND, CLICK_SOUND
+
 
 class InteractiveLabel(arcade.gui.UILabel):
     def __init__(self,
@@ -43,9 +45,9 @@ class InteractiveLabel(arcade.gui.UILabel):
         self.hover_sound_played = False
 
         if not hover_sound:
-            self.hover_sound = arcade.load_sound('././assets/sounds/effects/hover.wav')
+            self.hover_sound = HOVER_SOUND
         if not click_sound:
-            self.click_sound = arcade.load_sound('././assets/sounds/effects/click.wav')
+            self.click_sound = CLICK_SOUND
 
     def check_mouse_hover(self, x: float, y: float) -> bool:
         old_hovered = self._is_hovered
@@ -54,7 +56,9 @@ class InteractiveLabel(arcade.gui.UILabel):
 
         # Звук при наведении
         if self._is_hovered and not old_hovered and self.hover_sound:
-            arcade.play_sound(self.hover_sound, volume=2)
+            from ..views.settings import SettingsManager
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(self.hover_sound, volume=volume)
 
         if self._is_active:
             self.text = f'= {self.base_text} ='
@@ -71,7 +75,9 @@ class InteractiveLabel(arcade.gui.UILabel):
     def on_click(self):
         # Звук при клике
         if self.click_sound:
-            arcade.play_sound(self.click_sound, volume=0.2)
+            from ..views.settings import SettingsManager
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(self.click_sound, volume=volume)
 
         self._is_active = not self._is_active
         self.check_mouse_hover(0, 0)

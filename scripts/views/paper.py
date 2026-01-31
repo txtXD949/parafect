@@ -3,7 +3,6 @@ from arcade.gui import UIWidget, UIBoxLayout, UIAnchorLayout, UIManager, UIEvent
 from arcade.gui.widgets import UIDummy
 from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 
-from ..ghosts import GHOSTS
 
 
 class PaperButton(UITextureButton):
@@ -186,6 +185,7 @@ class Paper(UIWidget):
             ]
         )
 
+        from ..ghosts import GHOSTS
         self.ghost_buttons = []
         self.create_section(
             content_layout,

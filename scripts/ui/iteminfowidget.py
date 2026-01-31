@@ -131,7 +131,7 @@ class ItemInfoWidget:
 
     def add_to_manager(self, manager):
         """Добавляем UI элементы в менеджер"""
-        # Заголовок - минимальный
+        # Заголовок
         title = arcade.gui.UILabel(
             text='ИНФОРМАЦИЯ',
             font_name='Courier New',
@@ -144,7 +144,7 @@ class ItemInfoWidget:
         manager.add(title)
         self.ui_elements.append(title)
 
-        # Название предмета
+        # Название
         self.name_label = arcade.gui.UILabel(
             text='',
             font_name='Courier New',

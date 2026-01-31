@@ -71,3 +71,7 @@ LAUGH_GHOST_EVENT = arcade.load_sound('././assets/sounds/effects/laugh_ghost_eve
 
 # Охота
 HUNT_SOUND = arcade.load_sound('./assets/sounds/effects/ghosthunt.wav')
+
+# ui
+HOVER_SOUND = arcade.load_sound('././assets/sounds/effects/hover.wav')
+CLICK_SOUND = arcade.load_sound('././assets/sounds/effects/click.wav')

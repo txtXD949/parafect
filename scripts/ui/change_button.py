@@ -61,7 +61,7 @@ class ChangeButton:
         value_x = self.start_x - total_approx / 2 + approx_w_left + self.spacing + approx_w_value / 2
         right_x = self.start_x + total_approx / 2 - approx_w_right / 2
 
-        # ← Стрелки статичные
+        # Стрелки
         self.arrow_left = arcade.Text(
             '<', left_x, self.start_y,
             font_size=self.font_size, color=self._text_params['color'],
