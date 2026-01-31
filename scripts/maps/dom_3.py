@@ -755,6 +755,8 @@ class Dom3(arcade.View):
             self.footprints_list.append(footprint)
 
     def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
         self.player_sprite.change_x = self.player_sprite.change_y = 0
 
         from ..views import SettingsView

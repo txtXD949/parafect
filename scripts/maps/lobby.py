@@ -2,6 +2,7 @@ import random
 import arcade
 
 from ..views import SettingsManager
+from ..sounds import *
 
 CAMERA_LERP = 0.3
 
@@ -37,7 +38,7 @@ class LobbyView(arcade.View):
         from ..player import PlayerSprite
 
         # Фоновый звук
-        self.sound_player = arcade.load_sound('././assets/sounds/background/lobby(1).mp3')
+        self.sound_player = LOBBY_BACKGROUND
         volume = SettingsManager.get_sound_volume()
         self.sound_player.play(loop=True, volume=volume)
 
@@ -131,13 +132,11 @@ class LobbyView(arcade.View):
         if random.random() < self.sound_ghost_chance:
             sound = random.randint(0, 1)
             if sound:
-                ghost_sound = arcade.load_sound('././assets/sounds/effects/sad_ghost1(lobby).wav')
-                volume = SettingsManager.get_ghost_sound_volume(1.0)
-                arcade.play_sound(ghost_sound, volume=volume)
+                volume = SettingsManager.get_ghost_sound_volume()
+                arcade.play_sound(SAD_GHOST_1, volume=volume)
             else:
-                ghost_sound = arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav')
-                volume = SettingsManager.get_ghost_sound_volume(1.0)
-                arcade.play_sound(ghost_sound, volume=volume)
+                volume = SettingsManager.get_ghost_sound_volume()
+                arcade.play_sound(SAD_GHOST_2, volume=volume)
 
         # Звук шагов
         if self.player.is_going:
@@ -146,20 +145,12 @@ class LobbyView(arcade.View):
 
                 if arcade.check_for_collision_with_list(self.player, self.scene['carpet']):
                     if self.player.bottom >= 16 * 3:
-                        arcade.play_sound(
-                            arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav'),
-                            volume=volume
-                        )
+                        arcade.play_sound(CARPET_FOOTSTEPS, volume=volume)
                     else:
-                        arcade.play_sound(
-                            arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'),
-                            volume=volume
-                        )
+                        arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
+
                 elif arcade.check_for_collision_with_list(self.player, self.scene['ground']):
-                    arcade.play_sound(
-                        arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav'),
-                        volume=volume
-                    )
+                    arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player.is_going = True
@@ -186,9 +177,8 @@ class LobbyView(arcade.View):
             self.player.change_x = 0
 
     def open_main_board(self):
-        sound = arcade.load_sound('././assets/sounds/effects/board1(lobby).wav')
         volume = SettingsManager.get_sound_volume()
-        arcade.play_sound(sound, volume=volume)
+        arcade.play_sound(BOARD_1, volume=volume)
 
         self.player.change_x = self.player.change_y = 0
 
@@ -197,18 +187,16 @@ class LobbyView(arcade.View):
         self.window.show_view(main_board)
 
     def open_map_board(self):
-        sound = arcade.load_sound('././assets/sounds/effects/board2(lobby).wav')
         volume = SettingsManager.get_sound_volume()
-        arcade.play_sound(sound, volume=volume)
+        arcade.play_sound(BOARD_2, volume=volume)
 
         self.player.change_x = self.player.change_y = 0
 
         self.window.show_view(self.map_board)
 
     def open_market(self):
-        sound = arcade.load_sound('././assets/sounds/effects/market(lobby).wav')
         volume = SettingsManager.get_sound_volume()
-        arcade.play_sound(sound, volume=volume)
+        arcade.play_sound(MARKET, volume=volume)
 
         self.player.change_x = self.player.change_y = 0
 
@@ -217,9 +205,8 @@ class LobbyView(arcade.View):
         self.window.show_view(market)
 
     def open_settings(self):
-        sound = arcade.load_sound('././assets/sounds/effects/market(lobby).wav')
         volume = SettingsManager.get_sound_volume()
-        arcade.play_sound(sound, volume=volume)
+        arcade.play_sound(SETTINGS, volume=volume)
 
         self.player.change_x = self.player.change_y = 0
 
