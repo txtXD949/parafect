@@ -1,6 +1,8 @@
 from arcade.future.light import LightLayer, Light
 
 from .. import Game
+from ..views import SettingsManager
+from ..sounds import *
 
 import arcade
 from arcade.gui import UIManager
@@ -176,18 +178,6 @@ class Kv96(arcade.View):
         clone_for_hitbox = arcade.Sprite(generator.texture, scale=0.8)
         clone_for_hitbox.position = generator.position
         self.scene["collitions"].append(clone_for_hitbox)
-
-        # Звуки
-        self.sound_grass_footsteps = arcade.load_sound('././assets/sounds/effects/grass_footsteps.wav')
-        self.sound_carpet_footsteps = arcade.load_sound('././assets/sounds/effects/ground_footsteps.wav')
-        self.sound_floor_footsteps = arcade.load_sound('././assets/sounds/effects/carpet_footsteps.wav')
-        self.sound_door = arcade.load_sound('././assets/sounds/effects/door.wav')
-        self.sound_closet = arcade.load_sound('././assets/sounds/effects/closet.wav')
-        self.sound_generator = arcade.load_sound('././assets/sounds/effects/generator.wav')
-        self.sound_lightning_noise = arcade.load_sound('././assets/sounds/effects/lightning_noise.wav')
-        self.sound_lightning_blink1 = arcade.load_sound('././assets/sounds/effects/lightning_blink1.wav')
-        self.sound_lightning_blink2 = arcade.load_sound('././assets/sounds/effects/lightning_blink2.wav')
-        self.sound_lightning_blink3 = arcade.load_sound('././assets/sounds/effects/lightning_blink3.wav')
 
         # Виньетка
         self.scene["dark"].alpha_normalized = 0
@@ -432,12 +422,14 @@ class Kv96(arcade.View):
         # Двери
         if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
             doors[0].change()
-            arcade.play_sound(self.sound_door, volume=0.03)
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(DOOR_OPEN, volume=volume)
 
         # Шкафы
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
             closets[0].interact(self.player_sprite, self.items_list)
-            arcade.play_sound(self.sound_closet, volume=0.03)
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(CLOSET, volume=volume)
 
         # Генератор
         if self.pressed_E and (arcade.check_for_collision_with_list(self.player_sprite, self.scene["generator"])):
@@ -446,7 +438,8 @@ class Kv96(arcade.View):
                 self.threshold = self.threshold_min
             else:
                 self.threshold = self.threshold_max
-            arcade.play_sound(self.sound_generator, volume=0.03)
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(GENERATOR, volume=volume)
 
         # Выход из игры
         if arcade.check_for_collision_with_list(self.player_sprite, self.scene["exit"]):
@@ -489,19 +482,24 @@ class Kv96(arcade.View):
             if self.player_sprite.animation_timer in (8,):
                 if arcade.check_for_collision_with_list(self.player_sprite, self.scene['carpet']):
                     if self.player_sprite.bottom >= 16 * 3:
-                        arcade.play_sound(self.sound_carpet_footsteps,
-                                          volume=0.03)
+                        volume = SettingsManager.get_sound_volume()
+                        arcade.play_sound(CARPET_FOOTSTEPS, volume=volume)
                     else:
-                        arcade.play_sound(self.sound_floor_footsteps,
-                                          volume=0.03)
+                        volume = SettingsManager.get_sound_volume()
+                        arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
+
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['floor']):
-                    arcade.play_sound(self.sound_floor_footsteps, volume=0.03)
+                    volume = SettingsManager.get_sound_volume()
+                    arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
+
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['ground']):
-                    arcade.play_sound(self.sound_grass_footsteps, volume=0.03)
+                    volume = SettingsManager.get_sound_volume()
+                    arcade.play_sound(GRASS_FOOTSTEPS, volume=volume)
 
         # Шум света
         if self.is_under_roof and self.is_lightning:
-            arcade.play_sound(self.sound_lightning_noise, volume=0.03)
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(LIGHTNING_NOISE, volume=volume)
 
         # Моргание света
         if self.time_blinking > 0 and self.is_lightning:
@@ -510,9 +508,9 @@ class Kv96(arcade.View):
                 is_blink = randint(0, 1)
                 if is_blink:
                     sound = choice(
-                        [self.sound_lightning_blink1, self.sound_lightning_blink2, self.sound_lightning_blink3])
-                    arcade.play_sound(sound, volume=0.03)
-                    print(':)')
+                        [LIGHTNING_BLINK_1, LIGHTNING_BLINK_2, LIGHTNING_BLINK_3])
+                    volume = SettingsManager.get_sound_volume()
+                    arcade.play_sound(sound, volume=volume)
                 self.scene["dark"].alpha = self.threshold_max * is_blink
 
         # Падение рассудка
@@ -549,6 +547,9 @@ class Kv96(arcade.View):
         if symbol == arcade.key.J:
             self.open_paper()
 
+        if symbol == arcade.key.F10:
+            self.open_settings()
+
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
         if symbol in (arcade.key.UP, arcade.key.DOWN):
             self.player_sprite.change_y = 0
@@ -576,12 +577,14 @@ class Kv96(arcade.View):
             self.manager.remove(self.paper)
             self.paper.visible = False
             self.manager.disable()
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/close_paper.wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(CLOSE_PAPER, volume=volume)
             return
         self.manager.enable()
         self.manager.add(self.paper)
         self.paper.visible = True
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/open_paper.wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(OPEN_PAPER, volume=volume)
 
     def set_end_flags(self):
         selected_ghosts = self.paper.get_circled_ghosts()
@@ -672,7 +675,8 @@ class Kv96(arcade.View):
 
         if not door.closed:
             door.change()
-            arcade.play_sound(self.sound_door, volume=0.03)
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(DOOR_OPEN, volume=volume)
 
         door.block()
 
@@ -706,7 +710,8 @@ class Kv96(arcade.View):
             closet.player_sprite.speed = 1
             closet.player_sprite = None
 
-        arcade.play_sound(self.sound_closet, volume=0.05)
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(CLOSET, volume=volume)
 
     def check_footprint_spawning(self, delta_time):
         if 'uf' not in self.evidences:
@@ -753,3 +758,10 @@ class Kv96(arcade.View):
 
             footprint = Footprint(x, y, lifetime=random.uniform(25, 30))
             self.footprints_list.append(footprint)
+
+    def open_settings(self):
+        self.player_sprite.change_x = self.player_sprite.change_y = 0
+
+        from ..views import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)
