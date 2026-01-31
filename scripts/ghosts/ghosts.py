@@ -4,7 +4,8 @@ import arcade
 
 from . import GHOST_EVENTS
 
-HUNT_SOUND = arcade.load_sound('./assets/sounds/effects/ghosthunt.wav')
+from ..sounds import *
+from ..views import SettingsManager
 
 
 class GhostParticle(arcade.SpriteSolidColor):
@@ -273,7 +274,8 @@ class Ghost:
             print('no', self.hunt_chance)
             return
 
-        self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True)
+        volume = SettingsManager.get_ghost_sound_volume()
+        self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True, volume=volume)
         self.is_charging = True
         self.charge_timer = random.uniform(1.5, 2.0)
         self.sprite.visible = True

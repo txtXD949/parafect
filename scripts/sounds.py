@@ -68,3 +68,6 @@ WHISPER_GHOST_EVENT_2 = arcade.load_sound('././assets/sounds/effects/whisper_gho
 
 # Laugh ghost event
 LAUGH_GHOST_EVENT = arcade.load_sound('././assets/sounds/effects/laugh_ghost_event.wav')
+
+# Охота
+HUNT_SOUND = arcade.load_sound('./assets/sounds/effects/ghosthunt.wav')
