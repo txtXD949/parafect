@@ -1,6 +1,8 @@
 import random
 import arcade
 
+from ..sounds import *
+
 
 class GhostEvent:
     def __init__(self, timer, sound, ghost):
@@ -18,9 +20,14 @@ class GhostEvent:
             c = random.randint(*color)
             self.ghost.sprite.color = (c, c, c)
             if not self.is_played:
-                self.ghost.sound_player_g = arcade.play_sound(self.sound)
-                self.ghost.sound_player_h = arcade.play_sound(
-                    arcade.load_sound('././assets/sounds/effects/heartbeat.wav'), loop=True)
+
+                from ..views import SettingsManager
+                volume_ghost = SettingsManager.get_ghost_sound_volume()
+                volume_heartbeat = SettingsManager.get_sound_volume()
+
+                self.ghost.sound_player_g = arcade.play_sound(self.sound, volume=volume_ghost)
+                self.ghost.sound_player_h = arcade.play_sound(HEARTBEAT, volume=volume_heartbeat, loop=True)
+
                 self.is_played = True
             if self.timer <= 0:
                 self.ghost.game.player.sanity = max(0, self.ghost.game.player.sanity - self.ghost.drop_sanity)

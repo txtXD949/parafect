@@ -36,3 +36,35 @@ MARKET = arcade.load_sound('././assets/sounds/effects/market(lobby).wav')
 
 # Настройки
 SETTINGS = arcade.load_sound('././assets/sounds/effects/settings.wav')
+
+# Гост-ивенты:
+HEARTBEAT = arcade.load_sound('././assets/sounds/effects/heartbeat.wav')
+
+# Sudden ghost events
+SUDDEN_GHOST_EVENT_1 = arcade.load_sound('././assets/sounds/effects/sudden_ghost_event1.wav')
+SUDDEN_GHOST_EVENT_2 = arcade.load_sound('././assets/sounds/effects/sudden_ghost_event2.wav')
+SUDDEN_GHOST_EVENT_3 = arcade.load_sound('././assets/sounds/effects/sudden_ghost_event3.wav')
+
+# Breath ghost events
+BREATH_GHOST_EVENT_1 = arcade.load_sound('././assets/sounds/effects/breath_ghost_event1.wav')
+BREATH_GHOST_EVENT_2 = arcade.load_sound('././assets/sounds/effects/breath_ghost_event2.wav')
+
+# Wheezing ghost events
+WHEEZING_GHOST_EVENT_1 = arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event1.wav')
+WHEEZING_GHOST_EVENT_2 = arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event2.wav')
+WHEEZING_GHOST_EVENT_3 = arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event3.wav')
+WHEEZING_GHOST_EVENT_4 = arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event4.wav')
+
+# Wheezing shadow ghost events
+WHEEZING_SHADOW_EVENT_1 = arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event1.wav')
+WHEEZING_SHADOW_EVENT_2 = arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event2.wav')
+WHEEZING_SHADOW_EVENT_3 = arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event3.wav')
+WHEEZING_SHADOW_EVENT_4 = arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event4.wav')
+WHEEZING_SHADOW_EVENT_5 = arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event5.wav')
+
+# Whisper ghost events
+WHISPER_GHOST_EVENT_1 = arcade.load_sound('././assets/sounds/effects/whisper_ghost_event1.wav')
+WHISPER_GHOST_EVENT_2 = arcade.load_sound('././assets/sounds/effects/whisper_ghost_event2.wav')
+
+# Laugh ghost event
+LAUGH_GHOST_EVENT = arcade.load_sound('././assets/sounds/effects/laugh_ghost_event.wav')
