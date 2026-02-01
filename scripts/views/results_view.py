@@ -169,7 +169,8 @@ class ResultsView(arcade.View):
         lst = list('aGVscCE=')
         random.shuffle(lst)
         self.title = arcade.Text(
-            text=(('Вы мертвы', 'Death')[c_lang], ''.join(lst), ('Поздравляем', 'Congratulate')[c_lang])[0 if self.game.was_death else self.game.is_win + 1],
+            text=(('Вы мертвы', 'Death')[c_lang], ''.join(lst), ('Поздравляем', 'Congratulate')[c_lang])[
+                0 if self.game.was_death else self.game.is_win + 1],
             x=150 + 150, y=530 + self.state_cord,
             color=arcade.color.BLACK,
             font_size=20,
@@ -280,7 +281,8 @@ class ResultsView(arcade.View):
         # Подчеркивания
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
-        arcade.draw_line(160, 440 + self.state_cord, (255, 220)[c_lang], 440 + self.state_cord, color=arcade.color.BLACK, line_width=2)
+        arcade.draw_line(160, 440 + self.state_cord, (255, 220)[c_lang], 440 + self.state_cord,
+                         color=arcade.color.BLACK, line_width=2)
 
         # Кнопка
         color = (50, 50, 50)

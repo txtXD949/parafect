@@ -264,7 +264,8 @@ class Ghost:
         if self.is_hunt or self.is_charging or self.stop_timer:
             return
 
-        if random.random() > self.hunt_chance + (((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
+        if random.random() > self.hunt_chance + (
+        ((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
             return
 
         volume = SettingsManager.get_ghost_sound_volume(1.5)
@@ -490,7 +491,8 @@ class Spirit(Ghost):
 
 class Demon(Ghost):
     def __init__(self):
-        super().__init__('demon', ('Демон', 'Demon'), evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.0004)
+        super().__init__('demon', ('Демон', 'Demon'), evidences=['cold_temp', 'mic', 'book'], hunt_start=75,
+                         hunt_chance=0.0004)
 
 
 class Phantom(Ghost):
@@ -519,7 +521,8 @@ class Banshee(Ghost):
 
 class Reverent(Ghost):
     def __init__(self):
-        super().__init__('reverent', ('Ревенант', 'Reverent'), evidences=['cold_temp', 'dict', 'book'], speed=0.05, boost=8.0,
+        super().__init__('reverent', ('Ревенант', 'Reverent'), evidences=['cold_temp', 'dict', 'book'], speed=0.05,
+                         boost=8.0,
                          spec='при виде игрока очень быстро ускоряется')
 
 
@@ -557,7 +560,8 @@ class Muling(Ghost):
 
 class Poltergeist(Ghost):
     def __init__(self):
-        super().__init__('poltergeist', ('Полтергейст', 'Poltergeist'), evidences=['emf5', 'mic', 'hot_temp'], interaction_chance=0.05,
+        super().__init__('poltergeist', ('Полтергейст', 'Poltergeist'), evidences=['emf5', 'mic', 'hot_temp'],
+                         interaction_chance=0.05,
                          spec='сильнее бросается предметами')
 
 
@@ -576,7 +580,8 @@ class Shade(Ghost):
 
 class Butcher(Ghost):
     def __init__(self):
-        super().__init__('butcher', ('Мясник', 'Butcher'), evidences=['hot_temp', 'dict', 'book'], step_loud='high', speed=0.1,
+        super().__init__('butcher', ('Мясник', 'Butcher'), evidences=['hot_temp', 'dict', 'book'], step_loud='high',
+                         speed=0.1,
                          boost=0.1, spec='хуже реагирует на войс-чат. Противоположность Мюллингу')
 
 
@@ -599,7 +604,8 @@ class Mimic(Ghost):
 
         self.change_ghost()
 
-        super().__init__('mimic', ('Мимик', 'Mimic'), spec='копирует другого призрака', evidences=['uf', 'cold_temp', 'mic'],
+        super().__init__('mimic', ('Мимик', 'Mimic'), spec='копирует другого призрака',
+                         evidences=['uf', 'cold_temp', 'mic'],
                          hunt_start=self.copied_ghost.hunt_start, hunt_chance=self.copied_ghost.hunt_chance,
                          step_loud=self.copied_ghost.step_loud, drop_sanity=self.copied_ghost.drop_sanity,
                          speed=self.copied_ghost.speed, interaction_chance=self.copied_ghost.interaction_chance,

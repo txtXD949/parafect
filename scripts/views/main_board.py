@@ -556,7 +556,8 @@ class MainBoard(arcade.View):
             self.start_game()
 
         if self.btn.on_mouse_press(world_pos.x, world_pos.y, button, modifiers):
-            self.set_difficulty_texts(([DIFFICULTY_DATABASE[i].id for i in DIFFICULTY_DATABASE.keys() if self.btn.value in DIFFICULTY_DATABASE[i].name] + [''])[0])
+            self.set_difficulty_texts(([DIFFICULTY_DATABASE[i].id for i in DIFFICULTY_DATABASE.keys() if
+                                        self.btn.value in DIFFICULTY_DATABASE[i].name] + [''])[0])
             self.set_info_game_texts()
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:

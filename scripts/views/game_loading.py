@@ -77,4 +77,3 @@ class GameLoading(arcade.View):
         """Запуск игры"""
         self.closed = True
         self.game.open_map()
-

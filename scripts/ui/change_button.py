@@ -50,7 +50,6 @@ class ChangeButton:
         self._index = self.values.index(new_value)
         self._create_elements()
 
-
     def _create_elements(self) -> None:
         approx_w_left = self.font_size * 0.8
         approx_w_value = self.font_size * 4

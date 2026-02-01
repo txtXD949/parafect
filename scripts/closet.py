@@ -1,5 +1,6 @@
 import arcade
 
+
 class ClosetSprite(arcade.Sprite):
     def __init__(self, position, texture):
         super().__init__()
@@ -43,4 +44,3 @@ class ClosetSprite(arcade.Sprite):
 
         self.is_broken = True
         self.texture = self.texture_broken
-

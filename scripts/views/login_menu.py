@@ -150,7 +150,6 @@ class LoginMenu(arcade.View):
         self.connect_btn.base_text = ('ПОДКЛЮЧИТЬСЯ', 'CONNECT')[c_lang]
         self.back_btn.base_text = ('НАЗАД', 'BACK')[c_lang]
 
-
     def on_login_enter(self, text):
         """При нажатии на Enter в логине"""
         if text and self.password_input.text == '':

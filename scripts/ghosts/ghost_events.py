@@ -20,7 +20,6 @@ class GhostEvent:
             c = random.randint(*color)
             self.ghost.sprite.color = (c, c, c)
             if not self.is_played:
-
                 from ..views import SettingsManager
                 volume_ghost = SettingsManager.get_ghost_sound_volume()
                 volume_heartbeat = SettingsManager.get_sound_volume()

@@ -342,7 +342,8 @@ class Microphone(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('mic', ('Направленный микрофон', 'Directional microphone'), sprite=None, board_scale=4.0, bias_scale=bias_scale)
+        super().__init__('mic', ('Направленный микрофон', 'Directional microphone'), sprite=None, board_scale=4.0,
+                         bias_scale=bias_scale)
 
     def use_item(self, evidence, ghost, sound_players=None):
         if not sound_players:

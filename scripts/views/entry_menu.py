@@ -142,7 +142,6 @@ class EntryMenu(arcade.View):
         self.button_settings.base_text = ('НАСТРОЙКИ', 'SETTINGS')[c_lang]
         self.button_exit.base_text = ('ВЫХОД', 'EXIT')[c_lang]
 
-
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -160,7 +159,6 @@ class EntryMenu(arcade.View):
 
         # Обновление текстов
         self.update_texts()
-
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.button_create.check_mouse_hover(x, y)
@@ -272,6 +270,3 @@ class EntryMenu(arcade.View):
         self.button_create.reset_state()
         self.button_login.reset_state()
         self.active_button = None
-
-
-

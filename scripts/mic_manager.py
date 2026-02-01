@@ -1,6 +1,7 @@
 import pyaudio
 import numpy as np
 
+
 class MicManager:
     def __init__(self):
         self.pa = pyaudio.PyAudio()

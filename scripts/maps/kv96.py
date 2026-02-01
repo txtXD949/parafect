@@ -249,6 +249,7 @@ class Kv96(arcade.View):
         self.scene["generator"].draw(pixelated=True)
         self.ghost.sprite.particles.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
+        self.footprints_list.draw(pixelated=True)
         self.ghost_sprite_list.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
         if self.player_sprite.visible:
@@ -256,8 +257,6 @@ class Kv96(arcade.View):
         else:
             self.free_items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
-
-        self.footprints_list.draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
@@ -422,13 +421,14 @@ class Kv96(arcade.View):
         # Двери
         if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
             doors[0].change()
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.2)
             arcade.play_sound(DOOR_OPEN, volume=volume)
 
         # Шкафы
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
             closets[0].interact(self.player_sprite, self.items_list)
-            volume = SettingsManager.get_sound_volume()
+            self.player_sprite.change_x = self.player_sprite.change_y = 0
+            volume = SettingsManager.get_sound_volume(0.2)
             arcade.play_sound(CLOSET, volume=volume)
 
         # Генератор
@@ -438,7 +438,7 @@ class Kv96(arcade.View):
                 self.threshold = self.threshold_min
             else:
                 self.threshold = self.threshold_max
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.3)
             arcade.play_sound(GENERATOR, volume=volume)
 
         # Выход из игры
@@ -482,18 +482,18 @@ class Kv96(arcade.View):
             if self.player_sprite.animation_timer in (8,):
                 if arcade.check_for_collision_with_list(self.player_sprite, self.scene['carpet']):
                     if self.player_sprite.bottom >= 16 * 3:
-                        volume = SettingsManager.get_sound_volume()
+                        volume = SettingsManager.get_sound_volume(0.16)
                         arcade.play_sound(CARPET_FOOTSTEPS, volume=volume)
                     else:
-                        volume = SettingsManager.get_sound_volume()
+                        volume = SettingsManager.get_sound_volume(0.16)
                         arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
 
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['floor']):
-                    volume = SettingsManager.get_sound_volume()
+                    volume = SettingsManager.get_sound_volume(0.16)
                     arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
 
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['ground']):
-                    volume = SettingsManager.get_sound_volume()
+                    volume = SettingsManager.get_sound_volume(0.16)
                     arcade.play_sound(GRASS_FOOTSTEPS, volume=volume)
 
         # Шум света
@@ -519,6 +519,22 @@ class Kv96(arcade.View):
         if self.sanity_timer == 0:
             self.sanity_timer = 5 * 60
             self.player.sanity = max(0, self.player.sanity - 1)
+
+        # Выкл щиток
+        if random.random() < 0.0001:
+            self.is_lightning = False
+
+        # Обновление громкости охоты и гост ивента
+        if self.ghost.sound_player_h:
+            volume = SettingsManager.get_sound_volume()
+            self.ghost.sound_player_h.volume = volume
+        if self.ghost.sound_player_g:
+            volume = SettingsManager.get_sound_volume()
+            self.ghost.sound_player_h.volume = volume
+
+    def on_show_view(self) -> None:
+        if self.paper:
+            self.paper.update_all_buttons_text()
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
@@ -762,6 +778,7 @@ class Kv96(arcade.View):
     def open_settings(self):
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(SETTINGS, volume=volume)
+
         self.player_sprite.change_x = self.player_sprite.change_y = 0
 
         from ..views import SettingsView

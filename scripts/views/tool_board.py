@@ -34,7 +34,8 @@ class ToolBoard(arcade.View):
         self.tools_sprites = arcade.SpriteList()
         self.tools = []
 
-        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Radio, FlashLight, LowFlashlight
+        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Radio, FlashLight, \
+            LowFlashlight
 
         emfs = [EMF(self.bias_scale) for _ in range(self.inv['emf'])]
         try:

@@ -529,7 +529,6 @@ class Dom1(arcade.View):
         if self.paper:
             self.paper.update_all_buttons_text()
 
-
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
 

@@ -178,16 +178,16 @@ class Paper(UIWidget):
         self.height = height
 
         self.evidence_button_texts = [
-                'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
-                'Отпечатки', 'Высокая температура',
-                'Низкая температура', 'Записи в блокноте'
-            ]
+            'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
+            'Отпечатки', 'Высокая температура',
+            'Низкая температура', 'Записи в блокноте'
+        ]
         self.ghost_button_texts = [
-                'Дух', 'Демон', 'Фантом', 'Они',
-                'Банши', 'Ревенант', 'Мюлинг',
-                'Полтергейст', 'Мимик', 'Мираж',
-                'Тень', 'Мясник', 'Сирена'
-            ]
+            'Дух', 'Демон', 'Фантом', 'Они',
+            'Банши', 'Ревенант', 'Мюлинг',
+            'Полтергейст', 'Мимик', 'Мираж',
+            'Тень', 'Мясник', 'Сирена'
+        ]
 
         self.stretch_x = stretch_x
         self.stretch_y = stretch_y
@@ -290,18 +290,14 @@ class Paper(UIWidget):
         return button
 
     def update_all_buttons_text(self):
-        """Быстро обновляет все кнопки из заранее заданных списков"""
         current_lang = SettingsManager.get_current_language()
 
-        # 1. Обновляем кнопки улик
         for i, button in enumerate(self.evidence_buttons):
             if i < len(EVIDENCE_TEXTS[current_lang]):
                 button.text = EVIDENCE_TEXTS[current_lang][i]
                 button.trigger_render()
 
-        # 2. Обновляем кнопки призраков
         for i, button in enumerate(self.ghost_buttons):
             if i < len(GHOST_TEXTS[current_lang]):
                 button.text = GHOST_TEXTS[current_lang][i]
                 button.trigger_render()
-
