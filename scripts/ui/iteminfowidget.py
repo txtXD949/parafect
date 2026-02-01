@@ -23,93 +23,120 @@ class ItemData:
 ITEM_DATABASE = {
     'emf': ItemData(
         item_id='emf',
-        name='ЭМП',
+        name=('ЭМП', 'EMF'),
         price=200,
-        description='Замеряет аномалии электрического поля.',
+        description=(
+            'Замеряет аномалии электрического поля.',
+            'Measures anomalies in the electric field.'
+        ),
         max_in_game=2,
         image_path='././assets/images/itms/emf_off.png',
     ),
     'low_light': ItemData(
         item_id='low_light',
-        name='СЛАБЫЙ ФОНАРИК',
+        name=('СЛАБЫЙ ФОНАРИК', 'LOW FLASHLIGHT'),
         price=100,
-        description='Достаточно света.',
+        description=(
+            'Достаточно света.',
+            'There\'s enough light.'
+        ),
         max_in_game=2,
         image_path='././assets/images/itms/uf.png'
     ),
     'book': ItemData(
         item_id='book',
-        name='БЛОКНОТ',
+        name=('БЛОКНОТ', 'BOOK'),
         price=200,
-        description='Стационарный. В нем без причины могут появиться записи.',
+        description=(
+            'Стационарный. В нем без причины могут появиться записи.',
+            'It\'s a stationary device that can generate entries for no reason.'
+        ),
         max_in_game=2,
         is_stationary=True,
         image_path='././assets/images/itms/book1.png'
     ),
     'mic': ItemData(
         item_id='mic',
-        name='НАПР-ЫЙ МИКРОФОН',
+        name=('НАПР-ЫЙ МИКРОФОН', 'DIRECTIONAL MIC'),
         price=200,
-        description='Дает услышать странное шипение.',
+        description=(
+            'Дает услышать странное шипение.',
+            'It makes a strange hissing sound.'
+        ),
         max_in_game=2,
         image_path='././assets/images/itms/mic_off.png'
     ),
     'dict': ItemData(
         item_id='dict',
-        name='РАДИОПРИЕМНИК',
+        name=('РАДИОПРИЕМНИК', 'RADIO'),
         price=200,
-        description='Можно услышать голоса.',
+        description=(
+            'Можно услышать голоса.',
+            'You can hear voices.'
+        ),
         max_in_game=2,
         image_path='././assets/images/itms/dict_off.png'
     ),
     'term': ItemData(
         item_id='term',
-        name='ТЕРМОМЕТР',
+        name=('ТЕРМОМЕТР', 'THERMOMETER'),
         price=150,
-        description='Показывает температуру.',
+        description=(
+            'Показывает температуру.',
+            'Shows the temperature.'
+        ),
         max_in_game=2,
         image_path='././assets/images/itms/term_norm.png'
     ),
     'flash_light': ItemData(
         item_id='flash_light',
-        name='ФОНАРИК',
+        name=('ФОНАРИК', 'FLASHLIGHT'),
         price=350,
-        description='Дает дополнительный свет.',
+        description=(
+            'Дает дополнительный свет.',
+            'Gives extra light.'
+        ),
         max_in_game=4,
         image_path='././assets/images/itms/flash_light.png',
         on_level=20
     ),
     'incense': ItemData(
         item_id='incense',
-        name='БЛАГОВОНИЯ',
+        name=('БЛАГОВОНИЯ', 'INCENSE'),
         price=150,
-        description='Защитит от паранормальных явлений.',
+        description=(
+            'Защитит от паранормальных явлений.',
+            'It will protect you from paranormal phenomena.'
+        ),
         max_in_game=4,
         image_path='././assets/images/itms/incense.png',
         on_level=15
     ),
     'lighter': ItemData(
         item_id='lighter',
-        name='ЗАЖИГАЛКА',
+        name=('ЗАЖИГАЛКА', 'LIGHTER'),
         price=50,
-        description='Дает зажечь благовония.',
+        description=(
+            'Дает зажечь благовония.',
+            'Lets you light the incense.'
+        ),
         max_in_game=4,
         image_path='././assets/images/itms/light.png',
         on_level=10
     ),
     'pills': ItemData(
         item_id='pills',
-        name='УСПОКОИТЕЛЬНОЕ',
+        name=('УСПОКОИТЕЛЬНОЕ', 'PILLS'),
         price=150,
-        description='Приведет в себя.',
+        description=(
+            'Приведет в себя.',
+            'Restore sanity.'
+        ),
         max_in_game=4,
         image_path='././assets/images/itms/pills.png',
         on_level=20
     )
 }
-
-import arcade
-from re import search
 
 
 class ItemInfoWidget:
@@ -129,11 +156,14 @@ class ItemInfoWidget:
 
         self.player_level = player_level
 
+        from ..views import SettingsManager
+        self.c_lang = SettingsManager.iget_current_language()
+
     def add_to_manager(self, manager):
         """Добавляем UI элементы в менеджер"""
         # Заголовок
         title = arcade.gui.UILabel(
-            text='ИНФОРМАЦИЯ',
+            text=('ИНФОРМАЦИЯ', 'INFO')[self.c_lang],
             font_name='Courier New',
             font_size=int(18 * self.scale),
             text_color=arcade.color.WHITE,
@@ -160,7 +190,7 @@ class ItemInfoWidget:
 
         # Цена
         self.price_label = arcade.gui.UILabel(
-            text='Цена: ',
+            text=f'{('Цена', 'Cost')[self.c_lang]}: ',
             font_name='Courier New',
             font_size=int(15 * self.scale),
             text_color=arcade.color.WHITE,
@@ -174,7 +204,7 @@ class ItemInfoWidget:
 
         # Максимум в игру
         self.on_level_ = arcade.gui.UILabel(
-            text='В игру: ',
+            text=f'{('В игру', 'In game')[self.c_lang]}: ',
             font_name='Courier New',
             font_size=int(15 * self.scale),
             text_color=arcade.color.WHITE,
@@ -188,7 +218,7 @@ class ItemInfoWidget:
 
         # В инвентаре
         self.inventory_label = arcade.gui.UILabel(
-            text='В инвентаре: ',
+            text=f'{('В инвентаре', 'In inventory')[self.c_lang]}: ',
             font_name='Courier New',
             font_size=int(15 * self.scale),
             text_color=arcade.color.WHITE,
@@ -202,7 +232,7 @@ class ItemInfoWidget:
 
         # С собой
         self.taken_label = arcade.gui.UILabel(
-            text='С собой: ',
+            text=f'{('С собой', 'Taken')[self.c_lang]}: ',
             font_name='Courier New',
             font_size=int(15 * self.scale),
             text_color=arcade.color.WHITE,
@@ -237,23 +267,23 @@ class ItemInfoWidget:
         self.image_sprite = None
 
         if not item_data:
-            self.name_label.text = 'ВЫБЕРИТЕ ТОВАР'
-            self.price_label.text = 'Цена: '
-            self.on_level_.text = 'На уровне: '
-            self.inventory_label.text = 'В инвентаре: '
-            self.taken_label.text = 'С собой: '
+            self.name_label.text = ('ВЫБЕРИТЕ ТОВАР', 'CHOOSE GOOD')[self.c_lang]
+            self.price_label.text = f'{('Цена', 'Cost')[self.c_lang]}: '
+            self.on_level_.text = f'{('На уровне', 'On level')[self.c_lang]}: '
+            self.inventory_label.text = f'{('В инвентаре', 'In inventory')[self.c_lang]}: '
+            self.taken_label.text = f'{('С собой', 'Taken')[self.c_lang]}: '
             self.desc_label.text = ''
             return
 
         # Обновляем текст
-        self.name_label.text = item_data.name
-        self.price_label.text = f'Цена: {item_data.price}$'
-        self.inventory_label.text = f'В инвентаре: {item_data.in_inventory}'
-        self.taken_label.text = f'С собой: {item_data.selected}/{item_data.max_in_game}'
-        self.desc_label.text = item_data.description
+        self.name_label.text = item_data.name[self.c_lang]
+        self.price_label.text = f'{('Цена', 'Cost')[self.c_lang]}: {item_data.price}$'
+        self.inventory_label.text = f'{('В инвентаре', 'In inventory')[self.c_lang]}: {item_data.in_inventory}'
+        self.taken_label.text = f'{('С собой', 'Taken')[self.c_lang]}: {item_data.selected}/{item_data.max_in_game}'
+        self.desc_label.text = item_data.description[self.c_lang]
 
         if item_data.on_level > self.player_level:
-            self.on_level_.text = f'На уровне: {item_data.on_level}'
+            self.on_level_.text = f'{('На уровне', 'On level')[self.c_lang]}: {item_data.on_level}'
         else:
             self.on_level_.text = ''
 

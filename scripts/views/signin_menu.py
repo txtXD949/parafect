@@ -16,7 +16,9 @@ class SigninMenu(arcade.View):
         self.hover_sound = HOVER_SOUND
         self.click_sound = CLICK_SOUND
 
-        self.status_text = '> ДАННЫЕ НЕ ПРОАНАЛИЗИРОВАНЫ'
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+        self.status_text = ('> ДАННЫЕ НЕ ПРОАНАЛИЗИРОВАНЫ', '> DATA NOT ANALYZED')[c_lang]
         self.active_input = None
 
         self.setup_widgets()
@@ -25,8 +27,8 @@ class SigninMenu(arcade.View):
         main_box = UIBoxLayout(vertical=True, space_between=15)
 
         # Заголовок
-        title = UILabel(
-            text='РЕГИСТРАЦИЯ В СИСТЕМЕ P-BASE',
+        self.title = UILabel(
+            text='REGISTRATION IN SYSTEM P-BASE',
             font_size=24,
             font_name='Courier New',
             width=500,
@@ -35,10 +37,10 @@ class SigninMenu(arcade.View):
             text_color=arcade.color.WHITE,
             bold=True
         )
-        main_box.add(title)
+        main_box.add(self.title)
 
-        subtitle = UILabel(
-            text='(Форма №7)',
+        self.subtitle = UILabel(
+            text='(FORM №7)',
             font_size=16,
             font_name='Courier New',
             width=500,
@@ -46,14 +48,14 @@ class SigninMenu(arcade.View):
             align='center',
             text_color=arcade.color.LIGHT_GRAY
         )
-        main_box.add(subtitle)
+        main_box.add(self.subtitle)
 
         # Пустая строка для отступа
         main_box.add(UILabel(text='', width=500, height=30))
 
         # Имя
-        name_label = UILabel(
-            text='ИМЯ:',
+        self.name_label = UILabel(
+            text='NAME:',
             font_size=18,
             font_name='Courier New',
             width=200,
@@ -72,7 +74,7 @@ class SigninMenu(arcade.View):
         )
 
         name_row = UIBoxLayout(vertical=False, space_between=10)
-        name_row.add(name_label)
+        name_row.add(self.name_label)
         name_row.add(self.name_input)
         main_box.add(name_row)
 
@@ -80,8 +82,8 @@ class SigninMenu(arcade.View):
         main_box.add(UILabel(text='', width=500, height=15))
 
         # Код доступа 1
-        code1_label = UILabel(
-            text='КОД ДОСТУПА:',
+        self.code1_label = UILabel(
+            text='ACCESS CODE:',
             font_size=18,
             font_name='Courier New',
             width=200,
@@ -101,13 +103,13 @@ class SigninMenu(arcade.View):
         )
 
         code1_row = UIBoxLayout(vertical=False, space_between=10)
-        code1_row.add(code1_label)
+        code1_row.add(self.code1_label)
         code1_row.add(self.code1_input)
         main_box.add(code1_row)
 
         # Код доступа 2
-        code2_label = UILabel(
-            text='ПОВТОРИТЕ КОД:',
+        self.code2_label = UILabel(
+            text='REPEAT THE CODE:',
             font_size=18,
             font_name='Courier New',
             width=200,
@@ -127,7 +129,7 @@ class SigninMenu(arcade.View):
         )
 
         code2_row = UIBoxLayout(vertical=False, space_between=10)
-        code2_row.add(code2_label)
+        code2_row.add(self.code2_label)
         code2_row.add(self.code2_input)
         main_box.add(code2_row)
 
@@ -152,7 +154,7 @@ class SigninMenu(arcade.View):
         buttons_row = UIBoxLayout(vertical=False, space_between=50)
 
         self.register_btn = InteractiveLabel(
-            text='ЗАРЕГИСТРИРОВАТЬ',
+            text='REGISTER',
             width=250,
             height=45,
             font_size=18,
@@ -165,7 +167,7 @@ class SigninMenu(arcade.View):
         )
 
         self.cancel_btn = InteractiveLabel(
-            text='ОТМЕНА',
+            text='CANCEL',
             width=250,
             height=45,
             font_size=18,
@@ -186,19 +188,34 @@ class SigninMenu(arcade.View):
         anchor.add(child=main_box, anchor_x='center', anchor_y='center')
         self.manager.add(anchor)
 
+    def update_texts(self):
+        from . import SettingsManager
+
+        c_lang = SettingsManager.iget_current_language()
+        self.title.text = ('РЕГИСТРАЦИЯ В СИСТЕМЕ P-BASE', 'REGISTRATION IN SYSTEM P-BASE')[c_lang]
+        self.subtitle.text = ('(Форма №7)', '(Form №7)')[c_lang]
+        self.name_label.text = ('ИМЯ:', 'NAME:')[c_lang]
+        self.code1_label.text = ('КОД ДОСТУПА:', 'ACCESS CODE:')[c_lang]
+        self.code2_label.text = ('ПОВТОРИТЕ КОД:', 'REPEAT THE CODE:')[c_lang]
+        self.register_btn.base_text = ('РЕГИСТРАЦИЯ', 'REGISTER')[c_lang]
+        self.cancel_btn.base_text = ('ОТМЕНА', 'CANCEL')[c_lang]
+
     def attempt_registration(self):
         """Попытка регистрации"""
         name = self.name_input.text
         code1 = self.code1_input.text
         code2 = self.code2_input.text
 
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
         if not name or not code1 or not code2:
-            self.status_text = '> ОШИБКА: ЗАПОЛНИТЕ ВСЕ ПОЛЯ'
+            self.status_text = ('> ОШИБКА: ЗАПОЛНИТЕ ВСЕ ПОЛЯ', '> ERROR: FILL IN ALL THE FIELDS')[c_lang]
             self.status_label.text = self.status_text
             return
 
         if code1 != code2:
-            self.status_text = '> ОШИБКА: КОДЫ НЕ СОВПАДАЮТ'
+            self.status_text = ('> ОШИБКА: КОДЫ НЕ СОВПАДАЮТ', '> ERROR: DIFFERENT CODES')[c_lang]
             self.status_label.text = self.status_text
             return
 
@@ -209,11 +226,11 @@ class SigninMenu(arcade.View):
         manager = AccountManager()
 
         if name in manager.get_logins():
-            self.status_text = '> ОШИБКА: ВВЕДЕН СУЩЕСТВУЮЩИЙ ЛОГИН'
+            self.status_text = ('> ОШИБКА: ВВЕДЕН СУЩЕСТВУЮЩИЙ ЛОГИН', '> ERROR: EXISTING LOGIN')[c_lang]
             self.status_label.text = self.status_text
             return
 
-        manager.add_account(name, code1)
+        manager.add_account(name, code1, name)
 
     def on_draw(self):
         self.clear()
@@ -225,6 +242,9 @@ class SigninMenu(arcade.View):
         self.name_input.on_update(delta_time)
         self.code1_input.on_update(delta_time)
         self.code2_input.on_update(delta_time)
+
+        # Обновляем тексты
+        self.update_texts()
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.register_btn.check_mouse_hover(x, y)

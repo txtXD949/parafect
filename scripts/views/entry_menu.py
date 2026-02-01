@@ -4,6 +4,8 @@ from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 from scripts.ui import InteractiveLabel
 from ..start_sound import ENTRY_BACKGROUND_SOUND
 
+from constants import LANGUAGE_INDEX
+
 
 class EntryMenu(arcade.View):
     def __init__(self):
@@ -32,7 +34,7 @@ class EntryMenu(arcade.View):
 
     def setup_widgets(self):
         self.label1 = UILabel(
-            text='Добро пожаловать',
+            text='Welcome',
             font_size=26,
             font_name='Courier New',
             width=300,
@@ -41,7 +43,7 @@ class EntryMenu(arcade.View):
         self.box_layout_labels.add(self.label1)
 
         self.label2 = UILabel(
-            text='Вам нужен профиль',
+            text='You need a profile',
             font_size=20,
             font_name='Courier New',
             width=300,
@@ -50,7 +52,7 @@ class EntryMenu(arcade.View):
         self.box_layout_labels.add(self.label2)
 
         self.button_create = InteractiveLabel(
-            text='СОЗДАТЬ',
+            text='CREATE',
             width=250,
             height=45,
             font_size=22,
@@ -64,7 +66,7 @@ class EntryMenu(arcade.View):
         self.box_layout_buttons.add(self.button_create)
 
         self.button_login = InteractiveLabel(
-            text='ВОЙТИ',
+            text='LOGIN',
             width=250,
             height=45,
             font_size=22,
@@ -78,7 +80,7 @@ class EntryMenu(arcade.View):
         self.box_layout_buttons.add(self.button_login)
 
         self.button_settings = InteractiveLabel(
-            text='НАСТРОЙКИ',
+            text='SETTINGS',
             width=180,
             height=35,
             font_size=18,
@@ -92,7 +94,7 @@ class EntryMenu(arcade.View):
         self.box_layout_bottom.add(self.button_settings)
 
         self.button_exit = InteractiveLabel(
-            text='ВЫХОД',
+            text='EXIT',
             width=180,
             height=35,
             font_size=18,
@@ -128,6 +130,19 @@ class EntryMenu(arcade.View):
 
         self.manager.add(self.anchor_layout)
 
+    def update_texts(self):
+        """Обновляет тексты"""
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
+        self.label1.text = ('Добро пожаловать', 'Welcome')[c_lang]
+        self.label2.text = ('Вам нужен профиль', 'You need a profile')[c_lang]
+        self.button_create.base_text = ('СОЗДАТЬ', 'CREATE')[c_lang]
+        self.button_login.base_text = ('ВОЙТИ', 'LOGIN')[c_lang]
+        self.button_settings.base_text = ('НАСТРОЙКИ', 'SETTINGS')[c_lang]
+        self.button_exit.base_text = ('ВЫХОД', 'EXIT')[c_lang]
+
+
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -142,6 +157,10 @@ class EntryMenu(arcade.View):
         from . import SettingsManager
         vol = SettingsManager.get_sound_volume()
         ENTRY_BACKGROUND_SOUND.volume = vol
+
+        # Обновление текстов
+        self.update_texts()
+
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.button_create.check_mouse_hover(x, y)
@@ -227,7 +246,6 @@ class EntryMenu(arcade.View):
             elif self.active_button == self.button_exit:
                 self.on_exit_click()
 
-
     def reset_all_buttons(self):
         """Сброс всех кнопок при возврате"""
         self.button_create.reset_state()
@@ -254,3 +272,6 @@ class EntryMenu(arcade.View):
         self.button_create.reset_state()
         self.button_login.reset_state()
         self.active_button = None
+
+
+

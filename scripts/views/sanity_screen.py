@@ -34,7 +34,7 @@ class SanityScreen(arcade.View):
         # Batch
         self.batch = Batch()
         self.text = arcade.Text(
-            text='Рассудок:',
+            text='Sanity:',
             x=30, y=560,
             color=arcade.color.WHITE,
             font_size=22,
@@ -132,6 +132,9 @@ class SanityScreen(arcade.View):
     def on_update(self, delta_time: float) -> bool | None:
         self.bar_width = (self.player.sanity / 100 * 540) if self.game.dif.sanity_screen else random.randint(0, 540)
 
+        # Обновляем тексты
+        self.update_texts()
+
     def close(self):
         if self.sound_player:
             self.sound_player.pause()
@@ -147,3 +150,8 @@ class SanityScreen(arcade.View):
         from . import SettingsView
         settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
         self.window.show_view(settings_view)
+
+    def update_texts(self):
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+        self.text.text = ('Рассудок:', 'Sanity:')[c_lang]

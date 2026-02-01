@@ -30,6 +30,8 @@ class MarketView(arcade.View):
         self.temp_inventory = {}
 
     def on_show_view(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Масштаб и смещение для центрирования
         screen_width = self.window.width
         screen_height = self.window.height
@@ -54,7 +56,7 @@ class MarketView(arcade.View):
 
         # МАРКЕТ
         market_label = arcade.gui.UILabel(
-            text='МАРКЕТ',
+            text=('МАРКЕТ', 'MARKET')[c_lang],
             font_name='Courier New',
             font_size=int(36 * self.scale),
             text_color=arcade.color.WHITE,
@@ -111,16 +113,16 @@ class MarketView(arcade.View):
         self.update_items_from_temp_inventory()
 
         items_to_show = [
-            ('flash_light', 'ФОНАРИК', 350),
-            ('emf', 'ЭМП', 200),
-            ('uf', 'СЛАБЫЙ ФОНАРИК', 100),
-            ('dict', 'РАДИОПРИЕМНИК', 200),
-            ('term', 'ТЕРМОМЕТР', 150),
-            ('mic', 'НАПРВЛЕННЫЙ МИКРОФОН', 200),
-            ('book', 'БЛОКНОТ', 200),
-            ('incense', 'БЛАГОВОНИЯ', 150),
-            ('lighter', 'ЗАЖИГАЛКА', 50),
-            ('pills', 'УСПОКОИТЕЛЬНОЕ', 150)
+            ('flash_light', ('ФОНАРИК', 'FLASHLIGHT')[c_lang], 350),
+            ('emf', ('ЭМП', 'EMF')[c_lang], 200),
+            ('low_light', ('СЛАБЫЙ ФОНАРИК', 'LOW FLASHLIGHT')[c_lang], 100),
+            ('dict', ('РАДИОПРИЕМНИК', 'RADIO')[c_lang], 200),
+            ('term', ('ТЕРМОМЕТР', 'THERMOMETER')[c_lang], 150),
+            ('mic', ('НАПРВЛЕННЫЙ МИКРОФОН', 'DIRECTIONAL MIC')[c_lang], 200),
+            ('book', ('БЛОКНОТ', 'BOOK')[c_lang], 200),
+            ('incense', ('БЛАГОВОНИЯ', 'INCENSE')[c_lang], 150),
+            ('lighter', ('ЗАЖИГАЛКА', 'LIGHTER')[c_lang], 50),
+            ('pills', ('УСПОКОИТЕЛЬНОЕ', 'PILLS')[c_lang], 150)
         ]
 
         # Добавляем предметы
@@ -178,7 +180,7 @@ class MarketView(arcade.View):
         self.manager.add(self.level_label)
 
         self.balance_label = arcade.gui.UILabel(
-            text=f'Баланс: {self.player_balance}$',
+            text=f'{('Баланс', 'Cash')[c_lang]}: {self.player_balance}$',
             font_name='Courier New',
             font_size=int(16 * self.scale),
             text_color=arcade.color.WHITE,
@@ -352,8 +354,9 @@ class MarketView(arcade.View):
                 button.on_update(delta_time)
 
         # Обновление баланса и уровня
+        c_lang = SettingsManager.iget_current_language()
         self.level_label.text = f'Lvl: {self.player_level}'
-        self.balance_label.text = f'Баланс: {self.player_balance}$'
+        self.balance_label.text = f'{('Баланс', 'Cash')[c_lang]}: {self.player_balance}$'
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:

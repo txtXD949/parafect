@@ -34,7 +34,7 @@ class ToolBoard(arcade.View):
         self.tools_sprites = arcade.SpriteList()
         self.tools = []
 
-        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Dictaphone, FlashLight, UF
+        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Radio, FlashLight, LowFlashlight
 
         emfs = [EMF(self.bias_scale) for _ in range(self.inv['emf'])]
         try:
@@ -59,7 +59,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        ufs = [UF(self.bias_scale) for _ in range(self.inv['low_light'])]
+        ufs = [LowFlashlight(self.bias_scale) for _ in range(self.inv['low_light'])]
         try:
             uf1 = ufs[0]
             uf1.create_board_sprite()
@@ -128,7 +128,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        dicts = [Dictaphone(self.bias_scale) for _ in range(self.inv['dict'])]
+        dicts = [Radio(self.bias_scale) for _ in range(self.inv['dict'])]
         try:
             dict1 = dicts[0]
             dict1.create_board_sprite()

@@ -525,6 +525,10 @@ class Dom1(arcade.View):
             volume = SettingsManager.get_sound_volume()
             self.ghost.sound_player_h.volume = volume
 
+    def on_show_view(self) -> None:
+        if self.paper:
+            self.paper.update_all_buttons_text()
+
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True

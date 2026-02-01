@@ -83,6 +83,11 @@ class SettingsManager:
         return constants.LANGUAGES[constants.LANGUAGE_INDEX]
 
     @staticmethod
+    def iget_current_language() -> int:
+        """Возвращает индекс текущего языка"""
+        return constants.LANGUAGE_INDEX
+
+    @staticmethod
     def update_master_volume(value: float):
         """Обновляет общую громкость"""
         constants.MASTER_VOLUME = round(max(0.0, min(1.0, value)), 2)

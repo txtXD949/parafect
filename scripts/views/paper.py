@@ -6,6 +6,33 @@ from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 from ..sounds import CLICK_GHOST_BUTTON, CLICK_DIS_GHOST_BUTTON
 from . import SettingsManager
 
+EVIDENCE_TEXTS = {
+    'ru': [
+        'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
+        'Отпечатки', 'Высокая температура',
+        'Низкая температура', 'Записи в блокноте'
+    ],
+    'en': [
+        'EMF5', 'Radio', 'Mic voice',
+        'Fingerprints', 'Hot temp',
+        'Cold temp', 'Book writing'
+    ]
+}
+
+GHOST_TEXTS = {
+    'ru': [
+        'Дух', 'Демон', 'Фантом', 'Они',
+        'Банши', 'Ревенант', 'Мюлинг',
+        'Полтергейст', 'Мимик', 'Мираж',
+        'Тень', 'Мясник', 'Сирена'
+    ],
+    'en': [
+        'Spirit', 'Demon', 'Phantom', 'Oni',
+        'Banshee', 'Revenant', 'Myling',
+        'Poltergeist', 'Mimic', 'Wraith',
+        'Shade', 'Butcher', 'Siren'
+    ]
+}
 
 
 class PaperButton(UITextureButton):
@@ -150,6 +177,18 @@ class Paper(UIWidget):
         self.width = width
         self.height = height
 
+        self.evidence_button_texts = [
+                'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
+                'Отпечатки', 'Высокая температура',
+                'Низкая температура', 'Записи в блокноте'
+            ]
+        self.ghost_button_texts = [
+                'Дух', 'Демон', 'Фантом', 'Они',
+                'Банши', 'Ревенант', 'Мюлинг',
+                'Полтергейст', 'Мимик', 'Мираж',
+                'Тень', 'Мясник', 'Сирена'
+            ]
+
         self.stretch_x = stretch_x
         self.stretch_y = stretch_y
 
@@ -174,11 +213,7 @@ class Paper(UIWidget):
         self.evidence_buttons = []
         self.create_section(
             content_layout,
-            [
-                'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
-                'Отпечатки', 'Высокая температура',
-                'Низкая температура', 'Записи в блокноте'
-            ],
+            self.evidence_button_texts,
             rows=3,
             section_height=content_layout.height * 0.4,
             lst=self.evidence_buttons,
@@ -194,12 +229,7 @@ class Paper(UIWidget):
         self.ghost_buttons = []
         self.create_section(
             content_layout,
-            [
-                'Дух', 'Демон', 'Фантом', 'Они',
-                'Банши', 'Ревенант', 'Мюлинг',
-                'Полтергейст', 'Мимик', 'Мираж',
-                'Тень', 'Мясник', 'Сирена'
-            ],
+            self.ghost_button_texts,
             rows=5,
             section_height=content_layout.height * 0.45,
             lst=self.ghost_buttons,
@@ -258,3 +288,20 @@ class Paper(UIWidget):
             )
 
         return button
+
+    def update_all_buttons_text(self):
+        """Быстро обновляет все кнопки из заранее заданных списков"""
+        current_lang = SettingsManager.get_current_language()
+
+        # 1. Обновляем кнопки улик
+        for i, button in enumerate(self.evidence_buttons):
+            if i < len(EVIDENCE_TEXTS[current_lang]):
+                button.text = EVIDENCE_TEXTS[current_lang][i]
+                button.trigger_render()
+
+        # 2. Обновляем кнопки призраков
+        for i, button in enumerate(self.ghost_buttons):
+            if i < len(GHOST_TEXTS[current_lang]):
+                button.text = GHOST_TEXTS[current_lang][i]
+                button.trigger_render()
+

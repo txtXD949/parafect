@@ -151,9 +151,6 @@ class Item:
         """Проверяет работает ли предмет нормально"""
         return not self.is_malfunctioning
 
-    def __str__(self):
-        return self.id + ' ' + self.name
-
 
 class EMF(Item):
     TEXTURES = [
@@ -171,7 +168,7 @@ class EMF(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('emf', 'ЭМП', False, sprite=None, bias_scale=bias_scale)
+        super().__init__('emf', ('ЭМП', 'EMF'), False, sprite=None, bias_scale=bias_scale)
 
         self.is_working = False
 
@@ -267,10 +264,10 @@ class FlashLight(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('flash-light', 'Фонарик', sprite=None, board_scale=2.8, bias_scale=bias_scale)
+        super().__init__('flash-light', ('Фонарик', 'FlashLight'), sprite=None, board_scale=2.8, bias_scale=bias_scale)
 
 
-class UF(Item):
+class LowFlashlight(Item):
     TURN_ON_OFF_SOUNDS = [
         TURN_ON_FLSH,
         TURN_OFF_FLSH
@@ -283,7 +280,7 @@ class UF(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('low_light', 'УФ-фонарик', sprite=None, bias_scale=bias_scale)
+        super().__init__('low_light', ('Слабый фонарик', 'Low flashlight'), sprite=None, bias_scale=bias_scale)
 
 
 class Book(Item):
@@ -296,7 +293,7 @@ class Book(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('book', 'Блокнот', is_stationary=True, sprite=None, bias_scale=bias_scale)
+        super().__init__('book', ('Блокнот', 'Book'), is_stationary=True, sprite=None, bias_scale=bias_scale)
 
         self.is_dropped = False
         self.wrote = False
@@ -345,7 +342,7 @@ class Microphone(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('mic', 'Направленный микрофон', sprite=None, board_scale=4.0, bias_scale=bias_scale)
+        super().__init__('mic', ('Направленный микрофон', 'Directional microphone'), sprite=None, board_scale=4.0, bias_scale=bias_scale)
 
     def use_item(self, evidence, ghost, sound_players=None):
         if not sound_players:
@@ -396,7 +393,7 @@ class Microphone(Item):
             self.sound_player = arcade.play_sound(random.choice(self.SOUNDS), volume=vol)
 
 
-class Dictaphone(Item):
+class Radio(Item):
     TEXTURES = [
         './assets/images/itms/dict_off.png',
         './assets/images/itms/dict_on.png'
@@ -404,7 +401,7 @@ class Dictaphone(Item):
     SOUNDS = [DICT_NOISE] + DICT_SAYS + [DICT_SAY_SIREN]
 
     def __init__(self, bias_scale=1):
-        super().__init__('dict', 'Диктофон', sprite=None, board_scale=3.0, bias_scale=bias_scale)
+        super().__init__('dict', ('Радиоприемник', 'Radio'), sprite=None, board_scale=3.0, bias_scale=bias_scale)
 
         self.pa = pa.PyAudio()
         self.stream = False
@@ -536,7 +533,7 @@ class Thermometer(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('term', 'Термометр', sprite=None, board_scale=3.1, bias_scale=bias_scale)
+        super().__init__('term', ('Термометр', 'Thermometer'), sprite=None, board_scale=3.1, bias_scale=bias_scale)
 
     def use_item(self, evidences):
         if not self.in_room:
@@ -562,7 +559,7 @@ class PhotoCamera(Item):
     TEXTURES = []
 
     def __init__(self, bias_scale=1):
-        super().__init__('camera', 'Фотокамера', sprite=None, bias_scale=bias_scale)
+        super().__init__('camera', ('Фотокамера', 'Camera'), sprite=None, bias_scale=bias_scale)
 
 
 class Incense(Item):
@@ -578,7 +575,7 @@ class Incense(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('incense', 'Благовония', sprite=None, bias_scale=bias_scale)
+        super().__init__('incense', ('Благовония', 'Incense'), sprite=None, bias_scale=bias_scale)
 
         # состояние горения
         self.phase = 0  # 0-4
@@ -728,7 +725,7 @@ class Lighter(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('lighter', 'Зажигалка', sprite=None, board_scale=1.0, bias_scale=bias_scale)
+        super().__init__('lighter', ('Зажигалка', 'Lighter'), sprite=None, board_scale=1.0, bias_scale=bias_scale)
 
     def use_item(self, player):
         if player.has_lighter:
@@ -753,7 +750,7 @@ class Pills(Item):
     ]
 
     def __init__(self, reg_sanity, bias_scale=1):
-        super().__init__('pills', 'Успокоительное', sprite=None, board_scale=2.0, bias_scale=bias_scale)
+        super().__init__('pills', ('Успокоительное', 'Pills'), sprite=None, board_scale=2.0, bias_scale=bias_scale)
 
         self._reg_sanity = reg_sanity
 
