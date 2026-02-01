@@ -513,8 +513,18 @@ class Dom1(arcade.View):
             self.sanity_timer = 5 * 60
             self.player.sanity = max(0, self.player.sanity - 1)
 
-        if random.random() < 0.00001:
+        # Выкл щиток
+        if random.random() < 0.0001:
             self.is_lightning = False
+
+        # Обновление громкости охоты и гост ивента
+        if self.ghost.sound_player_h:
+            volume = SettingsManager.get_sound_volume()
+            self.ghost.sound_player_h.volume = volume
+        if self.ghost.sound_player_g:
+            volume = SettingsManager.get_sound_volume()
+            self.ghost.sound_player_h.volume = volume
+
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True
