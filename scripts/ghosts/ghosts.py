@@ -130,7 +130,7 @@ class GhostSprite(arcade.Sprite):
 
 
 class Ghost:
-    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.0001, step_loud='mid',
+    def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.0003, step_loud='mid',
                  ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec='', main_evidence=None):
         self._id = id
@@ -264,8 +264,7 @@ class Ghost:
         if self.is_hunt or self.is_charging or self.stop_timer:
             return
 
-        if random.random() > self.hunt_chance:
-            print('no', self.hunt_chance)
+        if random.random() > self.hunt_chance + (((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
             return
 
         volume = SettingsManager.get_ghost_sound_volume()
@@ -494,7 +493,7 @@ class Spirit(Ghost):
 
 class Demon(Ghost):
     def __init__(self):
-        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.0002)
+        super().__init__('demon', 'Демон', evidences=['cold_temp', 'mic', 'book'], hunt_start=75, hunt_chance=0.0004)
 
 
 class Phantom(Ghost):
@@ -507,7 +506,7 @@ class Phantom(Ghost):
 
 class Oni(Ghost):
     def __init__(self):
-        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.00016,
+        super().__init__('oni', 'Они', evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.00025,
                          ghost_event_chance=0.0001, drop_sanity=10, blink_chance=0.02,
                          spec='много гост-ивентов, есть шанс что гост ивент снимет 20% рассудка')
 
@@ -523,7 +522,7 @@ class Banshee(Ghost):
 
 class Reverent(Ghost):
     def __init__(self):
-        super().__init__('reverent', 'Ревенант', evidences=['cold_temp', 'dict', 'book'], speed=0.05, boost=10.0,
+        super().__init__('reverent', 'Ревенант', evidences=['cold_temp', 'dict', 'book'], speed=0.05, boost=8.0,
                          spec='при виде игрока очень быстро ускоряется')
 
 
@@ -574,7 +573,7 @@ class Siren(Ghost):
 class Shade(Ghost):
     def __init__(self):
         super().__init__('shade', 'Тень', evidences=['cold_temp', 'mic', 'emf5'], hunt_start=35,
-                         interaction_chance=0.005, ghost_event_chance=0.00008, spec='спокойный призрак',
+                         interaction_chance=0.005, ghost_event_chance=0.0001, spec='спокойный призрак',
                          hunt_chance=0.00008)
 
 

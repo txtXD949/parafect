@@ -6,8 +6,8 @@ import pyaudio as pa
 import numpy as np
 import threading
 
-from views import SettingsManager
-from sounds import *
+from .views import SettingsManager
+from .sounds import *
 
 
 class Item:
@@ -235,8 +235,8 @@ class EMF(Item):
 
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
-        if random.random() < 0.0003:
-            if 'emf5' in evidences and random.random() < 0.3:
+        if random.random() < 0.0003 * 60:
+            if 'emf5' in evidences and random.random() < 0.5:
                 level_index = 4
             else:
                 level_index = random.choice((2, 3))
@@ -311,7 +311,7 @@ class Book(Item):
         if not self.in_room:
             return
 
-        if not self.wrote and random.random() < 0.00009:
+        if not self.wrote and random.random() < 0.001:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
             vol = SettingsManager.get_sound_volume()
             self.sound_player = arcade.play_sound(self.SOUNDS[0], volume=vol)
@@ -380,18 +380,18 @@ class Microphone(Item):
             return
 
         if ghost.id == 'muling':
-            if random.random() < 0.0001:
+            if random.random() < 0.0001 * 60:
                 vol = SettingsManager.get_sound_volume()
                 self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[1], volume=vol)
                 return
 
         if ghost.id == 'banshee':
-            if random.random() < 0.0001:
+            if random.random() < 0.0001 * 60:
                 vol = SettingsManager.get_sound_volume()
                 self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[0], volume=vol)
                 return
 
-        if 'mic' in evidence and random.random() < 0.0003:
+        if 'mic' in evidence and random.random() < 0.0003 * 60:
             vol = SettingsManager.get_sound_volume()
             self.sound_player = arcade.play_sound(random.choice(self.SOUNDS), volume=vol)
 
@@ -515,7 +515,7 @@ class Dictaphone(Item):
         if not self.is_turn_on or not self.in_room:
             return
 
-        if ghost.id == 'siren' and random.random() < 0.0002:
+        if ghost.id == 'siren' and random.random() < 0.0002 * 60:
             vol = SettingsManager.get_sound_volume()
             self.ghost_voice = arcade.play_sound(self.SOUNDS[-1], volume=vol)
             return
@@ -523,7 +523,7 @@ class Dictaphone(Item):
         if 'dict' not in evidences:
             return
 
-        if self.voice_detected and random.random() < 0.0006:
+        if self.voice_detected and random.random() < 0.0006 * 60:
             vol = SettingsManager.get_sound_volume()
             self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]), volume=vol)
 
@@ -543,11 +543,11 @@ class Thermometer(Item):
             self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
             return
 
-        if 'cold_temp' in evidences and random.random() < 0.00009:
+        if 'cold_temp' in evidences and random.random() < 0.001:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
             return
 
-        if 'hot_temp' in evidences and random.random() < 0.00009:
+        if 'hot_temp' in evidences and random.random() < 0.0001:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[2])
             return
 

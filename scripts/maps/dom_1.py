@@ -242,6 +242,7 @@ class Dom1(arcade.View):
         self.scene["generator"].draw(pixelated=True)
         self.ghost.sprite.particles.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
+        self.footprints_list.draw(pixelated=True)
         self.ghost_sprite_list.draw(pixelated=True)
         self.player_list.draw(pixelated=True)
         if self.player_sprite.visible:
@@ -249,8 +250,6 @@ class Dom1(arcade.View):
         else:
             self.free_items_sprite_list.draw(pixelated=True)
         self.scene["furniture_front"].draw(pixelated=True)
-
-        self.footprints_list.draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
@@ -421,6 +420,7 @@ class Dom1(arcade.View):
         # Шкафы
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
             closets[0].interact(self.player_sprite, self.items_list)
+            self.player_sprite.change_x = self.player_sprite.change_y = 0
             volume = SettingsManager.get_sound_volume()
             arcade.play_sound(CLOSET, volume=volume)
 
@@ -512,6 +512,9 @@ class Dom1(arcade.View):
         if self.sanity_timer == 0:
             self.sanity_timer = 5 * 60
             self.player.sanity = max(0, self.player.sanity - 1)
+
+        if random.random() < 0.00001:
+            self.is_lightning = False
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         self.player_sprite.is_going = True

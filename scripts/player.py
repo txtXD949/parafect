@@ -3,8 +3,8 @@ import enum
 import random
 import math
 
-from views import SettingsManager
-from sounds import *
+from .views import SettingsManager
+from .sounds import *
 
 
 class FootstepParticle(arcade.SpriteSolidColor):
@@ -217,12 +217,14 @@ class Player:
         if len(self.inventory) == 2:
             return
         if len(self.inventory) == 1:
-            arcade.play_sound(TAKE_ITEM)
+            vol = SettingsManager.get_sound_volume()
+            arcade.play_sound(TAKE_ITEM, volume=vol)
             self.inventory.append(item)
             item.in_inventory = True
             return
 
-        arcade.play_sound(TAKE_ITEM)
+        vol = SettingsManager.get_sound_volume()
+        arcade.play_sound(TAKE_ITEM, volume=vol)
         self.inventory.append(item)
         self.gripped_item = item
         item.in_inventory = True
@@ -238,7 +240,8 @@ class Player:
         self.gripped_item = self.inventory[next(self.inds)]
         self.gripped_item.is_grabbed = True
 
-        arcade.play_sound(TAKE_ITEM)
+        vol = SettingsManager.get_sound_volume()
+        arcade.play_sound(TAKE_ITEM, volume=vol)
 
     def drop_item(self):
         if self.gripped_item is None:
@@ -251,7 +254,8 @@ class Player:
         self.turn_off_item()
 
         self.inventory.remove(self.gripped_item)
-        arcade.play_sound(DROP_ITEM)
+        vol = SettingsManager.get_sound_volume()
+        arcade.play_sound(DROP_ITEM, volume=vol)
         try:
             self.gripped_item = self.inventory[0]
             self.gripped_item.is_grabbed = True
@@ -267,7 +271,8 @@ class Player:
         item.turn_off()
 
         self.inventory.remove(item)
-        arcade.play_sound(BOARD_ITEM)
+        vol = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_ITEM, volume=vol)
         try:
             self.gripped_item = self.inventory[0]
             self.gripped_item.is_grabbed = True
