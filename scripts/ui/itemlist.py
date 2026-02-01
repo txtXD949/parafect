@@ -95,7 +95,7 @@ class ItemsList:
                 try:
                     from ..sounds import CLICK_SOUND
                     from ..views.settings import SettingsManager
-                    volume =  SettingsManager.get_sound_volume()
+                    volume =  SettingsManager.get_sound_volume(0.6)
                     arcade.play_sound(CLICK_SOUND, volume=volume)
                 except Exception:
                     pass

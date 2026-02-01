@@ -57,7 +57,7 @@ class InteractiveLabel(arcade.gui.UILabel):
         # Звук при наведении
         if self._is_hovered and not old_hovered and self.hover_sound:
             from ..views.settings import SettingsManager
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(self.hover_sound, volume=volume)
 
         if self._is_active:
@@ -76,7 +76,7 @@ class InteractiveLabel(arcade.gui.UILabel):
         # Звук при клике
         if self.click_sound:
             from ..views.settings import SettingsManager
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(self.click_sound, volume=volume)
 
         self._is_active = not self._is_active
