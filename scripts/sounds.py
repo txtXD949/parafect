@@ -12,6 +12,7 @@ CARPET_FOOTSTEPS = arcade.load_sound('././assets/sounds/effects/carpet_footsteps
 # Фон
 GENERATOR = arcade.load_sound('././assets/sounds/effects/generator.wav')
 LOBBY_BACKGROUND = arcade.load_sound('././assets/sounds/background/lobby(1).mp3')
+ENTRY_BACKGROUND = arcade.load_sound('././assets/sounds/background/login.mp3')
 
 # Свет
 LIGHTNING_NOISE = arcade.load_sound('././assets/sounds/effects/lightning_noise.wav')
@@ -22,6 +23,8 @@ LIGHTNING_BLINK_3 = arcade.load_sound('././assets/sounds/effects/lightning_blink
 # Блокнот
 OPEN_PAPER = arcade.load_sound('././assets/sounds/effects/open_paper.wav')
 CLOSE_PAPER = arcade.load_sound('././assets/sounds/effects/close_paper.wav')
+CLICK_GHOST_BUTTON = arcade.load_sound('././assets/sounds/effects/click_ghost_button.wav')
+CLICK_DIS_GHOST_BUTTON = arcade.load_sound('././assets/sounds/effects/click_dis_ghost_button.wav')
 
 # Призрачное
 SAD_GHOST_1 = arcade.load_sound('././assets/sounds/effects/sad_ghost1(lobby).wav')
@@ -31,8 +34,26 @@ SAD_GHOST_2 = arcade.load_sound('././assets/sounds/effects/sad_ghost2(lobby).wav
 BOARD_1 = arcade.load_sound('././assets/sounds/effects/board1(lobby).wav')
 BOARD_2 = arcade.load_sound('././assets/sounds/effects/board2(lobby).wav')
 
+# Отметки (чирк)
+GOOD_MARK = arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav')
+BAD_MARK = arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav')
+
+# Кнопка Играть
+GOOD_PLAY = arcade.load_sound('././assets/sounds/effects/click(play).wav')
+BAD_PLAY = arcade.load_sound('././assets/sounds/effects/click_bad(play).wav')
+
 # Маркет
 MARKET = arcade.load_sound('././assets/sounds/effects/market(lobby).wav')
+REJECT = arcade.load_sound('././assets/sounds/effects/reject_sound.wav')
+
+# Для вывода результатов
+PRINT = arcade.load_sound('././assets/sounds/effects/print.wav')
+COUNTER = arcade.load_sound('././assets/sounds/effects/counter.wav')
+CASH_COUNTER = arcade.load_sound('././assets/sounds/effects/cash_counter.wav')
+RETURN_LOBBY = arcade.load_sound('././assets/sounds/effects/return_lobby.wav')
+
+# Экран рассудка
+BROKEN_SAN_SCREEN = arcade.load_sound('././assets/sounds/effects/crashed_sanity_screen.wav')
 
 # Настройки
 SETTINGS = arcade.load_sound('././assets/sounds/effects/settings.wav')

@@ -3,6 +3,9 @@ import random
 import arcade
 from pyglet.graphics import Batch
 
+from ..sounds import BOARD_2, BROKEN_SAN_SCREEN, SETTINGS
+from . import SettingsManager
+
 
 class SanityScreen(arcade.View):
     def __init__(self, player, map, game):
@@ -109,10 +112,11 @@ class SanityScreen(arcade.View):
         arcade.draw_line(740 + 10, 540 - 10, 740 - 10, 540 + 10, color=arcade.color.WHITE)
 
     def on_show_view(self) -> None:
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_2, volume=volume)
         if not self.game.dif.sanity_screen:
-            self.sound_player = arcade.play_sound(
-                arcade.load_sound('././assets/sounds/effects/crashed_sanity_screen.wav'), loop=True)
+            volume = SettingsManager.get_sound_volume()
+            self.sound_player = arcade.play_sound(BROKEN_SAN_SCREEN, loop=True, volume=volume)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         world_cords = self.camera.unproject((x, y))
@@ -132,5 +136,14 @@ class SanityScreen(arcade.View):
         if self.sound_player:
             self.sound_player.pause()
 
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_2, volume=volume)
         self.window.show_view(self.map)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

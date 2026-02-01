@@ -2,6 +2,8 @@ import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 from scripts.ui import InteractiveLabel, TextInputField
 
+from ..sounds import HOVER_SOUND, CLICK_SOUND
+
 
 class SigninMenu(arcade.View):
     def __init__(self, back_callback):
@@ -11,8 +13,8 @@ class SigninMenu(arcade.View):
         self.manager = UIManager()
         self.manager.enable()
 
-        self.hover_sound = arcade.load_sound('././assets/sounds/effects/hover.wav')
-        self.click_sound = arcade.load_sound('././assets/sounds/effects/click.wav')
+        self.hover_sound = HOVER_SOUND
+        self.click_sound = CLICK_SOUND
 
         self.status_text = '> ДАННЫЕ НЕ ПРОАНАЛИЗИРОВАНЫ'
         self.active_input = None

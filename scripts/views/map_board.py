@@ -4,6 +4,9 @@ from functools import lru_cache
 import arcade
 from pyglet.graphics import Batch
 
+from ..sounds import *
+from . import SettingsManager
+
 
 class MapInfo:
     def __init__(self, id, name, size, desc, cords, on_level=1):
@@ -780,6 +783,8 @@ class MapBoard(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
             self.close_mapboard()
+        if symbol == arcade.key.F10:
+            self.open_settings()
 
     @staticmethod
     def get_map_id(grid_y, grid_x):
@@ -833,13 +838,15 @@ class MapBoard(arcade.View):
             point_sprite.color = arcade.color.DARK_YELLOW
             self.game_state['map'] = map_key
             self.save_game_state()
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(GOOD_MARK, volume=volume)
 
             # Сохраняем как последнюю доступную карту
             self.last_accessible_point = point_sprite
 
         else:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(BAD_MARK, volume=volume)
 
             if self.last_accessible_point:
                 self.last_accessible_point.color = arcade.color.DARK_YELLOW
@@ -879,7 +886,8 @@ class MapBoard(arcade.View):
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mapboard(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'), volume=0.4)
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_2, volume=volume)
         self.window.show_view(self.lobby)
 
     @staticmethod
@@ -891,3 +899,11 @@ class MapBoard(arcade.View):
             lines = f.readlines()
 
         return list(map(lambda x: x.strip('\n'), lines))
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

@@ -139,7 +139,7 @@ class LoginMenu(arcade.View):
         self.manager.add(anchor)
 
     def on_login_enter(self, text):
-        """Когда нажали Enter в поле логина"""
+        """При нажатии на Enter в логине"""
         if text and self.password_input.text == '':
             # Переходим к паролю
             self.login_input.deactivate()
@@ -147,7 +147,7 @@ class LoginMenu(arcade.View):
             self.active_input = self.password_input
 
     def on_password_enter(self, text):
-        """Когда нажали Enter в поле пароля"""
+        """Когда нажали Enter в пароле"""
         if text:
             self.password_input.deactivate()
             self.active_input = None
@@ -174,7 +174,7 @@ class LoginMenu(arcade.View):
             lobby = LobbyView(account_manager=manager)
             self.window.show_view(lobby)
 
-            from constants import ENTRY_BACKGROUND_SOUND
+            from ..start_sound import ENTRY_BACKGROUND_SOUND
             ENTRY_BACKGROUND_SOUND.pause()
 
         else:

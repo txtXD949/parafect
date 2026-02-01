@@ -5,6 +5,7 @@ from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel, UISlider
 
 from scripts.ui import InteractiveLabel
 import constants
+from ..sounds import CLICK_SOUND, HOVER_SOUND
 
 
 class SettingsManager:
@@ -250,8 +251,8 @@ class SettingsView(arcade.View):
             normal_color='#C8C8C8',
             hover_color='#FFFFFF',
             active_color='#FFFFFF',
-            hover_sound=arcade.load_sound('././assets/sounds/effects/hover.wav'),
-            click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
+            hover_sound=HOVER_SOUND,
+            click_sound=CLICK_SOUND
         )
         self.box_layout_settings.add(self.language_button)
 
@@ -265,8 +266,8 @@ class SettingsView(arcade.View):
             normal_color='#C8C8C8',
             hover_color='#FFFFFF',
             active_color='#FFFFFF',
-            hover_sound=arcade.load_sound('././assets/sounds/effects/hover.wav'),
-            click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
+            hover_sound=HOVER_SOUND,
+            click_sound=CLICK_SOUND
         )
         self.box_layout_bottom.add(self.back_button)
 
@@ -310,6 +311,9 @@ class SettingsView(arcade.View):
             self.back_button.on_update(delta_time)
         if self.language_button:
             self.language_button.on_update(delta_time)
+
+        from ..start_sound import ENTRY_BACKGROUND_SOUND
+        ENTRY_BACKGROUND_SOUND.volume = SettingsManager.get_sound_volume()
 
     def on_mouse_motion(self, x, y, dx, dy):
         if self.back_button:

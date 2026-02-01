@@ -35,6 +35,7 @@ class GameLoading(arcade.View):
         )
 
     def set_text(self):
+        """Устанавливает и обновляет текст"""
         texts = ['.', '..', '...']
 
         if 0 < self.timer < 1.5:
@@ -73,6 +74,7 @@ class GameLoading(arcade.View):
         self.batch.draw()
 
     def open_game(self):
+        """Запуск игры"""
         self.closed = True
         self.game.open_map()
 

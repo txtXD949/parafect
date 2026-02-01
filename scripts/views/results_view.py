@@ -7,6 +7,9 @@ from . import DIFFICULTY_DATABASE
 from . import MAP_DATABASE
 from ..ui import ITEM_DATABASE
 
+from ..sounds import *
+from . import SettingsManager
+
 P_EXP_WIN = 100
 P_EXP_LOSE = 10
 
@@ -39,11 +42,11 @@ LEVEL_EXP = 50
 
 class ResultsView(arcade.View):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/print.wav'),
-        arcade.load_sound('././assets/sounds/effects/counter.wav'),
-        arcade.load_sound('././assets/sounds/effects/cash_counter.wav'),
-        arcade.load_sound('././assets/sounds/effects/hover.wav'),
-        arcade.load_sound('././assets/sounds/effects/return_lobby.wav')
+        PRINT,
+        COUNTER,
+        CASH_COUNTER,
+        HOVER_SOUND,
+        RETURN_LOBBY
     ]
 
     def __init__(self, game):
@@ -300,7 +303,8 @@ class ResultsView(arcade.View):
         if not self.state:
             if self.new_exp:
                 if not self.is_playing:
-                    self.sound_player = arcade.play_sound(self.SOUNDS[1], loop=True)
+                    volume = SettingsManager.get_sound_volume()
+                    self.sound_player = arcade.play_sound(self.SOUNDS[1], loop=True, volume=volume)
                     self.is_playing = True
                 self.exp = min(self.exp + 1, LEVEL_EXP * self.lvl)
                 if self.exp == LEVEL_EXP * self.lvl:
@@ -314,7 +318,8 @@ class ResultsView(arcade.View):
 
             if self.new_cash and not self.new_exp:
                 if not self.is_playing:
-                    self.sound_player = arcade.play_sound(self.SOUNDS[2], loop=True)
+                    volume = SettingsManager.get_sound_volume()
+                    self.sound_player = arcade.play_sound(self.SOUNDS[2], loop=True, volume=volume)
                     self.is_playing = True
                 self.cash += 1
                 self.new_cash -= 1
@@ -329,7 +334,8 @@ class ResultsView(arcade.View):
 
         if self.state_cord != 0:
             if not self.is_playing:
-                self.sound_player = arcade.play_sound(self.SOUNDS[0], loop=True)
+                volume = SettingsManager.get_sound_volume()
+                self.sound_player = arcade.play_sound(self.SOUNDS[0], loop=True, volume=volume)
                 self.is_playing = True
             self.state_cord -= 3
         if self.state_cord <= 0:
@@ -345,7 +351,8 @@ class ResultsView(arcade.View):
             return
 
         if (w.x, w.y) in arcade.rect.XYWH(625, 300, 50, 50) and self.can_click:
-            arcade.play_sound(self.SOUNDS[4])
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(self.SOUNDS[4], volume=volume)
             self.open_lobby()
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int) -> bool | None:
@@ -353,7 +360,8 @@ class ResultsView(arcade.View):
 
         if (w.x, w.y) in arcade.rect.XYWH(625, 300, 50, 50) and self.can_click:
             if not self.on_hover:
-                arcade.play_sound(self.SOUNDS[3])
+                volume = SettingsManager.get_sound_volume()
+                arcade.play_sound(self.SOUNDS[3], volume=volume)
             self.on_hover = True
         else:
             self.on_hover = False
@@ -361,7 +369,6 @@ class ResultsView(arcade.View):
     def open_lobby(self):
         self.give_away_items()
 
-        print(':)')
         from ..maps import LobbyView
         lobby_view = LobbyView(self.account)
         self.window.show_view(lobby_view)

@@ -3,12 +3,15 @@ from arcade.gui import UIWidget, UIBoxLayout, UIAnchorLayout, UIManager, UIEvent
 from arcade.gui.widgets import UIDummy
 from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 
+from ..sounds import CLICK_GHOST_BUTTON, CLICK_DIS_GHOST_BUTTON
+from . import SettingsManager
+
 
 
 class PaperButton(UITextureButton):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/click_ghost_button.wav'),
-        arcade.load_sound('././assets/sounds/effects/click_dis_ghost_button.wav')
+        CLICK_GHOST_BUTTON,
+        CLICK_DIS_GHOST_BUTTON
     ]
 
     def __init__(self, text, width, height, journal_widget, type, *, ghost=None, evidence=None):
@@ -54,10 +57,12 @@ class PaperButton(UITextureButton):
             return
 
         if not self.is_active:
-            arcade.play_sound(self.SOUNDS[1])
+            volume = SettingsManager.get_sound_volume()
+            self.SOUNDS[1].play(volume=volume)
             return
 
-        arcade.play_sound(self.SOUNDS[0])
+        volume = SettingsManager.get_sound_volume()
+        self.SOUNDS[0].play(volume=volume)
         if self.type == 'ghost':
             self.state = (self.state + 1) % 3
             self._update_visual()

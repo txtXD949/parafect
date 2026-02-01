@@ -1,3 +1,4 @@
+from .settings import SettingsView, SettingsManager
 from .screensaver import Screensaver
 from .entry_menu import EntryMenu
 from .login_menu import LoginMenu
@@ -10,7 +11,7 @@ from .tool_board import ToolBoard
 from .paper import Paper
 from .sanity_screen import SanityScreen
 from .results_view import ResultsView
-from .settings import SettingsView, SettingsManager
+
 
 __all__ = [
     'Screensaver',

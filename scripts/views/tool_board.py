@@ -1,6 +1,8 @@
 import random
-
 import arcade
+
+from ..sounds import BOARD_1, SETTINGS
+from .settings import SettingsManager
 
 
 class ToolBoard(arcade.View):
@@ -399,7 +401,8 @@ class ToolBoard(arcade.View):
         arcade.draw_line(400, 25, 390, 30, color=arcade.color.BLACK)
 
     def on_show_view(self) -> None:
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_1, volume=volume)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         world_cords = self.world_camera.unproject((x, y))
@@ -451,5 +454,14 @@ class ToolBoard(arcade.View):
         self.tools_sprites.append(item.board_sprite)
 
     def close(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_1, volume=volume)
         self.window.show_view(self.map)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

@@ -47,7 +47,7 @@
   },
   "3": {
     "name": "I-303",
-    "cash": 6579,
+    "cash": 6529,
     "level": 50,
     "experience": 1641,
     "inventory": {
@@ -57,9 +57,9 @@
       "mic": 2,
       "dict": 2,
       "term": 3,
-      "flash_light": 6,
+      "flash_light": 5,
       "incense": 3,
-      "lighter": 2,
+      "lighter": 3,
       "pills": 5
     },
     "settings": {

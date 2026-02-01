@@ -2,14 +2,14 @@ import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 
 from scripts.ui import InteractiveLabel
-import constants
+from ..start_sound import ENTRY_BACKGROUND_SOUND
 
 
 class EntryMenu(arcade.View):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.BLACK
-        constants.ENTRY_BACKGROUND_SOUND.play()
+        ENTRY_BACKGROUND_SOUND.play()
 
         self.manager = UIManager()
         self.manager.enable()
@@ -139,6 +139,10 @@ class EntryMenu(arcade.View):
         self.button_settings.on_update(delta_time)
         self.button_exit.on_update(delta_time)
 
+        from . import SettingsManager
+        vol = SettingsManager.get_sound_volume()
+        ENTRY_BACKGROUND_SOUND.volume = vol
+
     def on_mouse_motion(self, x, y, dx, dy):
         self.button_create.check_mouse_hover(x, y)
         self.button_login.check_mouse_hover(x, y)
@@ -210,6 +214,8 @@ class EntryMenu(arcade.View):
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
             self.window.close()
+        if key == arcade.key.F10:
+            self.on_settings_click()
         elif key == arcade.key.ENTER:
             # Если есть активная кнопка, выполняем её действие
             if self.active_button == self.button_create:
@@ -220,6 +226,7 @@ class EntryMenu(arcade.View):
                 self.on_settings_click()
             elif self.active_button == self.button_exit:
                 self.on_exit_click()
+
 
     def reset_all_buttons(self):
         """Сброс всех кнопок при возврате"""

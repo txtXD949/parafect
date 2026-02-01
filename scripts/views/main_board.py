@@ -2,6 +2,9 @@ import arcade
 from pyglet.graphics import Batch
 from arcade.gui import UIManager
 
+from ..sounds import *
+from . import SettingsManager
+
 from itertools import cycle
 import json
 
@@ -336,11 +339,13 @@ class MainBoard(arcade.View):
                 difficulty_key = key
                 break
 
+        volume = SettingsManager.get_sound_volume()
         if difficulty_key and self.player_level >= DIFFICULTY_DATABASE[difficulty_key].on_level:
             self.game_state['difficulty'] = difficulty_key
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
+            arcade.play_sound(GOOD_MARK, volume=volume)
         else:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(BAD_MARK, volume=volume)
             self.game_state['difficulty'] = None
         self.save_game_state()
 
@@ -511,6 +516,8 @@ class MainBoard(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
             self.close_mainboard()
+        if symbol == arcade.key.F10:
+            self.open_settings()
 
     def load_game_state(self):
         try:
@@ -525,7 +532,8 @@ class MainBoard(arcade.View):
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mainboard(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_1, volume=volume)
         self.window.show_view(self.lobby)
 
     def start_game(self):
@@ -534,10 +542,12 @@ class MainBoard(arcade.View):
         inventory = self.game_state.get('inventory')
 
         if not (dif_id and map_id):
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click_bad(play).wav'), volume=0.5)
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(BAD_PLAY, volume=volume)
             return
 
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click(play).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(GOOD_PLAY, volume=volume)
 
         from .. import Player, Game
         self.player = Player(self.player_name, self.player_level, self.player_cash, self.player_exp)
@@ -546,3 +556,11 @@ class MainBoard(arcade.View):
         from . import GameLoading
         loading = GameLoading(game)
         self.window.show_view(loading)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)
