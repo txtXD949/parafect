@@ -85,7 +85,7 @@ class Screensaver(arcade.View):
 
             # Быстрое мерцание
             elif self.f_animation_phase == 'blinking':
-                volume = SettingsManager.get_sound_volume()
+                volume = SettingsManager.get_sound_volume(1.2)
                 self.heartbeat_sound.play(volume=volume)
                 blink_interval = 0.1
                 blink_state = int(self.f_animation_timer / blink_interval) % 2

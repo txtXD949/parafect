@@ -141,7 +141,7 @@ class LobbyView(arcade.View):
         # Звук шагов
         if self.player.is_going:
             if self.player.animation_timer in (8,):
-                volume = SettingsManager.get_sound_volume(1.0)
+                volume = SettingsManager.get_sound_volume(0.16)
 
                 if arcade.check_for_collision_with_list(self.player, self.scene['carpet']):
                     if self.player.bottom >= 16 * 3:
@@ -195,7 +195,7 @@ class LobbyView(arcade.View):
         self.window.show_view(self.map_board)
 
     def open_market(self):
-        volume = SettingsManager.get_sound_volume()
+        volume = SettingsManager.get_sound_volume(0.3)
         arcade.play_sound(MARKET, volume=volume)
 
         self.player.change_x = self.player.change_y = 0
@@ -205,7 +205,7 @@ class LobbyView(arcade.View):
         self.window.show_view(market)
 
     def open_settings(self):
-        volume = SettingsManager.get_sound_volume()
+        volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 
         self.player.change_x = self.player.change_y = 0

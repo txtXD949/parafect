@@ -378,9 +378,9 @@ class MainBoard(arcade.View):
                 difficulty_key = key
                 break
 
-        volume = SettingsManager.get_sound_volume()
         if difficulty_key and self.player_level >= DIFFICULTY_DATABASE[difficulty_key].on_level:
             self.game_state['difficulty'] = difficulty_key
+            volume = SettingsManager.get_sound_volume()
             arcade.play_sound(GOOD_MARK, volume=volume)
         else:
             volume = SettingsManager.get_sound_volume()
@@ -588,7 +588,7 @@ class MainBoard(arcade.View):
         inventory = self.game_state.get('inventory')
 
         if not (dif_id and map_id):
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.7)
             arcade.play_sound(BAD_PLAY, volume=volume)
             return
 
@@ -604,7 +604,7 @@ class MainBoard(arcade.View):
         self.window.show_view(loading)
 
     def open_settings(self):
-        volume = SettingsManager.get_sound_volume()
+        volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 
         from . import SettingsView

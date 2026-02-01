@@ -484,7 +484,7 @@ class Radio(Item):
         super().turn_on()
         self.start_capture()
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
-        vol = SettingsManager.get_sound_volume()
+        vol = SettingsManager.get_sound_volume(0.5)
         self.sound_player = arcade.play_sound(self.SOUNDS[0], loop=True, volume=vol)
 
     def turn_off(self):

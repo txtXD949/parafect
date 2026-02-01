@@ -254,7 +254,7 @@ class Player:
         self.turn_off_item()
 
         self.inventory.remove(self.gripped_item)
-        vol = SettingsManager.get_sound_volume()
+        vol = SettingsManager.get_sound_volume(0.55)
         arcade.play_sound(DROP_ITEM, volume=vol)
         try:
             self.gripped_item = self.inventory[0]

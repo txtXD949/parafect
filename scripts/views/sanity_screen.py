@@ -115,7 +115,7 @@ class SanityScreen(arcade.View):
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(BOARD_2, volume=volume)
         if not self.game.dif.sanity_screen:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.5)
             self.sound_player = arcade.play_sound(BROKEN_SAN_SCREEN, loop=True, volume=volume)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
@@ -144,7 +144,7 @@ class SanityScreen(arcade.View):
         self.window.show_view(self.map)
 
     def open_settings(self):
-        volume = SettingsManager.get_sound_volume()
+        volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 
         from . import SettingsView

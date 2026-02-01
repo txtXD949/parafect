@@ -419,13 +419,13 @@ class MarketView(arcade.View):
 
         # Проверяем уровень игрока
         if self.player_level < item.on_level:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
         # Проверяем баланс игрока
         if item.price > self.player_balance:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
@@ -459,12 +459,12 @@ class MarketView(arcade.View):
                 total_cost += item.price
 
         if not items_to_buy:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
         if total_cost > self.player_balance:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
@@ -499,13 +499,13 @@ class MarketView(arcade.View):
         item = self.items_data[self.selected_item_id]
 
         if item.in_inventory <= 0:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
         current_taken = self.temp_inventory.get('inventory', {}).get(self.selected_item_id, 0)
         if current_taken >= item.max_in_game:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
@@ -526,7 +526,7 @@ class MarketView(arcade.View):
                 'set'
             )
         else:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
@@ -544,13 +544,13 @@ class MarketView(arcade.View):
 
         current_taken = self.temp_inventory.get('inventory', {}).get(self.selected_item_id, 0)
         if current_taken <= 0:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
         basic_items = {'emf', 'low_light', 'dict', 'term', 'mic', 'book'}
         if self.selected_item_id in basic_items and current_taken <= 1:
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.6)
             arcade.play_sound(REJECT, volume=volume)
             return
 
@@ -608,12 +608,12 @@ class MarketView(arcade.View):
             json.dump(self.temp_inventory, f, ensure_ascii=False, indent=2)
 
     def close_market(self):
-        volume = SettingsManager.get_sound_volume()
+        volume = SettingsManager.get_sound_volume(0.6)
         arcade.play_sound(CLICK_SOUND, volume=volume)
         self.window.show_view(self.lobby)
 
     def open_settings(self):
-        volume = SettingsManager.get_sound_volume()
+        volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 
         from . import SettingsView

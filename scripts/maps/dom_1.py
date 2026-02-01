@@ -414,14 +414,14 @@ class Dom1(arcade.View):
         # Двери
         if self.pressed_E and (doors := arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)):
             doors[0].change()
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.2)
             arcade.play_sound(DOOR_OPEN, volume=volume)
 
         # Шкафы
         if self.pressed_E and (closets := arcade.check_for_collision_with_list(self.player_sprite, self.closets_list)):
             closets[0].interact(self.player_sprite, self.items_list)
             self.player_sprite.change_x = self.player_sprite.change_y = 0
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.2)
             arcade.play_sound(CLOSET, volume=volume)
 
         # Генератор
@@ -431,7 +431,7 @@ class Dom1(arcade.View):
                 self.threshold = self.threshold_min
             else:
                 self.threshold = self.threshold_max
-            volume = SettingsManager.get_sound_volume()
+            volume = SettingsManager.get_sound_volume(0.3)
             arcade.play_sound(GENERATOR, volume=volume)
 
         # Выход из игры
@@ -475,18 +475,18 @@ class Dom1(arcade.View):
             if self.player_sprite.animation_timer in (8,):
                 if arcade.check_for_collision_with_list(self.player_sprite, self.scene['carpet']):
                     if self.player_sprite.bottom >= 16 * 3:
-                        volume = SettingsManager.get_sound_volume()
+                        volume = SettingsManager.get_sound_volume(0.16)
                         arcade.play_sound(CARPET_FOOTSTEPS, volume=volume)
                     else:
-                        volume = SettingsManager.get_sound_volume()
+                        volume = SettingsManager.get_sound_volume(0.16)
                         arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
 
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['floor']):
-                    volume = SettingsManager.get_sound_volume()
+                    volume = SettingsManager.get_sound_volume(0.16)
                     arcade.play_sound(GROUND_FOOTSTEPS, volume=volume)
 
                 elif arcade.check_for_collision_with_list(self.player_sprite, self.scene['ground']):
-                    volume = SettingsManager.get_sound_volume()
+                    volume = SettingsManager.get_sound_volume(0.16)
                     arcade.play_sound(GRASS_FOOTSTEPS, volume=volume)
 
         # Шум света

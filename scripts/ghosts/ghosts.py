@@ -267,7 +267,7 @@ class Ghost:
         if random.random() > self.hunt_chance + (((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
             return
 
-        volume = SettingsManager.get_ghost_sound_volume()
+        volume = SettingsManager.get_ghost_sound_volume(1.5)
         self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True, volume=volume)
         self.is_charging = True
         self.charge_timer = random.uniform(1.5, 2.0)
