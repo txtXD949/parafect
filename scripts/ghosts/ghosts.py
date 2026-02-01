@@ -83,12 +83,6 @@ class GhostSprite(arcade.Sprite):
         arcade.load_texture('./assets/images/ghost/ghost_0.png'),
         arcade.load_texture('./assets/images/ghost/ghost_1.png')
     ]
-    GE_SOUNDS = [
-
-    ]
-    HUNT_SOUNDS = [
-
-    ]
 
     def __init__(self, ghost, scale=1.0):
         super().__init__(scale=scale)

@@ -48,9 +48,9 @@ class GhostEvent:
 
 class SuddenGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/sudden_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/sudden_ghost_event2.wav'),
-        arcade.load_sound('././assets/sounds/effects/sudden_ghost_event3.wav')
+        SUDDEN_GHOST_EVENT_1,
+        SUDDEN_GHOST_EVENT_2,
+        SUDDEN_GHOST_EVENT_3
     ]
 
     def __init__(self, ghost):
@@ -65,8 +65,8 @@ class SuddenGhostEvent(GhostEvent):
 
 class BreathGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/breath_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/breath_ghost_event2.wav')
+        BREATH_GHOST_EVENT_1,
+        BREATH_GHOST_EVENT_2
     ]
 
     def __init__(self, ghost):
@@ -75,10 +75,10 @@ class BreathGhostEvent(GhostEvent):
 
 class WheezingGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event2.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event3.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event4.wav')
+        WHEEZING_GHOST_EVENT_1,
+        WHEEZING_GHOST_EVENT_2,
+        WHEEZING_GHOST_EVENT_3,
+        WHEEZING_GHOST_EVENT_4
     ]
 
     def __init__(self, ghost):
@@ -87,11 +87,11 @@ class WheezingGhostEvent(GhostEvent):
 
 class WheezingGhostEvenShadow(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event2.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event3.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event4.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event5.wav')
+        WHEEZING_SHADOW_EVENT_1,
+        WHEEZING_SHADOW_EVENT_2,
+        WHEEZING_SHADOW_EVENT_3,
+        WHEEZING_SHADOW_EVENT_4,
+        WHEEZING_SHADOW_EVENT_5
     ]
 
     def __init__(self, ghost):
@@ -103,8 +103,8 @@ class WheezingGhostEvenShadow(GhostEvent):
 
 class WhisperGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/whisper_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/whisper_ghost_event2.wav')
+        WHISPER_GHOST_EVENT_1,
+        WHISPER_GHOST_EVENT_2
     ]
 
     def __init__(self, ghost):
@@ -113,7 +113,7 @@ class WhisperGhostEvent(GhostEvent):
 
 class LaughGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/laugh_ghost_event.wav')
+        LAUGH_GHOST_EVENT
     ]
 
     def __init__(self, ghost):
