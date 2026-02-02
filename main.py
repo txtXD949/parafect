@@ -1,6 +1,7 @@
 #  Запуск программы отсюда
 import arcade
 import os
+import pyglet.image
 
 
 class GameWindow(arcade.Window):
@@ -9,6 +10,8 @@ class GameWindow(arcade.Window):
             title='Parafect',
             fullscreen=True
         )
+
+        self.set_icon(pyglet.image.load('./assets/images/icons/parafect.ico'))
 
         self.center_window()
 
