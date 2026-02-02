@@ -2,14 +2,16 @@ import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 
 from scripts.ui import InteractiveLabel
-import constants
+from ..start_sound import ENTRY_BACKGROUND_SOUND
+
+from constants import LANGUAGE_INDEX
 
 
 class EntryMenu(arcade.View):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.BLACK
-        constants.ENTRY_BACKGROUND_SOUND.play()
+        ENTRY_BACKGROUND_SOUND.play()
 
         self.manager = UIManager()
         self.manager.enable()
@@ -17,11 +19,14 @@ class EntryMenu(arcade.View):
         self.anchor_layout = UIAnchorLayout()
         self.box_layout_labels = UIBoxLayout(vertical=True, space_between=20)
         self.box_layout_buttons = UIBoxLayout(vertical=True, space_between=20)
+        self.box_layout_bottom = UIBoxLayout(vertical=False, space_between=30)
 
         self.label1 = None  # Добро пожаловать
         self.label2 = None  # Вам нужен профиль
         self.button1 = None  # Создать
         self.button2 = None  # Войти
+        self.button_settings = None  # Настройки
+        self.button_exit = None  # Выход
 
         self.active_button = None
 
@@ -29,7 +34,7 @@ class EntryMenu(arcade.View):
 
     def setup_widgets(self):
         self.label1 = UILabel(
-            text='Добро пожаловать',
+            text='Welcome',
             font_size=26,
             font_name='Courier New',
             width=300,
@@ -38,7 +43,7 @@ class EntryMenu(arcade.View):
         self.box_layout_labels.add(self.label1)
 
         self.label2 = UILabel(
-            text='Вам нужен профиль',
+            text='You need a profile',
             font_size=20,
             font_name='Courier New',
             width=300,
@@ -47,7 +52,7 @@ class EntryMenu(arcade.View):
         self.box_layout_labels.add(self.label2)
 
         self.button_create = InteractiveLabel(
-            text='СОЗДАТЬ',
+            text='CREATE',
             width=250,
             height=45,
             font_size=22,
@@ -61,7 +66,7 @@ class EntryMenu(arcade.View):
         self.box_layout_buttons.add(self.button_create)
 
         self.button_login = InteractiveLabel(
-            text='ВОЙТИ',
+            text='LOGIN',
             width=250,
             height=45,
             font_size=22,
@@ -73,6 +78,34 @@ class EntryMenu(arcade.View):
             click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
         )
         self.box_layout_buttons.add(self.button_login)
+
+        self.button_settings = InteractiveLabel(
+            text='SETTINGS',
+            width=180,
+            height=35,
+            font_size=18,
+            font_name='Courier New',
+            normal_color='#888888',  # Темно-серый
+            hover_color='#C8C8C8',  # Светло-серый
+            active_color='#C8C8C8',
+            hover_sound=arcade.load_sound('././assets/sounds/effects/hover.wav'),
+            click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
+        )
+        self.box_layout_bottom.add(self.button_settings)
+
+        self.button_exit = InteractiveLabel(
+            text='EXIT',
+            width=180,
+            height=35,
+            font_size=18,
+            font_name='Courier New',
+            normal_color='#888888',
+            hover_color='#C8C8C8',
+            active_color='#C8C8C8',
+            hover_sound=arcade.load_sound('././assets/sounds/effects/hover.wav'),
+            click_sound=arcade.load_sound('././assets/sounds/effects/click.wav')
+        )
+        self.box_layout_bottom.add(self.button_exit)
 
         # Собираем все в anchor layout
         self.anchor_layout.add(
@@ -88,7 +121,26 @@ class EntryMenu(arcade.View):
             anchor_y='center'
         )
 
+        self.anchor_layout.add(
+            child=self.box_layout_bottom,
+            anchor_x='center',
+            anchor_y='bottom',
+            align_y=50  # Отступ от низа
+        )
+
         self.manager.add(self.anchor_layout)
+
+    def update_texts(self):
+        """Обновляет тексты"""
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
+        self.label1.text = ('Добро пожаловать', 'Welcome')[c_lang]
+        self.label2.text = ('Вам нужен профиль', 'You need a profile')[c_lang]
+        self.button_create.base_text = ('СОЗДАТЬ', 'CREATE')[c_lang]
+        self.button_login.base_text = ('ВОЙТИ', 'LOGIN')[c_lang]
+        self.button_settings.base_text = ('НАСТРОЙКИ', 'SETTINGS')[c_lang]
+        self.button_exit.base_text = ('ВЫХОД', 'EXIT')[c_lang]
 
     def on_draw(self) -> bool | None:
         self.clear()
@@ -96,18 +148,25 @@ class EntryMenu(arcade.View):
         self.manager.draw()
 
     def on_update(self, delta_time):
-        """Обновление анимации"""
         self.button_create.on_update(delta_time)
         self.button_login.on_update(delta_time)
+        self.button_settings.on_update(delta_time)
+        self.button_exit.on_update(delta_time)
+
+        from . import SettingsManager
+        vol = SettingsManager.get_sound_volume()
+        ENTRY_BACKGROUND_SOUND.volume = vol
+
+        # Обновление текстов
+        self.update_texts()
 
     def on_mouse_motion(self, x, y, dx, dy):
-        """Обработка движения мыши"""
-        # Проверяем наведение на кнопки
         self.button_create.check_mouse_hover(x, y)
         self.button_login.check_mouse_hover(x, y)
+        self.button_settings.check_mouse_hover(x, y)
+        self.button_exit.check_mouse_hover(x, y)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        """Обработка клика мыши"""
         if button == arcade.MOUSE_BUTTON_LEFT:
             # Проверяем клик по кнопке СОЗДАТЬ
             if self.button_create.check_mouse_hover(x, y):
@@ -133,6 +192,19 @@ class EntryMenu(arcade.View):
                     # Действие при нажатии ВОЙТИ
                     self.on_login_click()
 
+            elif self.button_settings.check_mouse_hover(x, y):
+                self.button_settings.on_click()
+                if self.button_settings._is_active:
+                    self.reset_other_buttons(self.button_settings)
+                    self.on_settings_click()
+
+                # Проверяем клик по кнопке ВЫХОД
+            elif self.button_exit.check_mouse_hover(x, y):
+                self.button_exit.on_click()
+                if self.button_exit._is_active:
+                    self.reset_other_buttons(self.button_exit)
+                    self.on_exit_click()
+
     def on_create_click(self):
         """Действие при клике на СОЗДАТЬ"""
         from .signin_menu import SigninMenu
@@ -145,25 +217,54 @@ class EntryMenu(arcade.View):
         login = LoginMenu(back_callback=lambda: self.window.show_view(self))
         self.window.show_view(login)
 
+    def on_settings_click(self):
+        """Действие при клике на НАСТРОЙКИ"""
+        self.reset_all_buttons()
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)
+
+    def on_exit_click(self):
+        """Действие при клике на ВЫХОД"""
+        self.window.close()
+
     def on_key_press(self, key, modifiers):
-        """Обработка клавиш"""
         if key == arcade.key.ESCAPE:
             self.window.close()
+        if key == arcade.key.F10:
+            self.on_settings_click()
         elif key == arcade.key.ENTER:
             # Если есть активная кнопка, выполняем её действие
             if self.active_button == self.button_create:
                 self.on_create_click()
             elif self.active_button == self.button_login:
                 self.on_login_click()
+            elif self.active_button == self.button_settings:
+                self.on_settings_click()
+            elif self.active_button == self.button_exit:
+                self.on_exit_click()
 
     def reset_all_buttons(self):
         """Сброс всех кнопок при возврате"""
         self.button_create.reset_state()
         self.button_login.reset_state()
         self.active_button = None
+        self.button_settings.reset_state()
+        self.button_exit.reset_state()
+        self.active_button = None
+
+    def reset_other_buttons(self, active_button):
+        """Сбрасывает все кнопки кроме активной"""
+        buttons = [self.button_create, self.button_login,
+                   self.button_settings, self.button_exit]
+
+        for button in buttons:
+            if button != active_button:
+                button.reset_state()
+
+        self.active_button = active_button
 
     def on_show_view(self):
-        """Вызывается при показе этого View"""
         super().on_show_view()
         # Сбрасываем кнопки
         self.button_create.reset_state()

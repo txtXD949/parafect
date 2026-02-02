@@ -2,15 +2,19 @@ import arcade
 from pyglet.graphics import Batch
 from arcade.gui import UIManager
 
+from ..sounds import *
+from . import SettingsManager
+
 from itertools import cycle
 import json
 
 
 class DifficultyInfo:
-    def __init__(self, name, desc, sanity, add_sanity, broke_chance, roomchange_chance, evidence_count,
+    def __init__(self, id, name, desc, sanity, add_sanity, broke_chance, roomchange_chance, evidence_count,
                  sanity_screen=True, on_level=1):
-        self.name: str = name
-        self.desc: str = desc
+        self.id = id
+        self.name: tuple = name
+        self.desc: tuple = desc
         self.sanity: str = sanity
         self.add_sanity: str = add_sanity
         self.broke_chance: str = broke_chance
@@ -22,8 +26,12 @@ class DifficultyInfo:
 
 DIFFICULTY_DATABASE = {
     'peaceful': DifficultyInfo(
-        name='Мирный',
-        desc='Ознакомительный режим, призраки не начинают охоту.',
+        id='peaceful',
+        name=('Мирный', 'Peaceful'),
+        desc=(
+            'Ознакомительный режим, призраки не начинают охоту.',
+            'Familiarization mode, the ghosts don\'t start hunting.'
+        ),
         sanity='100%',
         add_sanity='50%',
         broke_chance='0%',
@@ -33,8 +41,12 @@ DIFFICULTY_DATABASE = {
         on_level=1
     ),
     'simple': DifficultyInfo(
-        name='Легкий',
-        desc='Подходит для новичков.',
+        id='simple',
+        name=('Легкий', 'Easy'),
+        desc=(
+            'Подходит для новичков.',
+            'For beginners.'
+        ),
         sanity='100%',
         add_sanity='40%',
         broke_chance='10%',
@@ -44,8 +56,12 @@ DIFFICULTY_DATABASE = {
         on_level=1
     ),
     'normal': DifficultyInfo(
-        name='Нормальный',
-        desc='Стандартный уровень сложности.',
+        id='normal',
+        name=('Нормальный', 'Normal'),
+        desc=(
+            'Стандартный уровень сложности.',
+            'Gold standard.'
+        ),
         sanity='100%',
         add_sanity='30%',
         broke_chance='30%',
@@ -55,8 +71,12 @@ DIFFICULTY_DATABASE = {
         on_level=1
     ),
     'difficult': DifficultyInfo(
-        name='Сложный',
-        desc='Призрак более агрессивен. Для продвинутых игроков',
+        id='difficult',
+        name=('Сложный', 'Difficult'),
+        desc=(
+            'Призрак более агрессивен. Для продвинутых игроков.',
+            'The ghost is more aggressive. For advanced players.'
+        ),
         sanity='85%',
         add_sanity='20%',
         broke_chance='50%',
@@ -66,8 +86,12 @@ DIFFICULTY_DATABASE = {
         on_level=10
     ),
     'nightmare': DifficultyInfo(
-        name='Кошмар',
-        desc='Призрак настроен убить вас, будь аккуратнее. Для профессиональных игроков',
+        id='nightmare',
+        name=('Кошмар', 'Nightmare'),
+        desc=(
+            'Призрак настроен убить вас, будь аккуратнее. Для профессиональных игроков.',
+            'The ghost is determined to kill you, be careful. For professional players.'
+        ),
         sanity='25%',
         add_sanity='10%',
         broke_chance='70%',
@@ -77,8 +101,12 @@ DIFFICULTY_DATABASE = {
         on_level=20
     ),
     'madness': DifficultyInfo(
-        name='Безумие',
-        desc='Призрак обезумел и не даст тебе шансов.',
+        id='madness',
+        name=('Безумие', 'Madness'),
+        desc=(
+            'Призрак обезумел и не даст тебе шансов.',
+            'The ghost is mad and won\'t give you a chance.'
+        ),
         sanity='10%',
         add_sanity='5%',
         broke_chance='85%',
@@ -88,8 +116,12 @@ DIFFICULTY_DATABASE = {
         on_level=30
     ),
     'chaos': DifficultyInfo(
-        name='Хаос',
-        desc='Призрак совсем в бешенстве. У тебя нет шансов…',
+        id='chaos',
+        name=('Хаос', 'Chaos'),
+        desc=(
+            'Призрак совсем в бешенстве. У тебя нет шансов…',
+            'The ghost is absolutely furious. You don\'t have a chance…'
+        ),
         sanity='1%',
         add_sanity='0%',
         broke_chance='99%',
@@ -152,8 +184,9 @@ class MainBoard(arcade.View):
 
         # UI
         from ..ui import ChangeButton
+        c_lang = SettingsManager.iget_current_language()
         self.btn = ChangeButton(
-            values=[' '] + list(map(lambda x: DIFFICULTY_DATABASE[x].name, DIFFICULTY_DATABASE.keys())),
+            values=[' '] + list(map(lambda x: DIFFICULTY_DATABASE[x].name[c_lang], DIFFICULTY_DATABASE.keys())),
             start_x=590,
             start_y=460,
             font_size=20,
@@ -163,7 +196,7 @@ class MainBoard(arcade.View):
         )
         start_diff = self.game_state.get('difficulty', None)
         if start_diff and start_diff in DIFFICULTY_DATABASE:
-            self.btn.value = DIFFICULTY_DATABASE[start_diff].name
+            self.btn.value = DIFFICULTY_DATABASE[start_diff].name[c_lang]
 
         # Камера
         self.camera = arcade.Camera2D(
@@ -185,7 +218,10 @@ class MainBoard(arcade.View):
         diff_id = self.game_state.get('difficulty')
 
         if diff_id:
-            self.set_difficulty_texts(DIFFICULTY_DATABASE[diff_id].name)
+            self.set_difficulty_texts(diff_id)
+
+        self.update_texts()
+        self.set_info_game_texts()
 
     def set_gui_texts(self):
         """Тексты: ИГРА/СЛОЖНОСТЬ"""
@@ -247,22 +283,25 @@ class MainBoard(arcade.View):
 
     def set_info_game_texts(self, map_key=None, difficulty=None):
         """Тексты: карта/сложность/играть"""
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
         from .map_board import MAP_DATABASE
-        map_name = '...'
+        map_name = ('...', '...')
         if map_key is None:
             map_key = self.game_state.get('map')
         if map_key and map_key in MAP_DATABASE:
             map_name = MAP_DATABASE[map_key].name
 
         # Сложность из JSON
-        diff_name = '...'
+        diff_name = ('...', '...')
         diff_key = self.game_state.get('difficulty')
         if diff_key and diff_key in DIFFICULTY_DATABASE:
             diff_name = DIFFICULTY_DATABASE[diff_key].name
 
         # Карта
         self.map_text = arcade.Text(
-            text=f'Карта: {map_name}.',
+            text=f'{('Карта', 'Map')[c_lang]}: {map_name[c_lang]}.',
             x=40,
             y=225 - 20,
             color=arcade.color.WHITE,
@@ -275,7 +314,7 @@ class MainBoard(arcade.View):
 
         # Сложность
         self.difficulty_text = arcade.Text(
-            text=f'Сложность: {diff_name}.',
+            text=f'{('Сложность', 'Difficulty')[c_lang]}: {diff_name[c_lang]}.',
             x=40,
             y=225 - 50,
             color=arcade.color.WHITE,
@@ -289,7 +328,7 @@ class MainBoard(arcade.View):
         # Кнопка играть
         arcade.load_font('././assets/fonts/CorrectionTape.otf')
         self.play_text = arcade.Text(
-            text=f'Играть',
+            text=f'{('Играть', 'Play')[c_lang]}',
             x=365 / 2 + 30,
             y=120,
             color=arcade.color.WHITE,
@@ -300,29 +339,30 @@ class MainBoard(arcade.View):
             batch=self.batch
         )
 
-    def set_difficulty_texts(self, difficulty_name):
+    def set_difficulty_texts(self, difficulty_id):
         """Тексты: название/описание/рассудок/шансы/улики/на уровне/???"""
         chosen = False
         try:
+            c_lang = SettingsManager.iget_current_language()
             info = next(DIFFICULTY_DATABASE[it] for it in DIFFICULTY_DATABASE.keys() if
-                        DIFFICULTY_DATABASE[it].name == difficulty_name)
+                        DIFFICULTY_DATABASE[it].id == difficulty_id)
             desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level = \
                 (
-                    info.desc, f'Начальный уровень рассудка: {info.sanity}.',
-                    f'Призрак ломает укрытия с шансом {info.broke_chance}.',
-                    f'Призрак меняет комнату с шансом {info.roomchange_chance}.',
-                    f'Количество улик: {info.evidence_count}.',
-                    f'На уровне {info.on_level}.'
+                    info.desc[c_lang], f'{('Начальный уровень рассудка', 'Level of sanity')[c_lang]}: {info.sanity}.',
+                    f'{('Призрак ломает укрытия с шансом', 'Ghost breaks closet chance')[c_lang]} {info.broke_chance}.',
+                    f'{('Призрак меняет комнату с шансом', 'Ghost change room chance')[c_lang]} {info.roomchange_chance}.',
+                    f'{('Количество улик', 'Evidences count')[c_lang]}: {info.evidence_count}.',
+                    f'{('На уровне', 'On level')[c_lang]} {info.on_level}.'
                 )
 
             if info.on_level > self.player_level:
                 desc, sanity, broke_chance, roomchange_chance, evidence_count, on_level = \
                     (
-                        '???', f'Начальный уровень рассудка: ???.',
-                        f'Призрак ломает укрытия с шансом ???.',
-                        f'Призрак меняет комнату с шансом ???.',
-                        f'Количество улик: ???.',
-                        f'На уровне {info.on_level}.'
+                        '???', f'{('Начальный уровень рассудка', 'Level sanity')[c_lang]}: ???.',
+                        f'{('Призрак ломает укрытия с шансом', 'Ghost breaks closets chance')[c_lang]} ???.',
+                        f'{('Призрак меняет комнату с шансом', 'Ghost changes room chance')[c_lang]} ???.',
+                        f'{('Количество улик', 'Evidences count')[c_lang]}: ???.',
+                        f'{('На уровне', 'On level')[c_lang]} {info.on_level}.'
                     )
 
             chosen = True
@@ -331,16 +371,20 @@ class MainBoard(arcade.View):
             desc = sanity = broke_chance = roomchange_chance = evidence_count = on_level = ''
 
         difficulty_key = None
+
         for key, info in DIFFICULTY_DATABASE.items():
-            if info.name == difficulty_name:
+            print(info.id, difficulty_id)
+            if info.id == difficulty_id:
                 difficulty_key = key
                 break
 
         if difficulty_key and self.player_level >= DIFFICULTY_DATABASE[difficulty_key].on_level:
             self.game_state['difficulty'] = difficulty_key
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(GOOD_MARK, volume=volume)
         else:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(BAD_MARK, volume=volume)
             self.game_state['difficulty'] = None
         self.save_game_state()
 
@@ -442,6 +486,13 @@ class MainBoard(arcade.View):
             if info.on_level <= self.player_level:
                 self.on_level_text = ''
 
+    def update_texts(self):
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
+        self.game_text.text = ('ИГРА', 'GAME')[c_lang]
+        self.difficulty_text_.text = ('СЛОЖНОСТЬ', 'DIFFICULTY')[c_lang]
+
     def on_draw(self) -> bool | None:
         self.clear()
 
@@ -505,12 +556,15 @@ class MainBoard(arcade.View):
             self.start_game()
 
         if self.btn.on_mouse_press(world_pos.x, world_pos.y, button, modifiers):
-            self.set_difficulty_texts(self.btn.value)
+            self.set_difficulty_texts(([DIFFICULTY_DATABASE[i].id for i in DIFFICULTY_DATABASE.keys() if
+                                        self.btn.value in DIFFICULTY_DATABASE[i].name] + [''])[0])
             self.set_info_game_texts()
 
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
             self.close_mainboard()
+        if symbol == arcade.key.F10:
+            self.open_settings()
 
     def load_game_state(self):
         try:
@@ -525,7 +579,8 @@ class MainBoard(arcade.View):
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mainboard(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_1, volume=volume)
         self.window.show_view(self.lobby)
 
     def start_game(self):
@@ -534,10 +589,12 @@ class MainBoard(arcade.View):
         inventory = self.game_state.get('inventory')
 
         if not (dif_id and map_id):
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click_bad(play).wav'), volume=0.5)
+            volume = SettingsManager.get_sound_volume(0.7)
+            arcade.play_sound(BAD_PLAY, volume=volume)
             return
 
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click(play).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(GOOD_PLAY, volume=volume)
 
         from .. import Player, Game
         self.player = Player(self.player_name, self.player_level, self.player_cash, self.player_exp)
@@ -546,3 +603,11 @@ class MainBoard(arcade.View):
         from . import GameLoading
         loading = GameLoading(game)
         self.window.show_view(loading)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume(1.2)
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

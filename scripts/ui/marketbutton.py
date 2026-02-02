@@ -111,7 +111,6 @@ class MarketButtons:
             self.button_take_item.text_color = arcade.color.Color.from_hex_string('#808080')
 
     def check_mouse_hover(self, x, y):
-        """Проверяем наведение на кнопки"""
         # Преобразуем координаты для проверки кнопок
         self.button_buy_item.check_mouse_hover(x, y)
         self.button_buy_all.check_mouse_hover(x, y)
@@ -119,7 +118,6 @@ class MarketButtons:
         self.button_remove_selected.check_mouse_hover(x, y)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        """Обработка клика по кнопкам"""
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.button_buy_item.check_mouse_hover(x, y):
                 self.button_buy_item.on_click()

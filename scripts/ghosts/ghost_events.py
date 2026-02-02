@@ -1,6 +1,8 @@
 import random
 import arcade
 
+from ..sounds import *
+
 
 class GhostEvent:
     def __init__(self, timer, sound, ghost):
@@ -18,9 +20,13 @@ class GhostEvent:
             c = random.randint(*color)
             self.ghost.sprite.color = (c, c, c)
             if not self.is_played:
-                self.ghost.sound_player_g = arcade.play_sound(self.sound)
-                self.ghost.sound_player_h = arcade.play_sound(
-                    arcade.load_sound('././assets/sounds/effects/heartbeat.wav'), loop=True)
+                from ..views import SettingsManager
+                volume_ghost = SettingsManager.get_ghost_sound_volume()
+                volume_heartbeat = SettingsManager.get_sound_volume()
+
+                self.ghost.sound_player_g = arcade.play_sound(self.sound, volume=volume_ghost)
+                self.ghost.sound_player_h = arcade.play_sound(HEARTBEAT, volume=volume_heartbeat, loop=True)
+
                 self.is_played = True
             if self.timer <= 0:
                 self.ghost.game.player.sanity = max(0, self.ghost.game.player.sanity - self.ghost.drop_sanity)
@@ -41,9 +47,9 @@ class GhostEvent:
 
 class SuddenGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/sudden_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/sudden_ghost_event2.wav'),
-        arcade.load_sound('././assets/sounds/effects/sudden_ghost_event3.wav')
+        SUDDEN_GHOST_EVENT_1,
+        SUDDEN_GHOST_EVENT_2,
+        SUDDEN_GHOST_EVENT_3
     ]
 
     def __init__(self, ghost):
@@ -58,8 +64,8 @@ class SuddenGhostEvent(GhostEvent):
 
 class BreathGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/breath_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/breath_ghost_event2.wav')
+        BREATH_GHOST_EVENT_1,
+        BREATH_GHOST_EVENT_2
     ]
 
     def __init__(self, ghost):
@@ -68,10 +74,10 @@ class BreathGhostEvent(GhostEvent):
 
 class WheezingGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event2.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event3.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_ghost_event4.wav')
+        WHEEZING_GHOST_EVENT_1,
+        WHEEZING_GHOST_EVENT_2,
+        WHEEZING_GHOST_EVENT_3,
+        WHEEZING_GHOST_EVENT_4
     ]
 
     def __init__(self, ghost):
@@ -80,11 +86,11 @@ class WheezingGhostEvent(GhostEvent):
 
 class WheezingGhostEvenShadow(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event2.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event3.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event4.wav'),
-        arcade.load_sound('././assets/sounds/effects/wheezing_shadow_ghost_event5.wav')
+        WHEEZING_SHADOW_EVENT_1,
+        WHEEZING_SHADOW_EVENT_2,
+        WHEEZING_SHADOW_EVENT_3,
+        WHEEZING_SHADOW_EVENT_4,
+        WHEEZING_SHADOW_EVENT_5
     ]
 
     def __init__(self, ghost):
@@ -96,8 +102,8 @@ class WheezingGhostEvenShadow(GhostEvent):
 
 class WhisperGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/whisper_ghost_event1.wav'),
-        arcade.load_sound('././assets/sounds/effects/whisper_ghost_event2.wav')
+        WHISPER_GHOST_EVENT_1,
+        WHISPER_GHOST_EVENT_2
     ]
 
     def __init__(self, ghost):
@@ -106,7 +112,7 @@ class WhisperGhostEvent(GhostEvent):
 
 class LaughGhostEvent(GhostEvent):
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/laugh_ghost_event.wav')
+        LAUGH_GHOST_EVENT
     ]
 
     def __init__(self, ghost):

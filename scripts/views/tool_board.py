@@ -1,6 +1,8 @@
 import random
-
 import arcade
+
+from ..sounds import BOARD_1, SETTINGS
+from .settings import SettingsManager
 
 
 class ToolBoard(arcade.View):
@@ -32,7 +34,8 @@ class ToolBoard(arcade.View):
         self.tools_sprites = arcade.SpriteList()
         self.tools = []
 
-        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Dictaphone, FlashLight, UF
+        from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Radio, FlashLight, \
+            LowFlashlight
 
         emfs = [EMF(self.bias_scale) for _ in range(self.inv['emf'])]
         try:
@@ -57,7 +60,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        ufs = [UF(self.bias_scale) for _ in range(self.inv['low_light'])]
+        ufs = [LowFlashlight(self.bias_scale) for _ in range(self.inv['low_light'])]
         try:
             uf1 = ufs[0]
             uf1.create_board_sprite()
@@ -126,7 +129,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        dicts = [Dictaphone(self.bias_scale) for _ in range(self.inv['dict'])]
+        dicts = [Radio(self.bias_scale) for _ in range(self.inv['dict'])]
         try:
             dict1 = dicts[0]
             dict1.create_board_sprite()
@@ -399,7 +402,8 @@ class ToolBoard(arcade.View):
         arcade.draw_line(400, 25, 390, 30, color=arcade.color.BLACK)
 
     def on_show_view(self) -> None:
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_1, volume=volume)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         world_cords = self.world_camera.unproject((x, y))
@@ -451,5 +455,14 @@ class ToolBoard(arcade.View):
         self.tools_sprites.append(item.board_sprite)
 
     def close(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board1(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_1, volume=volume)
         self.window.show_view(self.map)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

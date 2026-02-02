@@ -3,6 +3,9 @@ import random
 import arcade
 from pyglet.graphics import Batch
 
+from ..sounds import BOARD_2, BROKEN_SAN_SCREEN, SETTINGS
+from . import SettingsManager
+
 
 class SanityScreen(arcade.View):
     def __init__(self, player, map, game):
@@ -31,7 +34,7 @@ class SanityScreen(arcade.View):
         # Batch
         self.batch = Batch()
         self.text = arcade.Text(
-            text='Рассудок:',
+            text='Sanity:',
             x=30, y=560,
             color=arcade.color.WHITE,
             font_size=22,
@@ -109,10 +112,11 @@ class SanityScreen(arcade.View):
         arcade.draw_line(740 + 10, 540 - 10, 740 - 10, 540 + 10, color=arcade.color.WHITE)
 
     def on_show_view(self) -> None:
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_2, volume=volume)
         if not self.game.dif.sanity_screen:
-            self.sound_player = arcade.play_sound(
-                arcade.load_sound('././assets/sounds/effects/crashed_sanity_screen.wav'), loop=True)
+            volume = SettingsManager.get_sound_volume(0.5)
+            self.sound_player = arcade.play_sound(BROKEN_SAN_SCREEN, loop=True, volume=volume)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         world_cords = self.camera.unproject((x, y))
@@ -128,9 +132,26 @@ class SanityScreen(arcade.View):
     def on_update(self, delta_time: float) -> bool | None:
         self.bar_width = (self.player.sanity / 100 * 540) if self.game.dif.sanity_screen else random.randint(0, 540)
 
+        # Обновляем тексты
+        self.update_texts()
+
     def close(self):
         if self.sound_player:
             self.sound_player.pause()
 
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'))
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_2, volume=volume)
         self.window.show_view(self.map)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume(1.2)
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)
+
+    def update_texts(self):
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+        self.text.text = ('Рассудок:', 'Sanity:')[c_lang]

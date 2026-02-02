@@ -2,6 +2,8 @@ import arcade
 import json
 
 from database import AccountManager, ProfileManager
+from ..sounds import REJECT, CLICK_SOUND, SETTINGS
+from . import SettingsManager
 
 
 class MarketView(arcade.View):
@@ -28,6 +30,8 @@ class MarketView(arcade.View):
         self.temp_inventory = {}
 
     def on_show_view(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Масштаб и смещение для центрирования
         screen_width = self.window.width
         screen_height = self.window.height
@@ -52,7 +56,7 @@ class MarketView(arcade.View):
 
         # МАРКЕТ
         market_label = arcade.gui.UILabel(
-            text='МАРКЕТ',
+            text=('МАРКЕТ', 'MARKET')[c_lang],
             font_name='Courier New',
             font_size=int(36 * self.scale),
             text_color=arcade.color.WHITE,
@@ -109,16 +113,16 @@ class MarketView(arcade.View):
         self.update_items_from_temp_inventory()
 
         items_to_show = [
-            ('flash_light', 'ФОНАРИК', 350),
-            ('emf', 'ЭМП', 200),
-            ('uf', 'СЛАБЫЙ ФОНАРИК', 100),
-            ('dict', 'РАДИОПРИЕМНИК', 200),
-            ('term', 'ТЕРМОМЕТР', 150),
-            ('mic', 'НАПРВЛЕННЫЙ МИКРОФОН', 200),
-            ('book', 'БЛОКНОТ', 200),
-            ('incense', 'БЛАГОВОНИЯ', 150),
-            ('lighter', 'ЗАЖИГАЛКА', 50),
-            ('pills', 'УСПОКОИТЕЛЬНОЕ', 150)
+            ('flash_light', ('ФОНАРИК', 'FLASHLIGHT')[c_lang], 350),
+            ('emf', ('ЭМП', 'EMF')[c_lang], 200),
+            ('low_light', ('СЛАБЫЙ ФОНАРИК', 'LOW FLASHLIGHT')[c_lang], 100),
+            ('dict', ('РАДИОПРИЕМНИК', 'RADIO')[c_lang], 200),
+            ('term', ('ТЕРМОМЕТР', 'THERMOMETER')[c_lang], 150),
+            ('mic', ('НАПРВЛЕННЫЙ МИКРОФОН', 'DIRECTIONAL MIC')[c_lang], 200),
+            ('book', ('БЛОКНОТ', 'BOOK')[c_lang], 200),
+            ('incense', ('БЛАГОВОНИЯ', 'INCENSE')[c_lang], 150),
+            ('lighter', ('ЗАЖИГАЛКА', 'LIGHTER')[c_lang], 50),
+            ('pills', ('УСПОКОИТЕЛЬНОЕ', 'PILLS')[c_lang], 150)
         ]
 
         # Добавляем предметы
@@ -176,7 +180,7 @@ class MarketView(arcade.View):
         self.manager.add(self.level_label)
 
         self.balance_label = arcade.gui.UILabel(
-            text=f'Баланс: {self.player_balance}$',
+            text=f'{('Баланс', 'Cash')[c_lang]}: {self.player_balance}$',
             font_name='Courier New',
             font_size=int(16 * self.scale),
             text_color=arcade.color.WHITE,
@@ -350,12 +354,15 @@ class MarketView(arcade.View):
                 button.on_update(delta_time)
 
         # Обновление баланса и уровня
+        c_lang = SettingsManager.iget_current_language()
         self.level_label.text = f'Lvl: {self.player_level}'
-        self.balance_label.text = f'Баланс: {self.player_balance}$'
+        self.balance_label.text = f'{('Баланс', 'Cash')[c_lang]}: {self.player_balance}$'
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
             self.close_market()
+        if key == arcade.key.F10:
+            self.open_settings()
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.market_buttons.check_mouse_hover(x, y)
@@ -412,12 +419,14 @@ class MarketView(arcade.View):
 
         # Проверяем уровень игрока
         if self.player_level < item.on_level:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         # Проверяем баланс игрока
         if item.price > self.player_balance:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         # Обновляем баланс
@@ -450,11 +459,13 @@ class MarketView(arcade.View):
                 total_cost += item.price
 
         if not items_to_buy:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         if total_cost > self.player_balance:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         # Обновляем баланс
@@ -488,12 +499,14 @@ class MarketView(arcade.View):
         item = self.items_data[self.selected_item_id]
 
         if item.in_inventory <= 0:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         current_taken = self.temp_inventory.get('inventory', {}).get(self.selected_item_id, 0)
         if current_taken >= item.max_in_game:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         inventory = self.temp_inventory.get('inventory', {})
@@ -513,7 +526,8 @@ class MarketView(arcade.View):
                 'set'
             )
         else:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         item.in_inventory -= 1
@@ -530,12 +544,14 @@ class MarketView(arcade.View):
 
         current_taken = self.temp_inventory.get('inventory', {}).get(self.selected_item_id, 0)
         if current_taken <= 0:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         basic_items = {'emf', 'low_light', 'dict', 'term', 'mic', 'book'}
         if self.selected_item_id in basic_items and current_taken <= 1:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/reject_sound.wav'), volume=-0.3)
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(REJECT, volume=volume)
             return
 
         inventory = self.temp_inventory.get('inventory', {})
@@ -592,5 +608,14 @@ class MarketView(arcade.View):
             json.dump(self.temp_inventory, f, ensure_ascii=False, indent=2)
 
     def close_market(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/click.wav'), volume=0.2)
+        volume = SettingsManager.get_sound_volume(0.6)
+        arcade.play_sound(CLICK_SOUND, volume=volume)
         self.window.show_view(self.lobby)
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume(1.2)
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

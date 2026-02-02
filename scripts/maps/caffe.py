@@ -14,7 +14,7 @@ import math
 SPEED = 1
 
 
-class Kv96(arcade.View):
+class Cafe(arcade.View):
     def __init__(self, game):
         super().__init__()
 
@@ -40,7 +40,7 @@ class Kv96(arcade.View):
         self.mic_manager.start()
 
         # Карта
-        self.tile_map = arcade.load_tilemap('././assets/maps/hrush.tmx', scaling=1.0)
+        self.tile_map = arcade.load_tilemap('././assets/maps/cafe.tmx', scaling=1.0)
 
         # Расчет размеров карты с учетом масштаба
         self.map_width = self.tile_map.width * self.tile_map.tile_width
@@ -79,20 +79,20 @@ class Kv96(arcade.View):
 
         # Комнаты
         self.rooms = [
+            "wardrobe1",
+            "wardrobe2",
             "corridor",
+            "garage",
+            "hall",
             "toilet1",
             "toilet2",
-            "toilet3",
+            "room1",
+            "room2",
             "kitchen1",
             "kitchen2",
             "kitchen3",
-            "room1",
-            "room2",
-            "room3",
-            "room4",
-            "wardroom1",
-            "wardroom2",
-            "wardroom3"
+            "kitchen4",
+            "kitchen5",
         ]
 
         # Призрак
@@ -399,7 +399,7 @@ class Kv96(arcade.View):
             if item.id in ('emf', 'book', 'term'):
                 item.use_item(self.evidences)
             elif item.id in ('mic',):
-                item.use_item(self.evidences, Muling(), [])
+                item.use_item(self.evidences, self.ghost, [])
             elif item.id in ('incense',):
                 item.update_item(self.player_sprite)
             elif item.id in ('dict',):

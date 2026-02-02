@@ -50,7 +50,6 @@ class ChangeButton:
         self._index = self.values.index(new_value)
         self._create_elements()
 
-
     def _create_elements(self) -> None:
         approx_w_left = self.font_size * 0.8
         approx_w_value = self.font_size * 4
@@ -61,7 +60,7 @@ class ChangeButton:
         value_x = self.start_x - total_approx / 2 + approx_w_left + self.spacing + approx_w_value / 2
         right_x = self.start_x + total_approx / 2 - approx_w_right / 2
 
-        # ← Стрелки статичные
+        # Стрелки
         self.arrow_left = arcade.Text(
             '<', left_x, self.start_y,
             font_size=self.font_size, color=self._text_params['color'],

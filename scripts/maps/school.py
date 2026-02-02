@@ -14,7 +14,7 @@ import math
 SPEED = 1
 
 
-class Kv96(arcade.View):
+class School(arcade.View):
     def __init__(self, game):
         super().__init__()
 
@@ -40,7 +40,7 @@ class Kv96(arcade.View):
         self.mic_manager.start()
 
         # Карта
-        self.tile_map = arcade.load_tilemap('././assets/maps/hrush.tmx', scaling=1.0)
+        self.tile_map = arcade.load_tilemap('././assets/maps/school.tmx', scaling=1.0)
 
         # Расчет размеров карты с учетом масштаба
         self.map_width = self.tile_map.width * self.tile_map.tile_width
@@ -79,20 +79,30 @@ class Kv96(arcade.View):
 
         # Комнаты
         self.rooms = [
-            "corridor",
             "toilet1",
             "toilet2",
-            "toilet3",
-            "kitchen1",
-            "kitchen2",
-            "kitchen3",
-            "room1",
-            "room2",
-            "room3",
-            "room4",
-            "wardroom1",
-            "wardroom2",
-            "wardroom3"
+            "corridor1",
+            "corridor2",
+            "main_corridor",
+            "classroom1",
+            "classroom2",
+            "classroom3",
+            "classroom4",
+            "classroom5",
+            "classroom6",
+            "classroom7",
+            "classroom8",
+            "classroom9",
+            "classroom10",
+            "classroom11",
+            "classroom12",
+            "garage",
+            'library',
+            'kitchen1',
+            'kitchen2',
+            'sporthall',
+            'director_room',
+            'archive'
         ]
 
         # Призрак
@@ -246,6 +256,7 @@ class Kv96(arcade.View):
         self.doors_list.draw(pixelated=True)
         self.closets_list.draw(pixelated=True)
         self.scene["furniture_back"].draw(pixelated=True)
+        self.scene["furniture_front"].draw(pixelated=True)
         self.scene["generator"].draw(pixelated=True)
         self.ghost.sprite.particles.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
@@ -256,11 +267,12 @@ class Kv96(arcade.View):
             self.items_sprite_list.draw(pixelated=True)
         else:
             self.free_items_sprite_list.draw(pixelated=True)
-        self.scene["furniture_front"].draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
                 item.smoke_particles.draw(pixelated=True)
+
+        self.scene['book_shelfes'].draw(pixelated=True)
 
         self.camera_shake.readjust_camera()
 
@@ -399,7 +411,7 @@ class Kv96(arcade.View):
             if item.id in ('emf', 'book', 'term'):
                 item.use_item(self.evidences)
             elif item.id in ('mic',):
-                item.use_item(self.evidences, Muling(), [])
+                item.use_item(self.evidences, self.ghost, [])
             elif item.id in ('incense',):
                 item.update_item(self.player_sprite)
             elif item.id in ('dict',):

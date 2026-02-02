@@ -1,3 +1,4 @@
+from .settings import SettingsView, SettingsManager
 from .screensaver import Screensaver
 from .entry_menu import EntryMenu
 from .login_menu import LoginMenu
@@ -11,6 +12,7 @@ from .paper import Paper
 from .sanity_screen import SanityScreen
 from .results_view import ResultsView
 
+
 __all__ = [
     'Screensaver',
     'EntryMenu',
@@ -22,5 +24,7 @@ __all__ = [
     'GameLoading',
     'DIFFICULTY_DATABASE',
     'Paper',
-    'ResultsView'
+    'ResultsView',
+    'SettingsView',
+    'SettingsManager'
 ]

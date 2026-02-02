@@ -27,7 +27,10 @@ class TextInputField(UIInputText):
 
     def on_click(self, event=None):
         if self.click_sound:
-            arcade.play_sound(self.click_sound, volume=0.2)
+            from ..sounds import CLICK_SOUND
+            from ..views.settings import SettingsManager
+            volume = SettingsManager.get_sound_volume(0.6)
+            arcade.play_sound(CLICK_SOUND, volume=volume)
 
         self.caret.visible = True
         self.caret.position = len(self.text)
@@ -39,7 +42,6 @@ class TextInputField(UIInputText):
         self._is_active = False
 
     def on_key_press(self, key, modifiers):
-        """Обрабатываем только специальные клавиши"""
         if not self._is_active:
             return
 
@@ -53,7 +55,6 @@ class TextInputField(UIInputText):
             self.reset_state()
 
     def on_text(self, text):
-        """Обрабатываем ввод текста"""
         if self._is_active:
             if text and text.isprintable() and text != '\r' and text != '\n':
                 self.text += text

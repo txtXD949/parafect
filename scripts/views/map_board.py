@@ -4,12 +4,16 @@ from functools import lru_cache
 import arcade
 from pyglet.graphics import Batch
 
+from ..sounds import *
+from . import SettingsManager
+
 
 class MapInfo:
-    def __init__(self, id, name, size, desc, cords, on_level=1):
+    def __init__(self, id, name, size, disp_size, desc, cords, on_level=1):
         self.id: int = id
-        self.name: str = name
+        self.name: tuple = name
         self.size: str = size
+        self.disp_size: tuple = disp_size
         self.desc: str = desc
         self.cords: str = cords
         self.on_level: int = on_level
@@ -18,55 +22,80 @@ class MapInfo:
 MAP_DATABASE = {
     'dom_1': MapInfo(
         id='0',
-        name='ДОМ 1',
+        name=('ДОМ 1', 'HOUSE 1'),
         size='МАЛЕНЬКАЯ',
+        disp_size=('МАЛЕНЬКАЯ', 'SMALL'),
         cords='38.279567°N, -122.009865°E',
-        desc='"Они переехали через месяц. Говорят, ребёнок всё время разговаривал с кем-то в углу."',
+        desc=(
+            '"Они переехали через месяц. Говорят, ребёнок всё время разговаривал с кем-то в углу."',
+            '"They moved a month later. They said the child was always talking to someone in the corner."'
+        ),
     ),
     'dom_3': MapInfo(
         id='1',
-        name='ДОМ 3',
+        name=('ДОМ 3', 'HOUSE 3'),
         size='СРЕДНЯЯ',
+        disp_size=('СРЕДНЯЯ', 'MEDIUM'),
         cords='38.349100°N, -121.956000°E',
-        desc='"Местные обходят это место. Говорят, ночью в окнах виден свет, хотя электричество отключено ещё в 90-х."',
+        desc=(
+            '"Местные обходят это место. Говорят, ночью в окнах виден свет, хотя электричество отключено ещё в 90-х."',
+            '"The locals avoid this place. They say you can see light in the windows at night, even though the electricity was turned off back in the 90s."'
+        ),
         on_level=5
     ),
     'caffe': MapInfo(
         id='2',
-        name='КАФЕ',
+        name=('КАФЕ', 'CAFFE'),
         size='СРЕДНЯЯ',
+        disp_size=('СРЕДНЯЯ', 'MEDIUM'),
         cords='34.163680°N, -117.904245°E',
-        desc='"Бармен жаловался, на посетителя, который несколько часов пил один кофе в углу. На камерах никого не было видно."',
+        desc=(
+            '"Бармен жаловался, на посетителя, который несколько часов пил один кофе в углу. На камерах никого не было видно."',
+            '"The bartender complained about a customer who had been drinking coffee in the corner for hours. No one was visible on the cameras."'
+        ),
         on_level=10
     ),
     'kv_no96': MapInfo(
         id='3',
-        name='КВАРТИРА №96',
+        name=('КВАРТИРА №96', 'FLAT №96'),
         size='СРЕДНЯЯ',
+        disp_size=('СРЕДНЯЯ', 'MEDIUM'),
         cords='58.630501°N, 59.789185°E',
-        desc='"Жильцы писали коллективную жалобу на соседа, который стучал по батареям, в двери и моргал светом ночами. Этот сосед умер в 1989."',
+        desc=(
+            '"Жильцы писали коллективную жалобу на соседа, который стучал по батареям, в двери и моргал светом ночами. Этот сосед умер в 1989."',
+            '"The residents wrote a collective complaint about a neighbor who knocked on their radiators, doors, and lights at night. This neighbor died in 1989."'
+        ),
         on_level=15
     ),
     'school': MapInfo(
         id='4',
-        name='ШКОЛА',
+        name=('ШКОЛА', 'SCHOOL'),
         size='БОЛЬШАЯ',
+        disp_size=('БОЛЬШАЯ', 'BIG'),
         cords='57.874040°N, 59.949528°E',
-        desc='"Школа была закрыта давно по неизвестным причинам. Власти не торопятся ее сносить."',
+        desc=(
+            '"Школа была закрыта давно по неизвестным причинам. Власти не торопятся ее сносить."',
+            '"The school was closed long ago for unknown reasons, and the authorities are in no hurry to demolish it."'
+        ),
         on_level=20
     ),
     'bunker': MapInfo(
         id='5',
-        name='БУНКЕР',
+        name=('БУНКЕР', 'BUNKER'),
         size='ОГРОМНАЯ',
+        disp_size=('ОГРОМНАЯ', 'LARGE'),
         cords='68.925214°N, 33.089326°E',
-        desc='"Группа исследователей сообщила, что видела свои же трупы. Больше сообщений от них не поступало."',
+        desc=(
+            '"Группа исследователей сообщила, что видела свои же трупы. Больше сообщений от них не поступало."',
+            '"A group of researchers reported seeing their own corpses, but no further reports were received."'
+        ),
         on_level=30
     ),
     'test': MapInfo(
         id=6,
         name='test',
         size='ОГРОМНАЯ',
+        disp_size=('ОГРОМНАЯ', 'LARGE'),
         cords='0',
         desc=':)',
         on_level=1
@@ -176,13 +205,17 @@ class MapBoard(arcade.View):
                 continue
             point.color = arcade.color.YELLOW
 
+        self.update_texts()
+
     def get_map_texts_dom_1(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Дом 1
         map = MAP_DATABASE['dom_1']
 
         # Название
         self.dom1_title = arcade.Text(
-            text=map.name,
+            text=map.name[c_lang],
             x=680,
             y=490,
             color=arcade.color.WHITE,
@@ -206,7 +239,7 @@ class MapBoard(arcade.View):
         )
         # Размер
         self.dom1_size = arcade.Text(
-            text=f'Размер: {map.size}',
+            text=f'Размер: {map.disp_size[c_lang]}',
             x=600,
             y=430,
             color=arcade.color.WHITE,
@@ -232,7 +265,7 @@ class MapBoard(arcade.View):
             self.dom1_on_level.text = ''
         # Описание
         self.dom1_desc = arcade.Text(
-            text=map.desc,
+            text=map.desc[c_lang],
             x=600,
             y=320,
             color=arcade.color.Color.from_hex_string('#C8C8C8'),
@@ -249,12 +282,14 @@ class MapBoard(arcade.View):
         return self.dom1_title, self.dom1_cords, self.dom1_size, self.dom1_on_level, self.dom1_desc
 
     def get_map_texts_dom_3(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Дом 3
         map = MAP_DATABASE['dom_3']
 
         # Название
         self.dom3_title = arcade.Text(
-            text=map.name,
+            text=map.name[c_lang],
             x=680,
             y=490,
             color=arcade.color.WHITE,
@@ -278,7 +313,7 @@ class MapBoard(arcade.View):
         )
         # Размер
         self.dom3_size = arcade.Text(
-            text=f'Размер: {map.size}',
+            text=f'Размер: {map.disp_size[c_lang]}',
             x=600,
             y=430,
             color=arcade.color.WHITE,
@@ -305,7 +340,7 @@ class MapBoard(arcade.View):
 
         # Описание
         self.dom3_desc = arcade.Text(
-            text=map.desc,
+            text=map.desc[c_lang],
             x=600,
             y=320,
             color=arcade.color.Color.from_hex_string('#C8C8C8'),
@@ -322,12 +357,14 @@ class MapBoard(arcade.View):
         return self.dom3_title, self.dom3_cords, self.dom3_size, self.dom3_on_level, self.dom3_desc
 
     def get_map_texts_caffe(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Кафе
         map = MAP_DATABASE['caffe']
 
         # Название
         self.caffe_title = arcade.Text(
-            text=map.name,
+            text=map.name[c_lang],
             x=680,
             y=490,
             color=arcade.color.WHITE,
@@ -351,7 +388,7 @@ class MapBoard(arcade.View):
         )
         # Размер
         self.caffe_size = arcade.Text(
-            text=f'Размер: {map.size}',
+            text=f'Размер: {map.disp_size[c_lang]}',
             x=600,
             y=430,
             color=arcade.color.WHITE,
@@ -377,7 +414,7 @@ class MapBoard(arcade.View):
             self.caffe_on_level.text = ''
         # Описание
         self.caffe_desc = arcade.Text(
-            text=map.desc,
+            text=map.desc[c_lang],
             x=600,
             y=305,
             color=arcade.color.Color.from_hex_string('#C8C8C8'),
@@ -394,12 +431,14 @@ class MapBoard(arcade.View):
         return self.caffe_title, self.caffe_cords, self.caffe_size, self.caffe_on_level, self.caffe_desc
 
     def get_map_texts_kv_no96(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Кв.96
         map = MAP_DATABASE['kv_no96']
 
         # Название
         self.kv_no96_title = arcade.Text(
-            text=map.name,
+            text=map.name[c_lang],
             x=680,
             y=490,
             color=arcade.color.WHITE,
@@ -423,7 +462,7 @@ class MapBoard(arcade.View):
         )
         # Размер
         self.kv_no96_size = arcade.Text(
-            text=f'Размер: {map.size}',
+            text=f'Размер: {map.disp_size[c_lang]}',
             x=600,
             y=430,
             color=arcade.color.WHITE,
@@ -449,7 +488,7 @@ class MapBoard(arcade.View):
             self.kv_no96_on_level.text = ''
         # Описание
         self.kv_no96_desc = arcade.Text(
-            text=map.desc,
+            text=map.desc[c_lang],
             x=600,
             y=290,
             color=arcade.color.Color.from_hex_string('#C8C8C8'),
@@ -466,12 +505,14 @@ class MapBoard(arcade.View):
         return self.kv_no96_title, self.kv_no96_cords, self.kv_no96_size, self.kv_no96_on_level, self.kv_no96_desc
 
     def get_map_texts_school(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Школа
         map = MAP_DATABASE['school']
 
         # Название
         self.school_title = arcade.Text(
-            text=map.name,
+            text=map.name[c_lang],
             x=680,
             y=490,
             color=arcade.color.WHITE,
@@ -495,7 +536,7 @@ class MapBoard(arcade.View):
         )
         # Размер
         self.school_size = arcade.Text(
-            text=f'Размер: {map.size}',
+            text=f'Размер: {map.disp_size[c_lang]}',
             x=600,
             y=430,
             color=arcade.color.WHITE,
@@ -521,7 +562,7 @@ class MapBoard(arcade.View):
             self.school_on_level.text = ''
         # Описание
         self.school_desc = arcade.Text(
-            text=map.desc,
+            text=map.desc[c_lang],
             x=600,
             y=330,
             color=arcade.color.Color.from_hex_string('#C8C8C8'),
@@ -538,12 +579,14 @@ class MapBoard(arcade.View):
         return self.school_title, self.school_cords, self.school_size, self.school_on_level, self.school_desc
 
     def get_map_texts_bunker(self):
+        c_lang = SettingsManager.iget_current_language()
+
         # Бункер
         map = MAP_DATABASE['bunker']
 
         # Название
         self.bunker_title = arcade.Text(
-            text=map.name,
+            text=map.name[c_lang],
             x=680,
             y=490,
             color=arcade.color.WHITE,
@@ -567,7 +610,7 @@ class MapBoard(arcade.View):
         )
         # Размер
         self.bunker_size = arcade.Text(
-            text=f'Размер: {map.size}',
+            text=f'Размер: {map.disp_size[c_lang]}',
             x=600,
             y=430,
             color=arcade.color.WHITE,
@@ -593,7 +636,7 @@ class MapBoard(arcade.View):
             self.bunker_on_level.text = ''
         # Описание
         self.bunker_desc = arcade.Text(
-            text=map.desc,
+            text=map.desc[c_lang],
             x=600,
             y=320,
             color=arcade.color.Color.from_hex_string('#C8C8C8'),
@@ -652,6 +695,11 @@ class MapBoard(arcade.View):
         profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
         self.text_lvl.text = f'Lvl: {self.player_level}'
+
+    def update_texts(self):
+        c_lang = SettingsManager.iget_current_language()
+        self.text_map.text = ('КАРТА', 'MAP')[c_lang]
+        self.text_info.text = ('ИНФОРМАЦИЯ', 'INFO')[c_lang]
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # Мировые координаты
@@ -780,6 +828,8 @@ class MapBoard(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int) -> bool | None:
         if symbol == arcade.key.ESCAPE:
             self.close_mapboard()
+        if symbol == arcade.key.F10:
+            self.open_settings()
 
     @staticmethod
     def get_map_id(grid_y, grid_x):
@@ -833,13 +883,15 @@ class MapBoard(arcade.View):
             point_sprite.color = arcade.color.DARK_YELLOW
             self.game_state['map'] = map_key
             self.save_game_state()
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/good_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(GOOD_MARK, volume=volume)
 
             # Сохраняем как последнюю доступную карту
             self.last_accessible_point = point_sprite
 
         else:
-            arcade.play_sound(arcade.load_sound('././assets/sounds/effects/bad_mark(map_board).wav'))
+            volume = SettingsManager.get_sound_volume()
+            arcade.play_sound(BAD_MARK, volume=volume)
 
             if self.last_accessible_point:
                 self.last_accessible_point.color = arcade.color.DARK_YELLOW
@@ -879,7 +931,8 @@ class MapBoard(arcade.View):
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mapboard(self):
-        arcade.play_sound(arcade.load_sound('././assets/sounds/effects/board2(lobby).wav'), volume=0.4)
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(BOARD_2, volume=volume)
         self.window.show_view(self.lobby)
 
     @staticmethod
@@ -891,3 +944,11 @@ class MapBoard(arcade.View):
             lines = f.readlines()
 
         return list(map(lambda x: x.strip('\n'), lines))
+
+    def open_settings(self):
+        volume = SettingsManager.get_sound_volume()
+        arcade.play_sound(SETTINGS, volume=volume)
+
+        from . import SettingsView
+        settings_view = SettingsView(back_callback=lambda: self.window.show_view(self))
+        self.window.show_view(settings_view)

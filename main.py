@@ -1,7 +1,7 @@
 #  Запуск программы отсюда
-from scripts.views import Screensaver
 import arcade
 import os
+import pyglet.image
 
 
 class GameWindow(arcade.Window):
@@ -10,6 +10,8 @@ class GameWindow(arcade.Window):
             title='Parafect',
             fullscreen=True
         )
+
+        self.set_icon(pyglet.image.load('./assets/images/icons/parafect.ico'))
 
         self.center_window()
 
@@ -24,6 +26,10 @@ class GameWindow(arcade.Window):
 def main():
     window = GameWindow()
 
+    from scripts.views import SettingsManager
+    SettingsManager.load()
+
+    from scripts.views import Screensaver
     screensaver = Screensaver()
     window.show_view(screensaver)
 
@@ -32,5 +38,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# TODO: Сделать настройки

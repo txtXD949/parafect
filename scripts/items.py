@@ -6,14 +6,14 @@ import pyaudio as pa
 import numpy as np
 import threading
 
-
-# TODO: сделать нормальные шансы
+from .views import SettingsManager
+from .sounds import *
 
 
 class Item:
     TURN_ON_OFF_SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/turn_on_off_item.wav'),
-        arcade.load_sound('./assets/sounds/effects/turn_on_off_item.wav')
+        TURN_OFF_ITEM,
+        TURN_ON_ITEM
     ]
 
     def __init__(self, id, name, is_stationary=False, is_grabbed=False, in_inventory=False, is_turn_on=False,
@@ -94,12 +94,14 @@ class Item:
 
     def turn_on(self):
         if not self.is_turn_on:
-            arcade.play_sound(self.TURN_ON_OFF_SOUNDS[0])
+            vol = SettingsManager.get_sound_volume()
+            arcade.play_sound(self.TURN_ON_OFF_SOUNDS[0], volume=vol)
         self.is_turn_on = True
 
     def turn_off(self):
         if self.is_turn_on:
-            arcade.play_sound(self.TURN_ON_OFF_SOUNDS[1])
+            vol = SettingsManager.get_sound_volume()
+            arcade.play_sound(self.TURN_ON_OFF_SOUNDS[1], volume=vol)
         self.is_turn_on = False
         if self.sound_player:
             self.sound_player.pause()
@@ -146,11 +148,7 @@ class Item:
         self.malfunction_timer = 0
 
     def is_working_correctly(self):
-        """Проверяет работает ли предмет нормально"""
         return not self.is_malfunctioning
-
-    def __str__(self):
-        return self.id + ' ' + self.name
 
 
 class EMF(Item):
@@ -163,13 +161,13 @@ class EMF(Item):
     ]
     SOUNDS = [
         None, None,
-        arcade.load_sound('./assets/sounds/effects/emf_3.wav'),
-        arcade.load_sound('./assets/sounds/effects/emf_4.wav'),
-        arcade.load_sound('./assets/sounds/effects/emf_5.wav'),
+        EMF3,
+        EMF4,
+        EMF5,
     ]
 
-    def __init__(self,  bias_scale=1):
-        super().__init__('emf', 'ЭМП', False, sprite=None, bias_scale=bias_scale)
+    def __init__(self, bias_scale=1):
+        super().__init__('emf', ('ЭМП', 'EMF'), False, sprite=None, bias_scale=bias_scale)
 
         self.is_working = False
 
@@ -191,7 +189,8 @@ class EMF(Item):
                 if false_level in [3, 4, 5] and self.SOUNDS[false_level]:
                     if self.sound_player:
                         self.sound_player.pause()
-                    self.sound_player = arcade.play_sound(self.SOUNDS[false_level], loop=True)
+                    vol = SettingsManager.get_sound_volume()
+                    self.sound_player = arcade.play_sound(self.SOUNDS[false_level], loop=True, volume=vol)
                     self.is_working = True
                     self.active_level_index = false_level
                     self.active_until = now + random.uniform(3.0, 8.0)
@@ -232,8 +231,8 @@ class EMF(Item):
 
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
-        if random.random() < 0.0003:
-            if 'emf5' in evidences and random.random() < 0.3:
+        if random.random() < 0.0003 * 60:
+            if 'emf5' in evidences and random.random() < 0.25:
                 level_index = 4
             else:
                 level_index = random.choice((2, 3))
@@ -247,13 +246,14 @@ class EMF(Item):
             self.sprite.texture = arcade.load_texture(self.TEXTURES[level_index])
             if self.sound_player:
                 self.sound_player.pause()
-            self.sound_player = arcade.play_sound(self.SOUNDS[level_index], loop=True)
+            vol = SettingsManager.get_sound_volume()
+            self.sound_player = arcade.play_sound(self.SOUNDS[level_index], loop=True, volume=vol)
 
 
 class FlashLight(Item):
     TURN_ON_OFF_SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/flashlight_on.wav'),
-        arcade.load_sound('./assets/sounds/effects/flashlight_off.wav')
+        TURN_ON_FLSH,
+        TURN_OFF_FLSH
     ]
     TEXTURES = [
         './assets/images/itms/flash_light.png'
@@ -263,13 +263,13 @@ class FlashLight(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('flash-light', 'Фонарик', sprite=None, board_scale=2.8, bias_scale=bias_scale)
+        super().__init__('flash-light', ('Фонарик', 'FlashLight'), sprite=None, board_scale=2.8, bias_scale=bias_scale)
 
 
-class UF(Item):
+class LowFlashlight(Item):
     TURN_ON_OFF_SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/flashlight_on.wav'),
-        arcade.load_sound('./assets/sounds/effects/flashlight_off.wav')
+        TURN_ON_FLSH,
+        TURN_OFF_FLSH
     ]
     TEXTURES = [
         './assets/images/itms/uf.png'
@@ -279,7 +279,7 @@ class UF(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('uf', 'УФ-фонарик', sprite=None, bias_scale=bias_scale)
+        super().__init__('low_light', ('Слабый фонарик', 'Low flashlight'), sprite=None, bias_scale=bias_scale)
 
 
 class Book(Item):
@@ -288,11 +288,11 @@ class Book(Item):
         '././assets/images/itms/book2.png'
     ]
     SOUNDS = [
-        arcade.load_sound('././assets/sounds/effects/book_writing.wav')
+        BOOK_WRITINGS
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('book', 'Блокнот', is_stationary=True, sprite=None, bias_scale=bias_scale)
+        super().__init__('book', ('Блокнот', 'Book'), is_stationary=True, sprite=None, bias_scale=bias_scale)
 
         self.is_dropped = False
         self.wrote = False
@@ -307,9 +307,10 @@ class Book(Item):
         if not self.in_room:
             return
 
-        if not self.wrote and random.random() < 0.00009:
+        if not self.wrote and random.random() < 0.001:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
-            self.sound_player = arcade.play_sound(self.SOUNDS[0])
+            vol = SettingsManager.get_sound_volume()
+            self.sound_player = arcade.play_sound(self.SOUNDS[0], volume=vol)
             self.wrote = True
 
     def turn_on(self):
@@ -325,21 +326,23 @@ class Microphone(Item):
         './assets/images/itms/mic_on.png'
     ]
     SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/whisper_1.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_2.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_3.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_4.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_5.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_6.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_7.wav')
+        WHISPER_MIC1,
+        WHISPER_MIC2,
+        WHISPER_MIC3,
+        WHISPER_MIC4,
+        WHISPER_MIC5,
+        WHISPER_MIC6,
+        WHISPER_MIC7
+
     ]
     SPEC_SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/whisper_banshee.wav'),
-        arcade.load_sound('./assets/sounds/effects/whisper_muling.wav')
+        WHISPER_MIC_BANSHEE,
+        WHISPER_MIC_MULING
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('mic', 'Направленный микрофон', sprite=None, board_scale=4.0, bias_scale=bias_scale)
+        super().__init__('mic', ('Направленный микрофон', 'Directional microphone'), sprite=None, board_scale=4.0,
+                         bias_scale=bias_scale)
 
     def use_item(self, evidence, ghost, sound_players=None):
         if not sound_players:
@@ -353,7 +356,8 @@ class Microphone(Item):
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
             if random.random() < 0.25:
-                self.sound_player = arcade.play_sound(random.choice(self.SOUNDS))
+                vol = SettingsManager.get_sound_volume()
+                self.sound_player = arcade.play_sound(random.choice(self.SOUNDS), volume=vol)
 
             return
 
@@ -373,30 +377,31 @@ class Microphone(Item):
             return
 
         if ghost.id == 'muling':
-            if random.random() < 0.0001:
-                self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[1])
+            if random.random() < 0.00001 * 60:
+                vol = SettingsManager.get_sound_volume()
+                self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[1], volume=vol)
                 return
 
         if ghost.id == 'banshee':
-            if random.random() < 0.0001:
-                self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[0])
+            if random.random() < 0.00001 * 60:
+                vol = SettingsManager.get_sound_volume()
+                self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[0], volume=vol)
                 return
 
-        if 'mic' in evidence and random.random() < 0.0003:
-            self.sound_player = arcade.play_sound(random.choice(self.SOUNDS))
+        if 'mic' in evidence and random.random() < 0.00003 * 60:
+            vol = SettingsManager.get_sound_volume()
+            self.sound_player = arcade.play_sound(random.choice(self.SOUNDS), volume=vol)
 
 
-class Dictaphone(Item):
+class Radio(Item):
     TEXTURES = [
         './assets/images/itms/dict_off.png',
         './assets/images/itms/dict_on.png'
     ]
-    SOUNDS = [arcade.load_sound('././assets/sounds/effects/dict_noise.wav')] + [
-        arcade.load_sound(f'././assets/sounds/effects/dict_say{i}.wav') for i in range(1, 18)
-    ] + [arcade.load_sound('././assets/sounds/effects/dict_siren.wav')]
+    SOUNDS = [DICT_NOISE] + DICT_SAYS + [DICT_SAY_SIREN]
 
     def __init__(self, bias_scale=1):
-        super().__init__('dict', 'Диктофон', sprite=None, board_scale=3.0, bias_scale=bias_scale)
+        super().__init__('dict', ('Радиоприемник', 'Radio'), sprite=None, board_scale=3.0, bias_scale=bias_scale)
 
         self.pa = pa.PyAudio()
         self.stream = False
@@ -479,7 +484,8 @@ class Dictaphone(Item):
         super().turn_on()
         self.start_capture()
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
-        self.sound_player = arcade.play_sound(self.SOUNDS[0], loop=True)
+        vol = SettingsManager.get_sound_volume(0.5)
+        self.sound_player = arcade.play_sound(self.SOUNDS[0], loop=True, volume=vol)
 
     def turn_off(self):
         super().turn_off()
@@ -495,24 +501,28 @@ class Dictaphone(Item):
 
             if random.random() < 0.2:
                 if random.random() < 0.7:
-                    self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]))
+                    vol = SettingsManager.get_sound_volume()
+                    self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]), volume=vol)
                 else:
-                    self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
+                    vol = SettingsManager.get_sound_volume()
+                    self.ghost_voice = arcade.play_sound(self.SOUNDS[-1], volume=vol)
 
             return
 
         if not self.is_turn_on or not self.in_room:
             return
 
-        if ghost.id == 'siren' and random.random() < 0.0002:
-            self.ghost_voice = arcade.play_sound(self.SOUNDS[-1])
+        if ghost.id == 'siren' and random.random() < 0.0002 * 60:
+            vol = SettingsManager.get_sound_volume()
+            self.ghost_voice = arcade.play_sound(self.SOUNDS[-1], volume=vol)
             return
 
         if 'dict' not in evidences:
             return
 
-        if self.voice_detected and random.random() < 0.0006:
-            self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]))
+        if self.voice_detected and random.random() < 0.0006 * 60:
+            vol = SettingsManager.get_sound_volume()
+            self.ghost_voice = arcade.play_sound(random.choice(self.SOUNDS[1:-1]), volume=vol)
 
 
 class Thermometer(Item):
@@ -523,18 +533,18 @@ class Thermometer(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('term', 'Термометр', sprite=None, board_scale=3.1, bias_scale=bias_scale)
+        super().__init__('term', ('Термометр', 'Thermometer'), sprite=None, board_scale=3.1, bias_scale=bias_scale)
 
     def use_item(self, evidences):
         if not self.in_room:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[0])
             return
 
-        if 'cold_temp' in evidences and random.random() < 0.00009:
+        if 'cold_temp' in evidences and random.random() < 0.001:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
             return
 
-        if 'hot_temp' in evidences and random.random() < 0.00009:
+        if 'hot_temp' in evidences and random.random() < 0.0001:
             self.sprite.texture = arcade.load_texture(self.TEXTURES[2])
             return
 
@@ -549,7 +559,7 @@ class PhotoCamera(Item):
     TEXTURES = []
 
     def __init__(self, bias_scale=1):
-        super().__init__('camera', 'Фотокамера', sprite=None, bias_scale=bias_scale)
+        super().__init__('camera', ('Фотокамера', 'Camera'), sprite=None, bias_scale=bias_scale)
 
 
 class Incense(Item):
@@ -561,11 +571,11 @@ class Incense(Item):
         './assets/images/itms/incense_4.png'
     ]
     SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/smoke_incense.wav')
+        INCENSE_BURN
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('incense', 'Благовония', sprite=None, bias_scale=bias_scale)
+        super().__init__('incense', ('Благовония', 'Incense'), sprite=None, bias_scale=bias_scale)
 
         # состояние горения
         self.phase = 0  # 0-4
@@ -599,7 +609,8 @@ class Incense(Item):
 
         player.is_unhittable = True
 
-        self.sound_player = arcade.play_sound(self.SOUNDS[0])
+        vol = SettingsManager.get_sound_volume()
+        self.sound_player = arcade.play_sound(self.SOUNDS[0], volume=vol)
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
     def update_smoke(self, delta_time):
@@ -685,7 +696,8 @@ class Incense(Item):
             self.sprite.texture = arcade.load_texture(self.TEXTURES[self.phase])
             if self.sound_player:
                 self.sound_player.pause()
-            self.sound_player = arcade.play_sound(self.SOUNDS[0])
+            vol = SettingsManager.get_sound_volume()
+            self.sound_player = arcade.play_sound(self.SOUNDS[0], volume=vol)
 
     def update_item(self, player_sprite):
         super().update_item(player_sprite)
@@ -713,12 +725,13 @@ class Lighter(Item):
     ]
 
     def __init__(self, bias_scale=1):
-        super().__init__('lighter', 'Зажигалка', sprite=None, board_scale=1.0, bias_scale=bias_scale)
+        super().__init__('lighter', ('Зажигалка', 'Lighter'), sprite=None, board_scale=1.0, bias_scale=bias_scale)
 
     def use_item(self, player):
         if player.has_lighter:
             return
-        arcade.play_sound(arcade.load_sound('./assets/sounds/effects/take_item.wav'))
+        vol = SettingsManager.get_sound_volume()
+        arcade.play_sound(TAKE_LIGHTER, volume=vol)
         player.has_lighter = True
 
     def turn_on(self):
@@ -733,11 +746,11 @@ class Pills(Item):
         '././assets/images/itms/pills.png'
     ]
     SOUNDS = [
-        arcade.load_sound('./assets/sounds/effects/pills.wav')
+        TAKE_PILLS
     ]
 
     def __init__(self, reg_sanity, bias_scale=1):
-        super().__init__('pills', 'Успокоительное', sprite=None, board_scale=2.0, bias_scale=bias_scale)
+        super().__init__('pills', ('Успокоительное', 'Pills'), sprite=None, board_scale=2.0, bias_scale=bias_scale)
 
         self._reg_sanity = reg_sanity
 
@@ -750,7 +763,8 @@ class Pills(Item):
 
         self.used = True
 
-        Item.sound_player = arcade.play_sound(self.SOUNDS[0])
+        vol = SettingsManager.get_sound_volume()
+        Item.sound_player = arcade.play_sound(self.SOUNDS[0], volume=vol)
 
         player.sanity = min(100, player.sanity + self._reg_sanity)
         player.drop_item()

@@ -4,6 +4,9 @@ from pyglet.graphics import Batch
 
 from .entry_menu import EntryMenu
 
+from ..sounds import HEARTBEAT
+from . import SettingsManager
+
 
 class Screensaver(arcade.View):
     def __init__(self):
@@ -17,7 +20,7 @@ class Screensaver(arcade.View):
         self.title = None
         self.title_ = None
 
-        self.heartbeat_sound = arcade.load_sound('././assets/sounds/effects/heartbeat.wav')
+        self.heartbeat_sound = HEARTBEAT
 
         # Анимация буквы f
         self.f_animation_timer = 0
@@ -82,7 +85,8 @@ class Screensaver(arcade.View):
 
             # Быстрое мерцание
             elif self.f_animation_phase == 'blinking':
-                self.heartbeat_sound.play()
+                volume = SettingsManager.get_sound_volume(1.2)
+                self.heartbeat_sound.play(volume=volume)
                 blink_interval = 0.1
                 blink_state = int(self.f_animation_timer / blink_interval) % 2
                 if blink_state == 0:

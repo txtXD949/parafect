@@ -15,7 +15,9 @@ class LoginMenu(arcade.View):
         self.hover_sound = arcade.load_sound('././assets/sounds/effects/hover.wav')
         self.click_sound = arcade.load_sound('././assets/sounds/effects/click.wav')
 
-        self.status_text = '> ОЖИДАНИЕ ВВОДА...'
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+        self.status_text = ('> ОЖИДАНИЕ ВВОДА...', '> WAITING FOR INPUT...')[c_lang]
         self.active_input = None
 
         self.setup_widgets()
@@ -24,8 +26,8 @@ class LoginMenu(arcade.View):
         main_box = UIBoxLayout(vertical=True, space_between=20)
 
         # Заголовок
-        title = UILabel(
-            text='ПОДКЛЮЧЕНИЕ К СИСТЕМЕ P-BASE',
+        self.title = UILabel(
+            text='CONNECTING TO SYSTEM P-BASE',
             font_size=24,
             font_name='Courier New',
             width=500,
@@ -34,11 +36,11 @@ class LoginMenu(arcade.View):
             text_color=arcade.color.WHITE,
             bold=True
         )
-        main_box.add(title)
+        main_box.add(self.title)
 
         # Поле логина
-        login_label = UILabel(
-            text='ЛОГИН:',
+        self.login_label = UILabel(
+            text='LOGIN:',
             font_size=18,
             font_name='Courier New',
             width=100,
@@ -58,13 +60,13 @@ class LoginMenu(arcade.View):
         )
 
         login_row = UIBoxLayout(vertical=False, space_between=15)
-        login_row.add(login_label)
+        login_row.add(self.login_label)
         login_row.add(self.login_input)
         main_box.add(login_row)
 
         # Поле пароля
-        password_label = UILabel(
-            text='ПАРОЛЬ:',
+        self.password_label = UILabel(
+            text='PASSWORD:',
             font_size=18,
             font_name='Courier New',
             width=100,
@@ -85,7 +87,7 @@ class LoginMenu(arcade.View):
         )
 
         password_row = UIBoxLayout(vertical=False, space_between=15)
-        password_row.add(password_label)
+        password_row.add(self.password_label)
         password_row.add(self.password_input)
         main_box.add(password_row)
 
@@ -104,7 +106,7 @@ class LoginMenu(arcade.View):
         buttons_row = UIBoxLayout(vertical=False, space_between=50)
 
         self.connect_btn = InteractiveLabel(
-            text='ПОДКЛЮЧИТЬСЯ',
+            text='CONNECT',
             width=200,
             height=45,
             font_size=18,
@@ -117,7 +119,7 @@ class LoginMenu(arcade.View):
         )
 
         self.back_btn = InteractiveLabel(
-            text='НАЗАД',
+            text='BACK',
             width=200,
             height=45,
             font_size=18,
@@ -138,8 +140,18 @@ class LoginMenu(arcade.View):
         anchor.add(child=main_box, anchor_x='center', anchor_y='center')
         self.manager.add(anchor)
 
+    def update_texts(self):
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
+        self.title.text = ('ПОДКЛЮЧЕНИЕ К СИСТЕМЕ P-BASE', 'CONNECTING TO SYSTEM P-BASE')[c_lang]
+        self.login_label.text = ('ЛОГИН:', 'LOGIN:')[c_lang]
+        self.password_label.text = ('ПАРОЛЬ:', 'PASSWORD:')[c_lang]
+        self.connect_btn.base_text = ('ПОДКЛЮЧИТЬСЯ', 'CONNECT')[c_lang]
+        self.back_btn.base_text = ('НАЗАД', 'BACK')[c_lang]
+
     def on_login_enter(self, text):
-        """Когда нажали Enter в поле логина"""
+        """При нажатии на Enter в логине"""
         if text and self.password_input.text == '':
             # Переходим к паролю
             self.login_input.deactivate()
@@ -147,7 +159,7 @@ class LoginMenu(arcade.View):
             self.active_input = self.password_input
 
     def on_password_enter(self, text):
-        """Когда нажали Enter в поле пароля"""
+        """Когда нажали Enter в пароле"""
         if text:
             self.password_input.deactivate()
             self.active_input = None
@@ -155,11 +167,15 @@ class LoginMenu(arcade.View):
 
     def attempt_login(self):
         """Попытка входа"""
+
+        from . import SettingsManager
+        c_lang = SettingsManager.iget_current_language()
+
         login = self.login_input.text
         password = self.password_input.text
 
         if not login or not password:
-            self.status_text = '> ОШИБКА: ЗАПОЛНИТЕ ВСЕ ПОЛЯ'
+            self.status_text = ('> ОШИБКА: ЗАПОЛНИТЕ ВСЕ ПОЛЯ', '> ERROR: FILL IN ALL THE FIELDS')[c_lang]
             self.status_label.text = self.status_text
             return
 
@@ -167,18 +183,18 @@ class LoginMenu(arcade.View):
         manager = AccountManager()
 
         if manager.get_account(login, password):
-            self.status_text = '> ПОДКЛЮЧЕНИЕ...'
+            self.status_text = ('> ПОДКЛЮЧЕНИЕ...', '> CONNECTING...')[c_lang]
             self.status_label.text = self.status_text
 
             from scripts.maps.lobby import LobbyView
             lobby = LobbyView(account_manager=manager)
             self.window.show_view(lobby)
 
-            from constants import ENTRY_BACKGROUND_SOUND
+            from ..start_sound import ENTRY_BACKGROUND_SOUND
             ENTRY_BACKGROUND_SOUND.pause()
 
         else:
-            self.status_text = '> ОШИБКА: НЕВЕРНЫЕ ДАННЫЕ'
+            self.status_text = ('> ОШИБКА: НЕВЕРНЫЕ ДАННЫЕ', '> ERROR: INCORRECT DATA')[c_lang]
             self.status_label.text = self.status_text
 
     def on_draw(self):
@@ -191,6 +207,9 @@ class LoginMenu(arcade.View):
         self.back_btn.on_update(delta_time)
         self.login_input.on_update(delta_time)
         self.password_input.on_update(delta_time)
+
+        # Обновляем текст
+        self.update_texts()
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.connect_btn.check_mouse_hover(x, y)

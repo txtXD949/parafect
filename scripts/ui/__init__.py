@@ -14,5 +14,5 @@ __all__ = [
     'ItemInfoWidget',
     'ITEM_DATABASE',
     'MarketButtons',
-    'ChangeButton'
+    'ChangeButton',
 ]

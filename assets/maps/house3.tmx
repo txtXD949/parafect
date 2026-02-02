@@ -135,7 +135,7 @@
  </layer>
  <layer id="29" name="ghost_wall" width="44" height="43" visible="0">
   <data encoding="base64" compression="zlib">
-   eJzt1MEJACEQBEFN5/IP0AD8yLGzCFaB37Hx4Rjwnm+enxucdnT1Vr1bZ+9NO1336M3e0/VPVO/rze7rze7rze7rze7rze7r3ferDwAAAP8tXs8NGw==
+   eJzt1LEJACAMRUFd0/0HcYagX1PcQTp5hBSOAWfWrM/vfZPvq27f68W+nXvpvn2z/fQ/oaurq6urq6ur26+bGgAAgC42v80ekw==
   </data>
  </layer>
  <layer id="34" name="exit" width="44" height="43">
