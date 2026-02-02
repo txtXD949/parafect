@@ -14,7 +14,7 @@ import math
 SPEED = 1
 
 
-class Dom1(arcade.View):
+class School(arcade.View):
     def __init__(self, game):
         super().__init__()
 
@@ -40,7 +40,7 @@ class Dom1(arcade.View):
         self.mic_manager.start()
 
         # Карта
-        self.tile_map = arcade.load_tilemap('././assets/maps/house1.tmx', scaling=1.0)
+        self.tile_map = arcade.load_tilemap('././assets/maps/school.tmx', scaling=1.0)
 
         # Расчет размеров карты с учетом масштаба
         self.map_width = self.tile_map.width * self.tile_map.tile_width
@@ -79,13 +79,30 @@ class Dom1(arcade.View):
 
         # Комнаты
         self.rooms = [
-            "corridor",
-            "wardrobe",
-            "hall",
-            "kitchen",
-            "toilet",
-            "room1",
-            "garage"
+            "toilet1",
+            "toilet2",
+            "corridor1",
+            "corridor2",
+            "main_corridor",
+            "classroom1",
+            "classroom2",
+            "classroom3",
+            "classroom4",
+            "classroom5",
+            "classroom6",
+            "classroom7",
+            "classroom8",
+            "classroom9",
+            "classroom10",
+            "classroom11",
+            "classroom12",
+            "garage",
+            'library',
+            'kitchen1',
+            'kitchen2',
+            'sporthall',
+            'director_room',
+            'archive'
         ]
 
         # Призрак
@@ -239,6 +256,7 @@ class Dom1(arcade.View):
         self.doors_list.draw(pixelated=True)
         self.closets_list.draw(pixelated=True)
         self.scene["furniture_back"].draw(pixelated=True)
+        self.scene["furniture_front"].draw(pixelated=True)
         self.scene["generator"].draw(pixelated=True)
         self.ghost.sprite.particles.draw(pixelated=True)
         self.player_sprite.footstep_particles.draw(pixelated=True)
@@ -249,11 +267,12 @@ class Dom1(arcade.View):
             self.items_sprite_list.draw(pixelated=True)
         else:
             self.free_items_sprite_list.draw(pixelated=True)
-        self.scene["furniture_front"].draw(pixelated=True)
 
         for item in self.items_list:
             if item.id == 'incense':
                 item.smoke_particles.draw(pixelated=True)
+
+        self.scene['book_shelfes'].draw(pixelated=True)
 
         self.camera_shake.readjust_camera()
 

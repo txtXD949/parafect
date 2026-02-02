@@ -2,10 +2,14 @@ from .lobby import LobbyView
 from .dom_1 import Dom1
 from .dom_3 import Dom3
 from .kv96 import Kv96
+from .school import School
+from .caffe import Cafe
 
 __all__ = [
     'LobbyView',
     'Dom1',
     'Dom3',
-    'Kv96'
+    'Kv96',
+    'School',
+    'Cafe'
 ]

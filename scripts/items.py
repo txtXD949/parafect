@@ -148,7 +148,6 @@ class Item:
         self.malfunction_timer = 0
 
     def is_working_correctly(self):
-        """Проверяет работает ли предмет нормально"""
         return not self.is_malfunctioning
 
 
@@ -233,7 +232,7 @@ class EMF(Item):
         self.sprite.texture = arcade.load_texture(self.TEXTURES[1])
 
         if random.random() < 0.0003 * 60:
-            if 'emf5' in evidences and random.random() < 0.5:
+            if 'emf5' in evidences and random.random() < 0.25:
                 level_index = 4
             else:
                 level_index = random.choice((2, 3))
@@ -378,18 +377,18 @@ class Microphone(Item):
             return
 
         if ghost.id == 'muling':
-            if random.random() < 0.0001 * 60:
+            if random.random() < 0.00001 * 60:
                 vol = SettingsManager.get_sound_volume()
                 self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[1], volume=vol)
                 return
 
         if ghost.id == 'banshee':
-            if random.random() < 0.0001 * 60:
+            if random.random() < 0.00001 * 60:
                 vol = SettingsManager.get_sound_volume()
                 self.sound_player = arcade.play_sound(self.SPEC_SOUNDS[0], volume=vol)
                 return
 
-        if 'mic' in evidence and random.random() < 0.0003 * 60:
+        if 'mic' in evidence and random.random() < 0.00003 * 60:
             vol = SettingsManager.get_sound_volume()
             self.sound_player = arcade.play_sound(random.choice(self.SOUNDS), volume=vol)
 

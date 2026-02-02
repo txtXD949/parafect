@@ -265,8 +265,11 @@ class Ghost:
             return
 
         if random.random() > self.hunt_chance + (
-        ((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
+                ((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
             return
+
+        if self.id == 'mimic':
+            self.change_ghost()
 
         volume = SettingsManager.get_ghost_sound_volume(1.5)
         self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True, volume=volume)
@@ -602,19 +605,25 @@ class Mimic(Ghost):
     def __init__(self):
         self.copied_ghost = None
 
-        self.change_ghost()
-
         super().__init__('mimic', ('Мимик', 'Mimic'), spec='копирует другого призрака',
-                         evidences=['uf', 'cold_temp', 'mic'],
-                         hunt_start=self.copied_ghost.hunt_start, hunt_chance=self.copied_ghost.hunt_chance,
-                         step_loud=self.copied_ghost.step_loud, drop_sanity=self.copied_ghost.drop_sanity,
-                         speed=self.copied_ghost.speed, interaction_chance=self.copied_ghost.interaction_chance,
-                         blink_chance=self.copied_ghost.blink_chance, boost=self.copied_ghost.boost)
+                         evidences=['uf', 'cold_temp', 'mic'])
+
+        self.change_ghost()
 
         self.change_chance = 0.7
 
     def change_ghost(self):
         self.copied_ghost = random.choice(self.GHOSTS[:-1])()
+
+        self._hunt_start = self.copied_ghost.hunt_start
+        self._hunt_chance = self.copied_ghost.hunt_chance
+        self._step_loud = self.copied_ghost.step_loud
+        self._drop_sanity = self.copied_ghost.drop_sanity
+        self.speed = self.copied_ghost.speed
+        self._interaction_chance = self.copied_ghost.interaction_chance
+        self._blink_chance = self.copied_ghost.blink_chance
+        self.boost = self.copied_ghost.boost
+
         return self.copied_ghost
 
     def start_hunt(self, dt):

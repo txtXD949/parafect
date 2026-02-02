@@ -14,7 +14,7 @@ import math
 SPEED = 1
 
 
-class Dom1(arcade.View):
+class Cafe(arcade.View):
     def __init__(self, game):
         super().__init__()
 
@@ -40,7 +40,7 @@ class Dom1(arcade.View):
         self.mic_manager.start()
 
         # Карта
-        self.tile_map = arcade.load_tilemap('././assets/maps/house1.tmx', scaling=1.0)
+        self.tile_map = arcade.load_tilemap('././assets/maps/cafe.tmx', scaling=1.0)
 
         # Расчет размеров карты с учетом масштаба
         self.map_width = self.tile_map.width * self.tile_map.tile_width
@@ -79,13 +79,20 @@ class Dom1(arcade.View):
 
         # Комнаты
         self.rooms = [
+            "wardrobe1",
+            "wardrobe2",
             "corridor",
-            "wardrobe",
+            "garage",
             "hall",
-            "kitchen",
-            "toilet",
+            "toilet1",
+            "toilet2",
             "room1",
-            "garage"
+            "room2",
+            "kitchen1",
+            "kitchen2",
+            "kitchen3",
+            "kitchen4",
+            "kitchen5",
         ]
 
         # Призрак
