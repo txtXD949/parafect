@@ -4,6 +4,7 @@ import math
 
 
 class Footprint(arcade.Sprite):
+    """Отпечатки призрака"""
     TEXTURES = [
         f'./assets/images/footprints/fp_{i}.png' for i in range(7)
     ]
@@ -20,9 +21,10 @@ class Footprint(arcade.Sprite):
         self.lifetime = lifetime
         self.time_alive = 0
 
+        # прозрачность
         self.alpha = 80
 
-    def update(self, delta_time):
+    def update(self, delta_time: float = 1 / 60, *args, **kwargs) -> None:
         self.time_alive += delta_time
 
         # Исчезание в последние 5 секунд
