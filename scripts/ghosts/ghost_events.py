@@ -5,9 +5,12 @@ from ..sounds import *
 
 
 class GhostEvent:
+    """Класс гост-ивента"""
+
     def __init__(self, timer, sound, ghost):
         self.ghost = ghost
 
+        # Параметры гост-ивента
         self.ge_timer = timer
         self.timer = self.ge_timer
         self.sound = sound
@@ -16,6 +19,7 @@ class GhostEvent:
         self.is_played = False
 
     def do_ghost_event(self, player_x, player_y, color=(230, 255)):
+        """Начинает гост-ивент"""
         if self.is_ge:
             c = random.randint(*color)
             self.ghost.sprite.color = (c, c, c)
@@ -46,6 +50,7 @@ class GhostEvent:
 
 
 class SuddenGhostEvent(GhostEvent):
+    """Внезапный гост-ивент"""
     SOUNDS = [
         SUDDEN_GHOST_EVENT_1,
         SUDDEN_GHOST_EVENT_2,
@@ -55,7 +60,7 @@ class SuddenGhostEvent(GhostEvent):
     def __init__(self, ghost):
         super().__init__(timer=6.0, sound=random.choice(self.SOUNDS), ghost=ghost)
 
-    def do_ghost_event(self, player_x, player_y):
+    def do_ghost_event(self, player_x, player_y, color=None):
         super().do_ghost_event(player_x, player_y)
 
         if self.is_ge and not self.is_played:
@@ -63,6 +68,7 @@ class SuddenGhostEvent(GhostEvent):
 
 
 class BreathGhostEvent(GhostEvent):
+    """Дышащий гост-ивент"""
     SOUNDS = [
         BREATH_GHOST_EVENT_1,
         BREATH_GHOST_EVENT_2
@@ -73,6 +79,7 @@ class BreathGhostEvent(GhostEvent):
 
 
 class WheezingGhostEvent(GhostEvent):
+    """Хрипящий гост ивент"""
     SOUNDS = [
         WHEEZING_GHOST_EVENT_1,
         WHEEZING_GHOST_EVENT_2,
@@ -85,6 +92,7 @@ class WheezingGhostEvent(GhostEvent):
 
 
 class WheezingGhostEvenShadow(GhostEvent):
+    """Хрипящий теневой гост-ивент"""
     SOUNDS = [
         WHEEZING_SHADOW_EVENT_1,
         WHEEZING_SHADOW_EVENT_2,
@@ -96,11 +104,12 @@ class WheezingGhostEvenShadow(GhostEvent):
     def __init__(self, ghost):
         super().__init__(timer=4.5, sound=random.choice(self.SOUNDS), ghost=ghost)
 
-    def do_ghost_event(self, player_x, player_y):
+    def do_ghost_event(self, player_x, player_y, color=None):
         super().do_ghost_event(player_x, player_y, (0, 40))
 
 
 class WhisperGhostEvent(GhostEvent):
+    """Шепчущий гост-ивент"""
     SOUNDS = [
         WHISPER_GHOST_EVENT_1,
         WHISPER_GHOST_EVENT_2
@@ -111,6 +120,7 @@ class WhisperGhostEvent(GhostEvent):
 
 
 class LaughGhostEvent(GhostEvent):
+    """Смеющийся гост-ивент"""
     SOUNDS = [
         LAUGH_GHOST_EVENT
     ]
@@ -119,6 +129,9 @@ class LaughGhostEvent(GhostEvent):
         super().__init__(timer=2.7, sound=random.choice(self.SOUNDS), ghost=ghost)
 
 
+# Гост-ивенты
 GHOST_EVENTS = [
-    SuddenGhostEvent, BreathGhostEvent, WheezingGhostEvent, WheezingGhostEvenShadow, WhisperGhostEvent, LaughGhostEvent
+    SuddenGhostEvent, BreathGhostEvent,
+    WheezingGhostEvent, WheezingGhostEvenShadow,
+    WhisperGhostEvent, LaughGhostEvent
 ]

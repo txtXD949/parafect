@@ -3,36 +3,46 @@ import arcade
 
 
 class GhostPhysics:
+    """Физический движок призрака"""
     def __init__(self, x=0, y=0, speed=1.0, boost=0.07):
+        # Координаты
         self.x = x
         self.y = y
 
+        # Скорость
         self.velocity_x = 0.0
         self.velocity_y = 0.0
 
+        # Остальные параметры
         self.acceleration = 0.5
         self.max_speed = 8.0
         self.friction = 0.92
 
+        # Параметры призрака
         self.boost = boost
         self.base_speed = speed
         self.boost_multiplier = 1 + boost
         self.current_speed = speed
 
+        # Поворот призрака
         self.angle = 0
         self.target_angle = 0
         self.rotation_speed = 0.1
 
+        # Последние координаты
         self.last_dx = 0
         self.last_dy = 0
 
     def set_boosted(self, boosted):
+        """Задает новую скорость(ускорение)"""
         if boosted:
             self.current_speed = self.base_speed * self.boost_multiplier
         else:
             self.current_speed = self.base_speed
 
-    def check_wall_collision(self, new_x, new_y, sprite_width, sprite_height, walls):
+    @staticmethod
+    def check_wall_collision(new_x, new_y, sprite_width, sprite_height, walls):
+        """Проверяет столкновение со стенами"""
         if not walls:
             return False
 

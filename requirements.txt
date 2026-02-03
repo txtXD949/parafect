@@ -3,3 +3,4 @@ bcrypt==5.0.0
 pyglet==2.1.11
 PyAudio==0.2.14
 numpy==2.4.1
+pillow==12.1.0
