@@ -371,7 +371,6 @@ class ResultsView(arcade.View):
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> bool | None:
         w = self.camera.unproject((x, y))
-        print(w.x, w.y)
         if self.state:
             return
 

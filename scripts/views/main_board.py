@@ -380,7 +380,6 @@ class MainBoard(arcade.View):
         difficulty_key = None
 
         for key, info in DIFFICULTY_DATABASE.items():
-            print(info.id, difficulty_id)
             if info.id == difficulty_id:
                 difficulty_key = key
                 break

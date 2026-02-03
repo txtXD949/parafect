@@ -47,12 +47,12 @@
   },
   "3": {
     "name": "I-303",
-    "cash": 3074,
+    "cash": 2665,
     "level": 50,
     "experience": 2194,
     "inventory": {
       "emf": 4,
-      "low_light": 2,
+      "low_light": 3,
       "book": 2,
       "mic": 2,
       "dict": 2,
