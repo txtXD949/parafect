@@ -3,7 +3,10 @@ import numpy as np
 
 
 class MicManager:
+    """Менеджер микрофона"""
+
     def __init__(self):
+        # Параметры микрофона
         self.pa = pyaudio.PyAudio()
         self.stream = None
         self.is_active = False
@@ -17,6 +20,7 @@ class MicManager:
         self.voice_volume = 0.0
 
     def start(self):
+        """Начать запись"""
         if self.is_active:
             return
 
@@ -34,6 +38,7 @@ class MicManager:
         self.stream.start_stream()
 
     def stop(self):
+        """Остановить запись"""
         self.is_active = False
         if self.stream:
             self.stream.stop_stream()
@@ -50,6 +55,7 @@ class MicManager:
         return in_data, pyaudio.paContinue
 
     def update(self, delta_time):
+        """Обновить запись"""
         if not self.audio_buffer:
             self.voice_volume = 0.0
             return
@@ -63,4 +69,5 @@ class MicManager:
             self.voice_volume = 0.0
 
     def is_voice_active(self, threshold=0.000001):
+        """Проверка на голос"""
         return self.voice_volume > threshold

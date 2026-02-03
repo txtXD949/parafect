@@ -10,17 +10,18 @@ from ..ui import ITEM_DATABASE
 from ..sounds import *
 from . import SettingsManager
 
-P_EXP_WIN = 100
-P_EXP_LOSE = 10
+P_EXP_WIN = 100  # Опыт за победу
+P_EXP_LOSE = 10  # Опыт за проигрыш
 
-P_CASH_WIN = 200
-P_CASH_LOSE = 1
+P_CASH_WIN = 200  # Деньги за победу
+P_CASH_LOSE = 1  # Деньги за проигрыш
 
-FIRST_DEATH_COEF = 0.8
+FIRST_DEATH_COEF = 0.8  # Коэффициент за одну смерть: не используется в игре
 
-P_HUNT = 20
-P_ZERO_SAN = 20
+P_HUNT = 20  # Бонус за охоту
+P_ZERO_SAN = 20  # Бонус за 0% рассудка
 
+# Коэффициенты карт/сложностей
 DIFFICULTIES_COEFS = {
     'peaceful': 0.2,
     'simple': 0.5,
@@ -37,10 +38,11 @@ MAP_SIZE_COEFS = {
     'ОГРОМНАЯ': 3.0
 }
 
-LEVEL_EXP = 50
+LEVEL_EXP = 50  # exp за 1-й уровень, далее + 50 за лвл
 
 
 class ResultsView(arcade.View):
+    """Вывод результатов"""
     SOUNDS = [
         PRINT,
         COUNTER,
@@ -52,26 +54,33 @@ class ResultsView(arcade.View):
     def __init__(self, game):
         super().__init__()
 
+        # Останавливаем звуки
         if game.ghost.sound_player_h:
             game.ghost.sound_player_h.pause()
         if game.ghost.sound_player_g:
             game.ghost.sound_player_g.pause()
 
+        # UI
         self.batch = Batch()
         self.camera = arcade.Camera2D(
             projection=arcade.rect.XYWH(0, 0, 800, 600),
             position=(400, 300)
         )
+
+        # Звуки
         self.sound_player = None
         self.is_playing = False
 
+        # Ссылка на игру
         self.game = game
 
+        # Призрак
         self.ghost = game.ghost
         self.map_id = game.map_id
         self.dif_id = game.dif_id
         self.inv = game.inv
 
+        # Анимация
         self.animation_timer = 0
         self.state_cord = 600
         self.state = True
@@ -81,11 +90,13 @@ class ResultsView(arcade.View):
         self.cash = game.player.cash
         self.exp = game.player.exp
 
+        # Начисления
         self.new_exp = None
         self.new_cash = None
         self.comp = None
         self.get_results()
 
+        # Профиль
         from database import ProfileManager
         self.profile = ProfileManager()
 
@@ -98,6 +109,7 @@ class ResultsView(arcade.View):
         # Полоска
         self.line_width = 1
 
+        # Тексты
         self.set_texts()
 
     def get_results(self):
@@ -132,6 +144,7 @@ class ResultsView(arcade.View):
                 map_coef * diff_coef * (1, f_lose_coef)[f_lose_coef]) + self.comp)
 
     def give_away_items(self):
+        """Возвращать предметы игроку в случае выживания"""
         if not self.game.was_death:
             default_items = ('emf', 'low_light', 'dict', 'term', 'mic', 'book')
             for item_id, item_count in self.inv.items():
@@ -163,6 +176,7 @@ class ResultsView(arcade.View):
         )
 
     def set_texts(self):
+        """Установить тексты"""
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
         # Тайтл
@@ -312,6 +326,7 @@ class ResultsView(arcade.View):
                     volume = SettingsManager.get_sound_volume()
                     self.sound_player = arcade.play_sound(self.SOUNDS[1], loop=True, volume=volume)
                     self.is_playing = True
+                # Начисление exp
                 self.exp = min(self.exp + 1, LEVEL_EXP * self.lvl)
                 if self.exp == LEVEL_EXP * self.lvl:
                     self.lvl += 1
@@ -322,6 +337,7 @@ class ResultsView(arcade.View):
                 self.sound_player.pause()
                 self.is_playing = False
 
+            # Начисление $
             if self.new_cash and not self.new_exp:
                 if not self.is_playing:
                     volume = SettingsManager.get_sound_volume()
@@ -338,12 +354,15 @@ class ResultsView(arcade.View):
                 self.can_click = True
             return
 
+        # Анимация печати
         if self.state_cord != 0:
             if not self.is_playing:
                 volume = SettingsManager.get_sound_volume()
                 self.sound_player = arcade.play_sound(self.SOUNDS[0], loop=True, volume=volume)
                 self.is_playing = True
             self.state_cord -= 3
+
+        # Остановка анимации
         if self.state_cord <= 0:
             self.sound_player.pause()
             self.is_playing = False
@@ -373,6 +392,7 @@ class ResultsView(arcade.View):
             self.on_hover = False
 
     def open_lobby(self):
+        """Вернуться в лобби"""
         self.give_away_items()
 
         from ..maps import LobbyView

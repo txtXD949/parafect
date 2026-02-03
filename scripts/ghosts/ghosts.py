@@ -48,7 +48,7 @@ class GhostParticle(arcade.SpriteSolidColor):
         self.lifetime = random.uniform(0.5, 1.0)
         self.time_alive = 0
 
-    def update(self, delta_time):
+    def update(self, delta_time: float = 1 / 60, *args, **kwargs) -> None:
         # Движение
         self.center_x += self.change_x
         self.center_y += self.change_y
@@ -79,6 +79,7 @@ class GhostParticle(arcade.SpriteSolidColor):
 
 
 class GhostSprite(arcade.Sprite):
+    """Спрайт призрака"""
     TEXTURES = [
         arcade.load_texture('./assets/images/ghost/ghost_0.png'),
         arcade.load_texture('./assets/images/ghost/ghost_1.png')
@@ -86,6 +87,7 @@ class GhostSprite(arcade.Sprite):
 
     def __init__(self, ghost, scale=1.0):
         super().__init__(scale=scale)
+        # Параметры спрайта
         self.texture = self.TEXTURES[0]
         self.ghost = ghost
         self.visible = False
@@ -97,6 +99,7 @@ class GhostSprite(arcade.Sprite):
         self.last_direction = 0
 
     def update(self, dt: float = 1 / 60, *args, **kwargs) -> None:
+        # Обновляем гост ивент
         if self.ghost.ghost_event and self.ghost.ghost_event.is_ge:
             self.ghost.ghost_event.timer -= dt
 
@@ -104,9 +107,11 @@ class GhostSprite(arcade.Sprite):
         if self.visible:
             self.update_particles(dt)
 
+        # Обновляем частицы
         self.particles.update(dt)
 
     def update_particles(self, delta_time):
+        """Обновляет частицы"""
         self.particle_timer += delta_time
 
         if self.particle_timer >= self.particle_interval:
@@ -115,6 +120,7 @@ class GhostSprite(arcade.Sprite):
             self.particle_timer = 0
 
     def create_particle(self):
+        """Создает частицы"""
         offset_distance = random.uniform(5, 15)
 
         x = self.center_x - math.cos(self.last_direction) * offset_distance
@@ -130,9 +136,12 @@ class GhostSprite(arcade.Sprite):
 
 
 class Ghost:
+    """Класс призрака"""
+
     def __init__(self, id, name, evidences, desc='', hunt_start=50, hunt_chance=0.0003, step_loud='mid',
                  ghost_event_chance=0.00005, drop_sanity=5, speed=0.3, interaction_chance=0.01, blink_chance=0.1,
                  boost=0.07, spec='', main_evidence=None):
+        # Параметры призрака
         self._id = id
         self._name = name
         self._description = desc
@@ -149,6 +158,7 @@ class Ghost:
         self._evidences = evidences[:]
         self._species = spec
 
+        # Спрайт призрака
         self.sprite = GhostSprite(self, 1.0)
 
         # Физика
@@ -185,6 +195,7 @@ class Ghost:
         self.is_ge = False
         self.ge_timer = 0
 
+        # Плееры для охоты и гост-ивента
         self.sound_player_g = None
         self.sound_player_h = None
 
@@ -248,29 +259,31 @@ class Ghost:
         return self._species
 
     def start_hunt(self, dt):
-        if self.stop_timer > 0:
+        """Начинает охоту"""
+        if self.stop_timer > 0:  # Проверка на таймер
             return
 
-        if self.game.dif_id == 'peaceful':
+        if self.game.dif_id == 'peaceful':  # Проверка на сложность
             return
 
-        if self.game.player.sanity > self.hunt_start:
+        if self.game.player.sanity > self.hunt_start:  # Проверка на рассудок
             return False
 
-        if self.ghost_event:
+        if self.ghost_event:  # Проверка на гост-ивент
             if self.ghost_event.is_ge:
                 return
 
-        if self.is_hunt or self.is_charging or self.stop_timer:
+        if self.is_hunt or self.is_charging or self.stop_timer:  # Проверка на охоту
             return
 
-        if random.random() > self.hunt_chance + (
-                ((51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):
+        if random.random() > self.hunt_chance + (((
+                                                          51 - self.game.player.sanity) / 50_000) if self.game.player.sanity <= self.hunt_start else 0.0):  # Проверка на гост-ивент
             return
 
-        if self.id == 'mimic':
+        if self.id == 'mimic':  # Мимик меняет призрака
             self.change_ghost()
 
+        # Начинаем охоту
         volume = SettingsManager.get_ghost_sound_volume(1.5)
         self.sound_player_h = arcade.play_sound(HUNT_SOUND, loop=True, volume=volume)
         self.is_charging = True
@@ -281,6 +294,7 @@ class Ghost:
             del self.hunt_initialized
 
     def end_hunt(self):
+        """Заканчивает охоту"""
         self.is_hunt = False
         self.is_charging = False
         self.hunt_timer = 0
@@ -294,10 +308,11 @@ class Ghost:
 
     def update_hunt(self, dt, player_x, player_y, player_in_closet, walls_layer=None, voice_level=0, is_mic_on=True,
                     is_using_electronic=False):
-        if self.stop_timer > 0:
+        """Обновляет охоту"""
+        if self.stop_timer > 0:  # Проверка на таймер
             self.stop_timer -= dt
 
-        if self.is_charging:
+        if self.is_charging:  # Проверка на зарядку
             self.charge_timer -= dt
             if self.charge_timer <= 0:
                 self.is_charging = False
@@ -306,21 +321,22 @@ class Ghost:
                 self.hunt_state = 'seek'
             return
 
-        if not self.is_hunt:
+        if not self.is_hunt:  # Проверка на охоту
             return
 
         self.hunt_timer -= dt
-        if self.hunt_timer <= 0:
+        if self.hunt_timer <= 0:  # Закончить охоту
             self.end_hunt()
             return
 
-        self.update_blinking(dt)
+        self.update_blinking(dt)  # Обновление мерцания
 
         # Расстояние до игрока
         dx = player_x - self.physics.x
         dy = player_y - self.physics.y
         distance = math.sqrt(dx * dx + dy * dy)
 
+        # Видимость игрока
         detects_player = False
         sees_player = False
 
@@ -387,6 +403,7 @@ class Ghost:
         return x, y
 
     def get_wander_target(self, dt):
+        """Поучает цель для блуждания"""
         if not hasattr(self, 'wander_cooldown'):
             self.wander_cooldown = 0
             self.wander_target = None
@@ -406,6 +423,7 @@ class Ghost:
         return self.wander_target
 
     def do_ghost_event(self, player_x, player_y):
+        """Начинает гост-ивент"""
         if self.is_hunt:
             return
         if not self.ghost_event:
@@ -413,6 +431,7 @@ class Ghost:
         self.ghost_event.do_ghost_event(player_x, player_y)
 
     def update_blinking(self, dt):
+        """Обновляет мерцания призрака"""
         if not self.is_hunt:
             return
 
@@ -434,6 +453,7 @@ class Ghost:
                     self.blink_timer = 0
 
     def try_change_room(self, scene, rooms_list, delta_time=1 / 60):
+        """Пытается сменить комнату призрака"""
         if self.is_hunt or self.is_charging:
             return False
 
@@ -443,6 +463,7 @@ class Ghost:
         return False
 
     def change_room_random(self, scene, rooms_list):
+        """Меняет комнату призрака"""
         if not rooms_list:
             return False
 
@@ -458,6 +479,7 @@ class Ghost:
         return False
 
     def move_to_random_position_in_room(self):
+        """Перемещает призрака в случайную координату комнаты"""
         if not self.room or len(self.room) == 0:
             return
 
@@ -483,6 +505,8 @@ class Ghost:
 
 
 class Spirit(Ghost):
+    """Дух"""
+
     def __init__(self):
         super().__init__('spirit', ('Дух', 'Spirit'), evidences=['emf5', 'hot_temp', 'dict'])
 
@@ -493,12 +517,16 @@ class Spirit(Ghost):
 
 
 class Demon(Ghost):
+    """Демон"""
+
     def __init__(self):
         super().__init__('demon', ('Демон', 'Demon'), evidences=['cold_temp', 'mic', 'book'], hunt_start=75,
                          hunt_chance=0.0004)
 
 
 class Phantom(Ghost):
+    """Фантом"""
+
     def __init__(self):
         super().__init__('phantom', ('Фантом', 'Phantom'), evidences=['book', 'dict', 'uf'], blink_chance=0.5,
                          spec='редко мерцает(почти невидимый), умеет телепортироваться по карте')
@@ -507,6 +535,8 @@ class Phantom(Ghost):
 
 
 class Oni(Ghost):
+    """Они"""
+
     def __init__(self):
         super().__init__('oni', ('Они', 'Oni'), evidences=['emf5', 'hot_temp', 'book'], hunt_chance=0.00025,
                          ghost_event_chance=0.0001, drop_sanity=10, blink_chance=0.02,
@@ -517,12 +547,16 @@ class Oni(Ghost):
 
 
 class Banshee(Ghost):
+    """Банши"""
+
     def __init__(self):
         super().__init__('banshee', ('Банши', 'Banshee'), evidences=['uf', 'book', 'mic'], main_evidence='mic',
                          spec='умеет ходить к игроку, есть шанс услышать особый крик банши на микрофоне, снимает 10% рассудка')
 
 
 class Reverent(Ghost):
+    """Ревенант"""
+
     def __init__(self):
         super().__init__('reverent', ('Ревенант', 'Reverent'), evidences=['cold_temp', 'dict', 'book'], speed=0.05,
                          boost=8.0,
@@ -530,6 +564,8 @@ class Reverent(Ghost):
 
 
 class Muling(Ghost):
+    """Мюлинг"""
+
     def __init__(self):
         super().__init__('muling', 'Мюллинг', evidences=['hot_temp', 'mic', 'uf'], step_loud='low',
                          spec='лучше реагирует на войс-чат', main_evidence='mic')
@@ -562,6 +598,8 @@ class Muling(Ghost):
 
 
 class Poltergeist(Ghost):
+    """Полтергейст"""
+
     def __init__(self):
         super().__init__('poltergeist', ('Полтергейст', 'Poltergeist'), evidences=['emf5', 'mic', 'hot_temp'],
                          interaction_chance=0.05,
@@ -569,12 +607,16 @@ class Poltergeist(Ghost):
 
 
 class Siren(Ghost):
+    """Сирена"""
+
     def __init__(self):
         super().__init__('siren', ('Сирена', 'Siren'), evidences=['dict', 'cold_temp', 'uf'], main_evidence='dict',
                          spec='в диктофоне можно услышать пение снимает 10% рассудка')
 
 
 class Shade(Ghost):
+    """Тень"""
+
     def __init__(self):
         super().__init__('shade', ('Тень', 'Shade'), evidences=['cold_temp', 'mic', 'emf5'], hunt_start=35,
                          interaction_chance=0.005, ghost_event_chance=0.0001, spec='спокойный призрак',
@@ -582,6 +624,8 @@ class Shade(Ghost):
 
 
 class Butcher(Ghost):
+    """Мясник"""
+
     def __init__(self):
         super().__init__('butcher', ('Мясник', 'Butcher'), evidences=['hot_temp', 'dict', 'book'], step_loud='high',
                          speed=0.1,
@@ -589,12 +633,15 @@ class Butcher(Ghost):
 
 
 class Wrath(Ghost):
+    """Мираж"""
+
     def __init__(self):
         super().__init__('wrath', ('Мираж', 'Wrath'), evidences=['emf5', 'uf', 'book'], hunt_start=60, drop_sanity=10,
                          spec='умеет телепортироваться к игроку')
 
 
 class Mimic(Ghost):
+    """Мимик"""
     GHOSTS = [
         Spirit, Demon, Phantom,
         Oni, Banshee, Reverent,
@@ -613,6 +660,7 @@ class Mimic(Ghost):
         self.change_chance = 0.7
 
     def change_ghost(self):
+        """Сменить поведение призрака"""
         self.copied_ghost = random.choice(self.GHOSTS[:-1])()
 
         self._hunt_start = self.copied_ghost.hunt_start
@@ -628,9 +676,12 @@ class Mimic(Ghost):
 
     def start_hunt(self, dt):
         super().start_hunt(dt)
-        self.change_ghost()
+        # Попытка сменить поведение призрака
+        if random.random() < self.change_chance:
+            self.change_ghost()
 
 
+# Призраки
 GHOSTS = [
     Spirit, Demon, Phantom,
     Oni, Banshee, Reverent,

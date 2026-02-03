@@ -6,26 +6,35 @@ from .profile_manager import ProfileManager
 
 
 class AccountManager:
-    def __init__(self):
+    """Менеджер работы с аккаунтами"""
+
+    def __init__(self) -> None:
+        # БД
         self.con: sqlite3.Connection | None = None
         self.cur: sqlite3.Cursor | None = None
 
+        # Аккаунт
         self.current_account: int | None = None
 
+        # Профиль
         self.profile_manager = ProfileManager()
         self.profile_manager.file_path = 'database/data.json'
 
+        # Подключение к БД
         self.connect_to_db()
 
-    def connect_to_db(self):
+    def connect_to_db(self) -> None:
+        """Подключение к БД"""
         self.con = sqlite3.connect('database/parafect_db.db')
         self.cur = self.con.cursor()
 
-    def close_db(self):
+    def close_db(self) -> None:
+        """Закрытие БД"""
         if self.con:
             self.con.close()
 
-    def add_account(self, login, password, name):
+    def add_account(self, login: str, password: str, name: str) -> int | None:
+        """Добавляет аккаунт БД"""
         coded_password = self.code_password(password)
         self.cur.execute("""INSERT INTO Users(login, password) VALUES (?, ?)""", (login, coded_password))
         self.con.commit()
@@ -35,7 +44,8 @@ class AccountManager:
 
         return user_id
 
-    def get_account(self, login, password):
+    def get_account(self, login: str, password: str) -> dict | bool:
+        """Получает аккаунт из БД"""
         self.cur.execute("""
             SELECT id, login, password
             FROM Users
@@ -56,7 +66,8 @@ class AccountManager:
         else:
             return False
 
-    def get_data(self):
+    def get_data(self) -> dict | None:
+        """Получает данные аккаунта из БД"""
         if not self.current_account:
             return None
 
@@ -78,33 +89,38 @@ class AccountManager:
             }
         return None
 
-    def update_profile(self, profile_data):
+    def update_profile(self, profile_data: dict) -> bool | None:
+        """Обновляет профиль"""
         if not self.current_account:
             return False
 
         return self.profile_manager.save_profile(self.current_account, profile_data)
 
-    def update_name(self, name):
+    def update_name(self, name: str) -> bool | None:
+        """Обновляет имя профиля"""
         if not self.current_account:
             return False
         return self.profile_manager.update_name(self.current_account, name)
 
     def get_logins(self):
+        """Получает логин"""
         return [a for b in self.cur.execute("""SELECT login FROM Users""") for a in b]
 
     @staticmethod
     def code_password(password: str) -> str:
-        bytes = password.encode('utf-8')
+        """Хэширует пароль с помощью bcrypt"""
+        by = password.encode('utf-8')
         salt = bcrypt.gensalt()
-        coded_password = bcrypt.hashpw(bytes, salt)
+        coded_password = bcrypt.hashpw(by, salt)
         return coded_password.decode()
 
     @staticmethod
     def check_password(password: str, coded_password: str) -> bool:
+        """Проверяет пароль"""
         try:
-            bytes = password.encode('utf-8')
+            by = password.encode('utf-8')
             coded_bytes = coded_password.encode('utf-8')
 
-            return bcrypt.checkpw(bytes, coded_bytes)
-        except:
+            return bcrypt.checkpw(by, coded_bytes)
+        except (TypeError, ValueError):
             return False

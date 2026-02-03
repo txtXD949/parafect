@@ -8,22 +8,28 @@ from . import SettingsManager
 
 
 class SanityScreen(arcade.View):
+    """Экран рассудка"""
+
     def __init__(self, player, map, game):
         super().__init__()
 
+        # Параметры игры
         self.player = player
         self.game = game
         self.map = map
 
+        # UI
         self.camera = None
         self.batch = None
         self.sound_player = None
 
+        # Параметры экрана
         self.bar_width = 0
 
         self.setup()
 
     def setup(self):
+        """НАстройка сцены"""
         # Камеры
         self.camera = arcade.Camera2D(
             projection=arcade.rect.XYWH(0, 0, 800, 600),
@@ -136,6 +142,7 @@ class SanityScreen(arcade.View):
         self.update_texts()
 
     def close(self):
+        """Закрыть экран рассудка"""
         if self.sound_player:
             self.sound_player.pause()
 
@@ -144,6 +151,7 @@ class SanityScreen(arcade.View):
         self.window.show_view(self.map)
 
     def open_settings(self):
+        """Открыть настройки"""
         volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 
@@ -152,6 +160,7 @@ class SanityScreen(arcade.View):
         self.window.show_view(settings_view)
 
     def update_texts(self):
+        """Обновить тексты"""
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
         self.text.text = ('Рассудок:', 'Sanity:')[c_lang]

@@ -5,6 +5,8 @@ from ..sounds import HOVER_SOUND, CLICK_SOUND
 
 
 class InteractiveLabel(arcade.gui.UILabel):
+    """Кнопка"""
+
     def __init__(self,
                  text: str = '',
                  x: float = 0,
@@ -50,6 +52,7 @@ class InteractiveLabel(arcade.gui.UILabel):
             self.click_sound = CLICK_SOUND
 
     def check_mouse_hover(self, x: float, y: float) -> bool:
+        """Проверка на ховер"""
         old_hovered = self._is_hovered
         self._is_hovered = (self.rect.left <= x <= self.rect.right and
                             self.rect.bottom <= y <= self.rect.top)
@@ -73,6 +76,7 @@ class InteractiveLabel(arcade.gui.UILabel):
         return self._is_hovered
 
     def on_click(self):
+        """При клике"""
         # Звук при клике
         if self.click_sound:
             from ..views.settings import SettingsManager
@@ -84,6 +88,7 @@ class InteractiveLabel(arcade.gui.UILabel):
         return True
 
     def reset_state(self):
+        """Сбросить кнопку"""
         self._is_hovered = False
         self._is_active = False
         self.hover_sound_played = False

@@ -3,6 +3,8 @@ from arcade.gui import UIInputText
 
 
 class TextInputField(UIInputText):
+    """Ввод текста"""
+
     def __init__(self, width=300, height=35,
                  font_name='Courier New', font_size=16,
                  text_color=arcade.color.WHITE,
@@ -22,10 +24,12 @@ class TextInputField(UIInputText):
         self._is_active = False
 
     def check_mouse_hover(self, x, y):
+        """проверка на ховер"""
         return (self.left <= x <= self.right and
                 self.bottom <= y <= self.top)
 
     def on_click(self, event=None):
+        """При клике"""
         if self.click_sound:
             from ..sounds import CLICK_SOUND
             from ..views.settings import SettingsManager
@@ -38,6 +42,7 @@ class TextInputField(UIInputText):
         return True
 
     def reset_state(self):
+        """Сбросить кнопку"""
         self.caret.visible = False
         self._is_active = False
 

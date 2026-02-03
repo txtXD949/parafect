@@ -2,6 +2,8 @@ import arcade
 
 
 class ItemsList:
+    """Список предметов (в маркете)"""
+
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
@@ -18,6 +20,7 @@ class ItemsList:
         self.last_mouse_y = 0
 
     def add_item_to_manager(self, manager, item_id, name, price):
+        """Добавить предмет в менеджер"""
         y_pos = self.y - 30 + self.scroll_offset - len(self.items) * 45
 
         total_height = 30 + len(self.items) * 45

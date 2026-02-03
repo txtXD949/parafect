@@ -7,6 +7,8 @@ from . import SettingsManager
 
 
 class MarketView(arcade.View):
+    """Маркет"""
+
     def __init__(self, lobby=None, account_manager=None):
         super().__init__()
 
@@ -412,6 +414,7 @@ class MarketView(arcade.View):
             self.items_list.update_visibility(self.manager)
 
     def buy_selected_item(self):
+        """Купить выбранный предмет"""
         if not self.selected_item_id:
             return
 
@@ -449,6 +452,7 @@ class MarketView(arcade.View):
         self.item_info.update_info(item)
 
     def buy_all_items(self):
+        """Купить все предметы"""
         items_to_buy = []
         total_cost = 0
 
@@ -613,6 +617,7 @@ class MarketView(arcade.View):
         self.window.show_view(self.lobby)
 
     def open_settings(self):
+        """Открыть настройки"""
         volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 
