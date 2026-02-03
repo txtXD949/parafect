@@ -2,19 +2,26 @@ import arcade
 from arcade.gui import UIManager, UIAnchorLayout, UIBoxLayout, UILabel
 
 from scripts.ui import InteractiveLabel, TextInputField
+from ..sounds import HOVER_SOUND, CLICK_SOUND
 
 
 class LoginMenu(arcade.View):
+    """Меню входа"""
+
     def __init__(self, back_callback):
         super().__init__()
+        # Ссылка на предыдущую сцену
         self.back_callback = back_callback
 
+        # Менеджер
         self.manager = UIManager()
         self.manager.enable()
 
-        self.hover_sound = arcade.load_sound('././assets/sounds/effects/hover.wav')
-        self.click_sound = arcade.load_sound('././assets/sounds/effects/click.wav')
+        # Звуки
+        self.hover_sound = HOVER_SOUND
+        self.click_sound = CLICK_SOUND
 
+        # Статусная строка
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
         self.status_text = ('> ОЖИДАНИЕ ВВОДА...', '> WAITING FOR INPUT...')[c_lang]
@@ -23,6 +30,7 @@ class LoginMenu(arcade.View):
         self.setup_widgets()
 
     def setup_widgets(self):
+        """Настройка виджетов"""
         main_box = UIBoxLayout(vertical=True, space_between=20)
 
         # Заголовок
@@ -141,6 +149,7 @@ class LoginMenu(arcade.View):
         self.manager.add(anchor)
 
     def update_texts(self):
+        """Обновление текстов"""
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
 

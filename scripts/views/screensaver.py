@@ -9,17 +9,24 @@ from . import SettingsManager
 
 
 class Screensaver(arcade.View):
+    """Заставка: Parafect"""
+
     def __init__(self):
         super().__init__()
+        # Фон
         self.background_color = arcade.color.WHITE
+
+        # Свойство надписи
         self.fade_alpha = 0
         self.fade_speed = 40
 
+        # Текст
         self.batch = None
         self.font = None
         self.title = None
         self.title_ = None
 
+        # Стук сердца
         self.heartbeat_sound = HEARTBEAT
 
         # Анимация буквы f
@@ -113,7 +120,6 @@ class Screensaver(arcade.View):
                 self.window.show_view(login_menu)
 
     def on_draw(self):
-        """Отрисовка кадра"""
         self.clear(arcade.color.WHITE)
 
         # Черный прямоугольник с анимацией прозрачности

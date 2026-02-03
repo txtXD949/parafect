@@ -3,6 +3,8 @@ from pyglet.graphics import Batch
 
 
 class GameLoading(arcade.View):
+    """Загрузка игры"""
+
     def __init__(self, game):
         super().__init__()
         self.background_color = arcade.color.BLACK
@@ -22,6 +24,7 @@ class GameLoading(arcade.View):
         self.setup()
 
     def setup(self):
+        """Настройка сцены"""
         self.batch = Batch()
         self.text = arcade.Text(
             text='',

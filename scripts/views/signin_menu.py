@@ -6,16 +6,22 @@ from ..sounds import HOVER_SOUND, CLICK_SOUND
 
 
 class SigninMenu(arcade.View):
+    """Меню регистрации"""
+
     def __init__(self, back_callback):
         super().__init__()
+        # Ссылка на прошлую сцену
         self.back_callback = back_callback
 
+        # UI
         self.manager = UIManager()
         self.manager.enable()
 
+        # Звуки
         self.hover_sound = HOVER_SOUND
         self.click_sound = CLICK_SOUND
 
+        # Статусная строка
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
         self.status_text = ('> ДАННЫЕ НЕ ПРОАНАЛИЗИРОВАНЫ', '> DATA NOT ANALYZED')[c_lang]
@@ -24,6 +30,7 @@ class SigninMenu(arcade.View):
         self.setup_widgets()
 
     def setup_widgets(self):
+        """Настройка виджетов"""
         main_box = UIBoxLayout(vertical=True, space_between=15)
 
         # Заголовок
@@ -189,6 +196,7 @@ class SigninMenu(arcade.View):
         self.manager.add(anchor)
 
     def update_texts(self):
+        """Обновление текстов"""
         from . import SettingsManager
 
         c_lang = SettingsManager.iget_current_language()

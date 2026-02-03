@@ -6,6 +6,7 @@ from arcade.gui.widgets.buttons import UIFlatButton, UITextureButton
 from ..sounds import CLICK_GHOST_BUTTON, CLICK_DIS_GHOST_BUTTON
 from . import SettingsManager
 
+# Тексты улик (для перевода)
 EVIDENCE_TEXTS = {
     'ru': [
         'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
@@ -19,6 +20,7 @@ EVIDENCE_TEXTS = {
     ]
 }
 
+# Тексты призраков (для перевода)
 GHOST_TEXTS = {
     'ru': [
         'Дух', 'Демон', 'Фантом', 'Они',
@@ -36,20 +38,26 @@ GHOST_TEXTS = {
 
 
 class PaperButton(UITextureButton):
+    """Кнопка в блокноте"""
     SOUNDS = [
         CLICK_GHOST_BUTTON,
         CLICK_DIS_GHOST_BUTTON
     ]
 
     def __init__(self, text, width, height, journal_widget, type, *, ghost=None, evidence=None):
+        # Ссылка на блокнот
         self.journal_widget = journal_widget
+
+        # Текстуры кнопки
         self.circle_tex = arcade.load_texture('././assets/images/ui/circle_button.png')
         self.cross_tex = arcade.load_texture('././assets/images/ui/cross_button.png')
         self.drow_tex = arcade.load_texture('././assets/images/ui/drow_button.png')
 
+        # Состояние
         self.state = 0
         self.is_active = True
 
+        # Информация внутри кнопки
         self.type = type
         self.ghost = ghost
         self.evidence = evidence
@@ -80,6 +88,7 @@ class PaperButton(UITextureButton):
         )
 
     def on_click(self, event):
+        """При нажатии"""
         if not self.journal_widget.visible:
             return
 
@@ -104,6 +113,7 @@ class PaperButton(UITextureButton):
                 self._update_ghost_states()
 
     def _update_ghost_states(self):
+        """Обновить состояние"""
         circled_evidences = []
         crossed_evidences = []
 
@@ -134,6 +144,7 @@ class PaperButton(UITextureButton):
             ghost_btn._update_visual()
 
     def _update_visual(self):
+        """Обновить вид"""
         if self.type == 'ghost':
             if not self.is_active:
                 self.texture = self.drow_tex
@@ -170,13 +181,18 @@ class PaperButton(UITextureButton):
 
 
 class Paper(UIWidget):
+    """Класс блокнота"""
+
     def __init__(self, width: float, height: float, stretch_x, stretch_y, **kwargs):
         super().__init__(**kwargs)
+        # Фон
         self.bg_texture = arcade.load_texture('././assets/images/bg/paper.png').transpose()
 
+        # Размеры
         self.width = width
         self.height = height
 
+        # Тесты
         self.evidence_button_texts = [
             'ЭМП5', 'Радиоприемник', 'Голос в микрофоне',
             'Отпечатки', 'Высокая температура',
@@ -194,6 +210,7 @@ class Paper(UIWidget):
 
         self.visible = False
 
+        # Контейнеры
         main_container = UIAnchorLayout(
             anchor_x="center",
             anchor_y="center",
@@ -210,6 +227,7 @@ class Paper(UIWidget):
         )
         main_container.add(content_layout)
 
+        # Кнопки улик
         self.evidence_buttons = []
         self.create_section(
             content_layout,
@@ -225,6 +243,7 @@ class Paper(UIWidget):
             ]
         )
 
+        # Кнопки призраков
         from ..ghosts import GHOSTS
         self.ghost_buttons = []
         self.create_section(
@@ -238,6 +257,7 @@ class Paper(UIWidget):
         )
 
     def create_section(self, parent, button_texts, rows, section_height, lst, type, ghosts_evidences):
+        """Создает секции кнопок призраков/улик"""
         for row in range(rows):
             row_height = section_height / rows
             row_layout = UIBoxLayout(
@@ -251,21 +271,23 @@ class Paper(UIWidget):
                 index = row * 3 + col
                 if index < len(button_texts):
                     button_width = parent.width / 3 - 10
-                    button = self.create_blue_button(button_texts[index], button_width, row_height - 10, type,
-                                                     ghosts_evidences[index])
+                    button = self.create_button(button_texts[index], button_width, row_height - 10, type,
+                                                ghosts_evidences[index])
                     row_layout.add(button)
                     lst.append(button)
 
             parent.add(row_layout)
 
     def get_circled_ghosts(self):
+        """Получить выбранных призраков"""
         circled_ghosts = []
         for btn in self.ghost_buttons:
             if btn.state == 1 and btn.ghost:
                 circled_ghosts.append(btn.ghost)
         return circled_ghosts
 
-    def create_blue_button(self, text, width, height, type, ghost_evidence):
+    def create_button(self, text, width, height, type, ghost_evidence):
+        """Создает кнопки"""
         arcade.load_font('././assets/fonts/CorrectionTape.otf')
 
         if type == 'ghost':
@@ -290,6 +312,7 @@ class Paper(UIWidget):
         return button
 
     def update_all_buttons_text(self):
+        """Обновляет тексты кнопок"""
         current_lang = SettingsManager.get_current_language()
 
         for i, button in enumerate(self.evidence_buttons):
