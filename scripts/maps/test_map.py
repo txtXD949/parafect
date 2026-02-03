@@ -10,6 +10,7 @@ SPEED = 1
 
 class TestMap(arcade.View):
     """Тестовая карта: не участвует в игре, создана для тестов предметов, призрака и и тд."""
+
     def __init__(self, game):
         super().__init__()
 

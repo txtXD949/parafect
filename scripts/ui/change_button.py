@@ -6,6 +6,8 @@ Number = Union[int, float]
 
 
 class ChangeButton:
+    """Кнопка крутилка"""
+
     def __init__(
             self,
             values: Sequence[str],
@@ -51,6 +53,7 @@ class ChangeButton:
         self._create_elements()
 
     def _create_elements(self) -> None:
+        """Создание элементов"""
         approx_w_left = self.font_size * 0.8
         approx_w_value = self.font_size * 4
         approx_w_right = self.font_size * 0.8
@@ -86,10 +89,12 @@ class ChangeButton:
         self.arrow_right.draw()
 
     def next(self) -> None:
+        """Следующий элемент"""
         self._index = (self._index + 1) % len(self.values)
         self._create_elements()
 
     def prev(self) -> None:
+        """Предыдущий элемент"""
         self._index = (self._index - 1) % len(self.values)
         self._create_elements()
 
