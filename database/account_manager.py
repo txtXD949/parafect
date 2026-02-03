@@ -109,18 +109,18 @@ class AccountManager:
     @staticmethod
     def code_password(password: str) -> str:
         """Хэширует пароль с помощью bcrypt"""
-        bytes = password.encode('utf-8')
+        by = password.encode('utf-8')
         salt = bcrypt.gensalt()
-        coded_password = bcrypt.hashpw(bytes, salt)
+        coded_password = bcrypt.hashpw(by, salt)
         return coded_password.decode()
 
     @staticmethod
     def check_password(password: str, coded_password: str) -> bool:
         """Проверяет пароль"""
         try:
-            bytes = password.encode('utf-8')
+            by = password.encode('utf-8')
             coded_bytes = coded_password.encode('utf-8')
 
-            return bcrypt.checkpw(bytes, coded_bytes)
-        except:
+            return bcrypt.checkpw(by, coded_bytes)
+        except (TypeError, ValueError):
             return False

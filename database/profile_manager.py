@@ -4,7 +4,7 @@ import json
 class ProfileManager:
     """Менеджер для работы с профилями"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.file_path: str = 'database/data.json'
         self.profiles: dict | None = self.load_profiles()
 
