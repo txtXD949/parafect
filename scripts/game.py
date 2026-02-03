@@ -5,21 +5,27 @@ from .ghosts import GHOSTS
 
 
 class Game:
+    """Класс логики игры"""
+
     def __init__(self, player, map_id='test', difficulty_id='test', inventory=None, profile=None, account=None,
                  window=None):
+        # Игрок
         self.player = player
         self.profile = profile
         self.account = account
+
+        # игровая информация
         self.player_name = player.name
         self.map_id = map_id
         self.dif_id = difficulty_id
         self.inv = inventory
-        self.ghost = random.choice(GHOSTS)()
 
+        # Призрак
+        self.ghost = random.choice(GHOSTS)()
         self.evidences = self.ghost.evidences[:]
 
+        # Сессионная информация
         self.map = None
-
         self.dif = None
         self.sanity = None
         self.broke_chance = None
@@ -27,8 +33,10 @@ class Game:
         self.roomchange_chance = None
         self.evidence_count = None
 
+        # главное окно игры
         self.window = window
 
+        # Определение сложности и карты
         self.choose_difficult(difficulty_id)
         self.choose_map(map_id)
 
@@ -40,6 +48,7 @@ class Game:
         self.was_first_death = False
 
     def choose_difficult(self, dif_id):
+        """Определение сложности"""
         from .views import DIFFICULTY_DATABASE
 
         self.dif = DIFFICULTY_DATABASE[dif_id]
@@ -54,6 +63,7 @@ class Game:
             self.remove_evidences()
 
     def remove_evidences(self):
+        """Отбрасывание улик на высоких уровнях сложности"""
         new_evidences = []
         if self.evidence_count in (1, 2):
             c = self.evidence_count
@@ -67,6 +77,7 @@ class Game:
         self.evidences = new_evidences
 
     def choose_map(self, map_id):
+        """Определение карты"""
         from .maps.test_map import TestMap
         from .maps import Dom1
         from .maps import Dom3
@@ -85,4 +96,5 @@ class Game:
         self.map = maps[map_id](self)
 
     def open_map(self):
+        """Открытие карты"""
         self.window.show_view(self.map)
