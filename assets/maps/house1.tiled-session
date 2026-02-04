@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "house1.tmx",
+    "activeFile": "school.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -30,12 +30,20 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "bunker.tmx": {
+            "scale": 4,
+            "selectedLayer": 63,
+            "viewCenter": {
+                "x": 738.875,
+                "y": 1672.5
+            }
+        },
         "cafe.tmx": {
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 248,
-                "y": 460.66666666666663
+                "x": 321,
+                "y": 518
             }
         },
         "caffe.tmx": {
@@ -50,8 +58,8 @@
             "scale": 4,
             "selectedLayer": 19,
             "viewCenter": {
-                "x": 249.25,
-                "y": 196.5
+                "x": 299.25,
+                "y": 311.875
             }
         },
         "house2.tmx": {
@@ -66,8 +74,8 @@
             "scale": 1.5,
             "selectedLayer": 19,
             "viewCenter": {
-                "x": 507.3333333333333,
-                "y": 643.3333333333333
+                "x": 352,
+                "y": 344.33333333333326
             }
         },
         "hrush.tmx": {
@@ -75,7 +83,7 @@
             "selectedLayer": 11,
             "viewCenter": {
                 "x": 296,
-                "y": 232
+                "y": 232.0909090909091
             }
         },
         "lobby.tmx": {
@@ -84,6 +92,14 @@
             "viewCenter": {
                 "x": 115.33333333333333,
                 "y": 87.83333333333331
+            }
+        },
+        "school.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 36,
+            "viewCenter": {
+                "x": 1479.3333333333335,
+                "y": 1325.3333333333333
             }
         },
         "test_map.tmx": {
@@ -97,25 +113,30 @@
     },
     "last.externalTilesetPath": "C:/python_projects/parafect/assets/sprites_2/tsxs",
     "last.imagePath": "C:/python_projects/parafect/assets/sprites_2/pngs",
-    "map.height": 30,
+    "map.height": 100,
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.renderOrder": "2",
-    "map.width": 40,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 100,
     "openFiles": [
         "house1.tmx",
         "lobby.tmx",
         "house3.tmx",
-        "house2.tmx",
-        "hrush.tmx"
+        "hrush.tmx",
+        "cafe.tmx",
+        "school.tmx"
     ],
     "project": "house1.tiled-project",
     "recentFiles": [
-        "hrush.tmx",
-        "house2.tmx",
-        "house3.tmx",
-        "lobby.tmx",
         "house1.tmx",
+        "lobby.tmx",
+        "house3.tmx",
+        "hrush.tmx",
+        "cafe.tmx",
+        "school.tmx",
+        "house2.tmx",
         "C:/python_projects/parafect/assets/sprites_2/tsxs/vignette.tsx",
         "C:/python_projects/parafect/assets/sprites_2/tsxs/vingette.tsx",
         "C:/python_projects/parafect/assets/sprites/tsxs/tileset_2.tsx",

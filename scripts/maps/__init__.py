@@ -4,6 +4,7 @@ from .dom_3 import Dom3
 from .kv96 import Kv96
 from .school import School
 from .caffe import Cafe
+from .bunker import Bunker
 
 __all__ = [
     'LobbyView',
@@ -11,5 +12,6 @@ __all__ = [
     'Dom3',
     'Kv96',
     'School',
-    'Cafe'
+    'Cafe',
+    'Bunker'
 ]

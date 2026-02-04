@@ -84,13 +84,14 @@ class Game:
         from .maps import Kv96
         from .maps import School
         from .maps import Cafe
+        from .maps import Bunker
         maps = {
             'dom_1': Dom1,
             'dom_3': Dom3,
             'kv_no96': Kv96,
             'caffe': Cafe,
             'school': School,
-            'bunker': ...,
+            'bunker': Bunker,
             'test': TestMap
         }
         self.map = maps[map_id](self)

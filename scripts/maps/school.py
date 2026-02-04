@@ -15,6 +15,8 @@ SPEED = 1
 
 
 class School(arcade.View):
+    """Класс карты Школа"""
+
     def __init__(self, game):
         super().__init__()
 
@@ -212,6 +214,8 @@ class School(arcade.View):
         self.gui_camera = arcade.Camera2D()
 
     def spawn_ghost_in_room(self):
+        """Появление призрака в комнате"""
+
         ghost_room = self.ghost.room[0]
 
         if ghost_room:
@@ -228,9 +232,13 @@ class School(arcade.View):
         self.ghost.sprite.center_y = y
 
     def get_voice_level(self):
+        """Возвращает уровень громкости микрофона"""
+
         return min(5, max(1, int(self.mic_manager.voice_volume * 5)))
 
     def draw_voice_level(self):
+        """Отвечает за прорисовку индикатора микрофона"""
+
         colors = [
             arcade.color.YELLOW,
             arcade.color.DARK_YELLOW
@@ -588,14 +596,20 @@ class School(arcade.View):
         self.player.change_gripped_item()
 
     def open_tool_board(self):
+        """Открытие стола с инструментами"""
+
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.tool_board)
 
     def open_sanity_screen(self):
+        """Открытие панели с уровнем рассудка"""
+
         self.player_sprite.change_x = self.player_sprite.change_y = 0
         self.window.show_view(self.sanity_screen)
 
     def open_paper(self, end=False):
+        """Открытие бумажки с уликами/призраками"""
+
         if end:
             self.manager.remove(self.paper)
             self.paper.visible = False
@@ -615,6 +629,8 @@ class School(arcade.View):
         arcade.play_sound(OPEN_PAPER, volume=volume)
 
     def set_end_flags(self):
+        """Установка 'флагов' для завершения игры"""
+
         selected_ghosts = self.paper.get_circled_ghosts()
         print(*map(lambda x: x.id, selected_ghosts), ' - ', self.game.ghost.id)
         if self.game.was_death:
@@ -631,6 +647,8 @@ class School(arcade.View):
         self.game.is_win = True
 
     def end_game(self):
+        """Завершение игры"""
+
         self.set_end_flags()
 
         self.open_paper(end=True)
@@ -640,10 +658,14 @@ class School(arcade.View):
         self.window.show_view(res)
 
     def player_die(self):
+        """Обработка смерти игрока"""
+
         self.game.was_death = True
         self.end_game()
 
     def smooth_roof(self):
+        """Плавное скрытие текстуры крыши при заходе игрока под неё"""
+
         if self.is_under_roof:
             if self.scene["roof"].alpha_normalized >= 0:
                 self.scene["roof"].alpha_normalized -= 0.05
@@ -652,6 +674,8 @@ class School(arcade.View):
                 self.scene["roof"].alpha_normalized += 0.05
 
     def smooth_roof_tent(self):
+        """Плавное скрытие текстуры крыши палатки при заходе игрока под неё"""
+
         if self.is_under_roof_tent:
             if self.scene["roof_tent"].alpha_normalized >= 0:
                 self.scene["roof_tent"].alpha_normalized -= 0.05
@@ -660,6 +684,8 @@ class School(arcade.View):
                 self.scene["roof_tent"].alpha_normalized += 0.05
 
     def smooth_house_dark(self):
+        """Плавное изменение уровня темноты. Может меняться при заходе в дом или включении генератора"""
+
         if self.is_under_roof:
             if self.scene["dark"].alpha == self.threshold:
                 pass
@@ -672,6 +698,8 @@ class School(arcade.View):
                 self.scene["dark"].alpha -= 5
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int) -> bool | None:
+        """Весь метод заточен на поворот виньетки фонарика за мышкой. Симуляция световых лучей"""
+
         width, height = arcade.get_display_size()
         x0 = x - width // 2 + 0.001
         y0 = y - height // 2 + 0.001
@@ -684,18 +712,14 @@ class School(arcade.View):
         deg = (-deg + 90) % 360
         self.vignette.angle = deg
 
-    def block_door(self):
-        door = arcade.get_sprites_at_point(self.scene["main_door"][0].position, self.doors_list)[0]
-        door.block()
-
-    def unblock_door(self):
-        door = arcade.get_sprites_at_point(self.scene["main_door"][0].position, self.doors_list)[0]
-        door.unblock()
-
     def do_light_blinking(self, time_blinking):
+        """Заставить освещение моргать time_blinking секунд"""
+
         self.time_blinking = time_blinking * 60
 
     def close_main_door(self):
+        """Заблокировать и закрыть входную дверь"""
+
         door = arcade.get_sprites_at_point(
             self.scene["main_door"][0].position,
             self.doors_list
@@ -709,6 +733,8 @@ class School(arcade.View):
         door.block()
 
     def open_main_door(self):
+        """Разблокировать входную дверь"""
+
         door = arcade.get_sprites_at_point(
             self.scene["main_door"][0].position,
             self.doors_list
@@ -717,6 +743,8 @@ class School(arcade.View):
         door.unblock()
 
     def check_closet_breaking(self, delta_time):
+        """Выбор шкафа, который может быть сломан призраком"""
+
         BASE_BREAK_CHANCE_PER_SECOND = 0.15
 
         for closet in self.closets_list:
@@ -731,6 +759,8 @@ class School(arcade.View):
                     return
 
     def break_closet(self, closet):
+        """Ломание шкафа closet"""
+
         closet.broke()
 
         if closet.player_sprite:
@@ -742,6 +772,8 @@ class School(arcade.View):
         arcade.play_sound(CLOSET, volume=volume)
 
     def check_footprint_spawning(self, delta_time):
+        """Проверяет спавн следов призрака"""
+
         if 'uf' not in self.evidences:
             return
         self.footprint_timer += delta_time
@@ -756,6 +788,8 @@ class School(arcade.View):
                 self.spawn_footprint_near_broken_closets()
 
     def spawn_footprint_in_ghost_room(self):
+        """Спавнит следы призрака"""
+
         if not self.ghost.room or len(self.ghost.room) == 0:
             return
 
@@ -770,6 +804,8 @@ class School(arcade.View):
         self.footprints_list.append(footprint)
 
     def spawn_footprint_near_broken_closets(self):
+        """Спавнит следы возле сломанных шкафом"""
+
         broken_closets = [c for c in self.closets_list if c.is_broken]
 
         if not broken_closets:
@@ -784,10 +820,13 @@ class School(arcade.View):
             x = closet.center_x + offset_x
             y = closet.center_y + offset_y
 
+            from .. import Footprint
             footprint = Footprint(x, y, lifetime=random.uniform(25, 30))
             self.footprints_list.append(footprint)
 
     def open_settings(self):
+        """Открытие настрое"""
+
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(SETTINGS, volume=volume)
 

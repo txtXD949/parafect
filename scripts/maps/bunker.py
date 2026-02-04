@@ -14,8 +14,8 @@ import math
 SPEED = 1
 
 
-class Dom1(arcade.View):
-    """Класс карты Дом 1"""
+class Bunker(arcade.View):
+    """Класс карты Бункер"""
 
     def __init__(self, game):
         super().__init__()
@@ -42,7 +42,7 @@ class Dom1(arcade.View):
         self.mic_manager.start()
 
         # Карта
-        self.tile_map = arcade.load_tilemap('././assets/maps/house1.tmx', scaling=1.0)
+        self.tile_map = arcade.load_tilemap('././assets/maps/bunker.tmx', scaling=1.0)
 
         # Расчет размеров карты с учетом масштаба
         self.map_width = self.tile_map.width * self.tile_map.tile_width
@@ -81,14 +81,10 @@ class Dom1(arcade.View):
 
         # Комнаты
         self.rooms = [
-            "corridor",
-            "wardrobe",
-            "hall",
-            "kitchen",
-            "toilet",
-            "room1",
             "garage"
         ]
+        for i in range(1, 51):
+            self.rooms.append(f"room{i}")
 
         # Призрак
         self.ghost = self.game.ghost
