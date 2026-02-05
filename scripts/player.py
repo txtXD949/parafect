@@ -64,6 +64,7 @@ class FootstepParticle(arcade.SpriteSolidColor):
 
 
 class Direction(enum.Enum):
+    """Направление взгляда спрайта игрока"""
     DOWN = 0
     UP = 1
     LEFT = 2
@@ -71,6 +72,8 @@ class Direction(enum.Enum):
 
 
 class PlayerSprite(arcade.Sprite):
+    """Спрайт игрока"""
+
     def __init__(self, player_class=None, scale=1.0):
         super().__init__(scale=scale)
         self.player_class = player_class
@@ -81,6 +84,7 @@ class PlayerSprite(arcade.Sprite):
                         [arcade.load_texture(f'./assets/images/hum/hum_lt{i}.png').flip_horizontally() for i in
                          range(1, 4)]
 
+        # Параметры спрайта
         self.texture = self.textures[0]
         self.animation_timer = 0
         self.current_frame = 0
@@ -154,6 +158,7 @@ class PlayerSprite(arcade.Sprite):
             self.create_footstep_particle()
 
     def create_footstep_particle(self):
+        """Создает частицы следов"""
         if not self.is_going:
             return
 
@@ -167,25 +172,33 @@ class PlayerSprite(arcade.Sprite):
 
 
 class Player:
+    """Класс игрока"""
+
     def __init__(self, name, lvl, cash, exp):
         from itertools import cycle
 
+        # Параметры игрока
         self.name = name
         self.lvl = lvl
         self.cash = cash
         self.exp = exp
 
+        # Предметы у игрока
         self._inventory = []
         self._gripped_item = None
         self.inds = cycle((1, 0))
 
+        # Зажигалка
         self.has_lighter = False
 
+        # Рассудок и защита
         self.sanity = None
         self.is_unhittable = False
 
+        # Спарйт
         self.sprite = None
 
+        # Голос
         self.voice_vol = 0.0
         self.is_voice = True
         self.threshold = 0.2
@@ -203,18 +216,19 @@ class Player:
         self._gripped_item = new_val
 
     def take_item(self, item):
-        if item.id in ('pills',):
+        """Взять предмет"""
+        if item.id in ('pills',):  # Проверка на таблетки
             if item.used:
                 return
 
-        if item.id == 'incense' and not item.take_item(self):
+        if item.id == 'incense' and not item.take_item(self):  # Проверка на благовония
             return
 
-        if item.id in ('lighter',):
+        if item.id in ('lighter',):  # Проверка на зажигалку
             item.use_item(self)
             return
 
-        if len(self.inventory) == 2:
+        if len(self.inventory) == 2:  # Проверка на ограничение инвентаря
             return
         if len(self.inventory) == 1:
             vol = SettingsManager.get_sound_volume()
@@ -231,6 +245,7 @@ class Player:
         item.is_grabbed = True
 
     def change_gripped_item(self):
+        """Смена предмета"""
         if len(self.inventory) in (0, 1):
             return
 
@@ -244,6 +259,7 @@ class Player:
         arcade.play_sound(TAKE_ITEM, volume=vol)
 
     def drop_item(self):
+        """Сбросить предмет"""
         if self.gripped_item is None:
             return
 
@@ -263,6 +279,7 @@ class Player:
             self.gripped_item = None
 
     def put_item(self, item):
+        """Вернуть предмет в тулборд"""
         if not self.inventory or item not in self.inventory:
             return False
 
@@ -282,6 +299,7 @@ class Player:
         return True
 
     def turn_on_item(self):
+        """Включить предмет"""
         if not self.gripped_item:
             return
 
@@ -299,4 +317,5 @@ class Player:
         self.gripped_item.turn_on()
 
     def turn_off_item(self):
+        """Выключить предмет"""
         self.gripped_item.turn_off()

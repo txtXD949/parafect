@@ -9,6 +9,8 @@ from . import SettingsManager
 
 
 class MapInfo:
+    """Информация о карте"""
+
     def __init__(self, id, name, size, disp_size, desc, cords, on_level=1):
         self.id: int = id
         self.name: tuple = name
@@ -19,6 +21,7 @@ class MapInfo:
         self.on_level: int = on_level
 
 
+# БД карт
 MAP_DATABASE = {
     'dom_1': MapInfo(
         id='0',
@@ -104,6 +107,8 @@ MAP_DATABASE = {
 
 
 class MapBoard(arcade.View):
+    """Доска выбора карты (мапборд)"""
+
     def __init__(self, lobby=None, account_manager=None):
         super().__init__()
         self.background_color = arcade.color.BLACK
@@ -141,6 +146,7 @@ class MapBoard(arcade.View):
         self.setup()
 
     def setup(self):
+        """Настройка сцены"""
         # Камера
         self.camera = arcade.Camera2D(
             projection=arcade.rect.XYWH(0, 0, 800, 600),
@@ -208,6 +214,7 @@ class MapBoard(arcade.View):
         self.update_texts()
 
     def get_map_texts_dom_1(self):
+        """Получить тексты Дом 1"""
         c_lang = SettingsManager.iget_current_language()
 
         # Дом 1
@@ -282,6 +289,7 @@ class MapBoard(arcade.View):
         return self.dom1_title, self.dom1_cords, self.dom1_size, self.dom1_on_level, self.dom1_desc
 
     def get_map_texts_dom_3(self):
+        """Получить тексты Дом 3"""
         c_lang = SettingsManager.iget_current_language()
 
         # Дом 3
@@ -357,6 +365,7 @@ class MapBoard(arcade.View):
         return self.dom3_title, self.dom3_cords, self.dom3_size, self.dom3_on_level, self.dom3_desc
 
     def get_map_texts_caffe(self):
+        """Получить тексты Кафе"""
         c_lang = SettingsManager.iget_current_language()
 
         # Кафе
@@ -431,6 +440,7 @@ class MapBoard(arcade.View):
         return self.caffe_title, self.caffe_cords, self.caffe_size, self.caffe_on_level, self.caffe_desc
 
     def get_map_texts_kv_no96(self):
+        """Получить тексты Квартиры 96"""
         c_lang = SettingsManager.iget_current_language()
 
         # Кв.96
@@ -505,6 +515,7 @@ class MapBoard(arcade.View):
         return self.kv_no96_title, self.kv_no96_cords, self.kv_no96_size, self.kv_no96_on_level, self.kv_no96_desc
 
     def get_map_texts_school(self):
+        """Получить тексты Школы"""
         c_lang = SettingsManager.iget_current_language()
 
         # Школа
@@ -579,6 +590,7 @@ class MapBoard(arcade.View):
         return self.school_title, self.school_cords, self.school_size, self.school_on_level, self.school_desc
 
     def get_map_texts_bunker(self):
+        """Получить тексты Бункера"""
         c_lang = SettingsManager.iget_current_language()
 
         # Бункер
@@ -697,6 +709,7 @@ class MapBoard(arcade.View):
         self.text_lvl.text = f'Lvl: {self.player_level}'
 
     def update_texts(self):
+        """Обновление текстов"""
         c_lang = SettingsManager.iget_current_language()
         self.text_map.text = ('КАРТА', 'MAP')[c_lang]
         self.text_info.text = ('ИНФОРМАЦИЯ', 'INFO')[c_lang]
@@ -822,6 +835,7 @@ class MapBoard(arcade.View):
         return texture
 
     def create_char_texture(self, char, color):
+        """Создает текстуру символа"""
         r, g, b = color[:3]
         return self.create_char_texture_cached(r, g, b)
 
@@ -847,6 +861,7 @@ class MapBoard(arcade.View):
         return maps.get((grid_y, grid_x))
 
     def show_info_info(self, map_id):
+        """Показывает информацию в поле ИНФОРМАЦИЯ"""
         data = {
             MAP_DATABASE['dom_1'].id: self.get_map_texts_dom_1(),
             MAP_DATABASE['dom_3'].id: self.get_map_texts_dom_3(),
@@ -897,6 +912,7 @@ class MapBoard(arcade.View):
                 self.last_accessible_point.color = arcade.color.DARK_YELLOW
 
     def load_game_state(self):
+        """Загружает состояние игры"""
         try:
             with open(self.game_state_path, 'r', encoding='utf-8') as f:
                 self.game_state = json.load(f)
@@ -918,10 +934,11 @@ class MapBoard(arcade.View):
             self.game_state = {'inventory': {}, 'map': None, 'difficulty': None}
             self.save_game_state()
 
-    def get_map_key_by_id(self, map_id):
+    @staticmethod
+    def get_map_key_by_id(map_id):
         """Возвращает ключ карты по её ID"""
         for key, map_info in MAP_DATABASE.items():
-            if map_info.id == map_id:  # Сравниваем строки '0' == '0'
+            if map_info.id == map_id:
                 return key
         return
 
@@ -938,8 +955,6 @@ class MapBoard(arcade.View):
     @staticmethod
     def get_map(arg: 'map' or 'points' = 'map') -> list:
         """Возвращает текстовую карту или точки на ней"""
-        lines = []
-
         with open(f'././assets/txts/{arg}(map_board).txt') as f:
             lines = f.readlines()
 

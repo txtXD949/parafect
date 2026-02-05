@@ -10,6 +10,8 @@ import json
 
 
 class DifficultyInfo:
+    """Информация о сложности"""
+
     def __init__(self, id, name, desc, sanity, add_sanity, broke_chance, roomchange_chance, evidence_count,
                  sanity_screen=True, on_level=1):
         self.id = id
@@ -24,6 +26,7 @@ class DifficultyInfo:
         self.on_level: int = on_level
 
 
+# БД сложностей
 DIFFICULTY_DATABASE = {
     'peaceful': DifficultyInfo(
         id='peaceful',
@@ -134,10 +137,13 @@ DIFFICULTY_DATABASE = {
 
 
 class MainBoard(arcade.View):
+    """Главная доска (мейнборд)"""
+
     def __init__(self, lobby=None, account_manager=None):
         super().__init__()
         self.background_color = arcade.color.BLACK
 
+        # Ссылка на лобби
         self.lobby = lobby
 
         # Профиль
@@ -162,6 +168,7 @@ class MainBoard(arcade.View):
         self.setup()
 
     def setup(self):
+        """Настройка сцены"""
         # Уровень
         profile = self.profile.load_profile(self.account.current_account)
         self.player_level = profile['level']
@@ -373,7 +380,6 @@ class MainBoard(arcade.View):
         difficulty_key = None
 
         for key, info in DIFFICULTY_DATABASE.items():
-            print(info.id, difficulty_id)
             if info.id == difficulty_id:
                 difficulty_key = key
                 break
@@ -487,6 +493,7 @@ class MainBoard(arcade.View):
                 self.on_level_text = ''
 
     def update_texts(self):
+        """Обновдение текстов"""
         from . import SettingsManager
         c_lang = SettingsManager.iget_current_language()
 
@@ -567,6 +574,7 @@ class MainBoard(arcade.View):
             self.open_settings()
 
     def load_game_state(self):
+        """загружает состояние игры"""
         try:
             with open(self.game_state_path, 'r', encoding='utf-8') as f:
                 self.game_state = json.load(f)
@@ -575,15 +583,23 @@ class MainBoard(arcade.View):
             self.save_game_state()
 
     def save_game_state(self):
+        """Сохраняет состояние игры"""
         with open(self.game_state_path, 'w', encoding='utf-8') as f:
             json.dump(self.game_state, f, ensure_ascii=False, indent=2)
 
     def close_mainboard(self):
+        """Закрывает мейнборд"""
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(BOARD_1, volume=volume)
         self.window.show_view(self.lobby)
 
     def start_game(self):
+        """
+        Начинает игру
+
+        Все собирается в экземпляр класса Game и оттуда начинается сессия
+        """
+
         dif_id = self.game_state.get('difficulty')
         map_id = self.game_state.get('map')
         inventory = self.game_state.get('inventory')
@@ -605,6 +621,7 @@ class MainBoard(arcade.View):
         self.window.show_view(loading)
 
     def open_settings(self):
+        """Открывает настройки"""
         volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 

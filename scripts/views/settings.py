@@ -9,6 +9,7 @@ from ..sounds import CLICK_SOUND, HOVER_SOUND
 
 
 class SettingsManager:
+    """Настройки"""
     SETTINGS_FILE = '././settings.json'
 
     @staticmethod
@@ -107,13 +108,20 @@ class SettingsManager:
 
 
 class SettingsView(arcade.View):
+    """Сцена настроек"""
+
     def __init__(self, back_callback):
         super().__init__()
+        # Ссылка на предыдущую сцену
         self.back_callback = back_callback
+
+        # Фон
         self.background_color = arcade.color.BLACK
 
+        # Настройки
         SettingsManager.load()
 
+        # UI
         self.manager = UIManager()
         self.manager.enable()
 
@@ -149,9 +157,10 @@ class SettingsView(arcade.View):
         self.ghost_volume = 1.0
 
         self.setup_widgets()
-        self.update_ui_texts()
+        self.update_texts()
 
     def setup_widgets(self):
+        """Настройка виджетов"""
         # Заголовок
         self.title_label = UILabel(
             text='НАСТРОЙКИ',
@@ -344,6 +353,7 @@ class SettingsView(arcade.View):
                     self.go_back()
 
     def go_back(self):
+        """Закрыть настройки"""
         self.manager.disable()
         if self.back_callback:
             self.back_callback()
@@ -356,6 +366,7 @@ class SettingsView(arcade.View):
         self.manager.disable()
 
     def on_master_volume_change(self, value):
+        """Изменить громкость"""
         self.master_volume = value
         self.master_value_label.text = f'{int(value * 100)}%'
 
@@ -364,6 +375,7 @@ class SettingsView(arcade.View):
         SettingsManager.save()
 
     def on_ghost_volume_change(self, value):
+        """Изменить громкость призрака"""
         self.ghost_volume = value
         self.ghost_value_label.text = f'{int(value * 100)}%'
 
@@ -372,6 +384,7 @@ class SettingsView(arcade.View):
         SettingsManager.save()
 
     def toggle_language(self):
+        """Смена языка"""
         # Меняем индекс
         constants.LANGUAGE_INDEX = 1 - constants.LANGUAGE_INDEX
 
@@ -386,9 +399,10 @@ class SettingsView(arcade.View):
         self.language_button.text = f'< {self.language_button_texts[constants.LANGUAGE_INDEX]} >'
 
         # Обновляем все тексты
-        self.update_ui_texts()
+        self.update_texts()
 
-    def update_ui_texts(self):
+    def update_texts(self):
+        """Обновить тексты"""
         # Все тексты через список по индексу
         title_texts = ['НАСТРОЙКИ', 'SETTINGS']
         self.title_label.text = title_texts[constants.LANGUAGE_INDEX]

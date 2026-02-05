@@ -3,6 +3,8 @@ from . import InteractiveLabel
 
 
 class MarketButtons:
+    """Кнопка в маркете"""
+
     def __init__(self, x, y, width, height, market_view):
         self.x = x
         self.y = y
@@ -111,6 +113,7 @@ class MarketButtons:
             self.button_take_item.text_color = arcade.color.Color.from_hex_string('#808080')
 
     def check_mouse_hover(self, x, y):
+        """проверка на ховер"""
         # Преобразуем координаты для проверки кнопок
         self.button_buy_item.check_mouse_hover(x, y)
         self.button_buy_all.check_mouse_hover(x, y)

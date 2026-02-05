@@ -7,19 +7,20 @@ class ItemData:
 
     def __init__(self, item_id, name, price, description,
                  max_in_game, image_path, is_stationary=False, on_level=1):
-        self.item_id = item_id
-        self.name = name
-        self.price = price
-        self.description = description
-        self.max_in_game = max_in_game
-        self.is_stationary = is_stationary
-        self.on_level = on_level
-        self.image_path = image_path
+        self.item_id: str = item_id
+        self.name: str = name
+        self.price: int = price
+        self.description: str = description
+        self.max_in_game: int = max_in_game
+        self.is_stationary: bool = is_stationary
+        self.on_level: int = on_level
+        self.image_path: str = image_path
 
         self.in_inventory = 0
         self.selected = 0
 
 
+# БД предметов
 ITEM_DATABASE = {
     'emf': ItemData(
         item_id='emf',
@@ -140,6 +141,8 @@ ITEM_DATABASE = {
 
 
 class ItemInfoWidget:
+    """Виджет вывода информации о предмете (в маркете)"""
+
     def __init__(self, x, y, width, height, player_level):
         self.x = x
         self.y = y
@@ -261,6 +264,7 @@ class ItemInfoWidget:
         self.ui_elements.append(self.desc_label)
 
     def update_info(self, item_data):
+        """Обновить информацию"""
         self.current_item = item_data
 
         self.image_sprite_list.clear()

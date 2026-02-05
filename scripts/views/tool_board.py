@@ -6,23 +6,30 @@ from .settings import SettingsManager
 
 
 class ToolBoard(arcade.View):
+    """Доска предметов (тулборд)"""
+
     def __init__(self, inv, map, player, bias_scale=1):
         super().__init__()
 
+        # Карта
         self.map = map
-        self.player = player
 
+        # Игрок
+        self.player = player
         self.inv = inv
 
+        # Камеры
         self.gui_camera = None
         self.world_camera = None
 
+        # Масштаб
         self.bias_scale = bias_scale
 
         self.setup()
         self.set_tools()
 
     def setup(self):
+        """Настройка сцены"""
         # Камеры
         self.world_camera = arcade.Camera2D(
             projection=arcade.rect.XYWH(0, 0, 800, 600),
@@ -31,12 +38,18 @@ class ToolBoard(arcade.View):
         self.gui_camera = arcade.Camera2D()
 
     def set_tools(self):
+        """
+        Установка предметов
+
+        Если возникает IndexError, предмет не добавляется, т.к его просто нет
+        """
         self.tools_sprites = arcade.SpriteList()
         self.tools = []
 
         from ..items import Thermometer, Microphone, EMF, Book, Pills, Lighter, Incense, Radio, FlashLight, \
             LowFlashlight
 
+        # ЭМП
         emfs = [EMF(self.bias_scale) for _ in range(self.inv['emf'])]
         try:
             emf1 = emfs[0]
@@ -60,29 +73,31 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        ufs = [LowFlashlight(self.bias_scale) for _ in range(self.inv['low_light'])]
+        # Слабый фонарик
+        low_flashlights = [LowFlashlight(self.bias_scale) for _ in range(self.inv['low_light'])]
         try:
-            uf1 = ufs[0]
-            uf1.create_board_sprite()
-            uf1.create_sprite(1.0)
-            self.map.uf1 = uf1
-            self.map.items_sprite_list.append(uf1.sprite)
-            uf1.board_sprite.center_x, uf1.board_sprite.center_y = 125, 370
-            self.tools_sprites.append(uf1.board_sprite)
-            self.tools.append(uf1)
+            low_flashlight1 = low_flashlights[0]
+            low_flashlight1.create_board_sprite()
+            low_flashlight1.create_sprite(1.0)
+            self.map.uf1 = low_flashlight1
+            self.map.items_sprite_list.append(low_flashlight1.sprite)
+            low_flashlight1.board_sprite.center_x, low_flashlight1.board_sprite.center_y = 125, 370
+            self.tools_sprites.append(low_flashlight1.board_sprite)
+            self.tools.append(low_flashlight1)
 
-            uf2 = ufs[1]
-            uf2.create_board_sprite()
-            uf2.create_sprite(1.0)
-            self.map.uf2 = uf2
-            self.map.items_sprite_list.append(uf2.sprite)
-            uf2.board_sprite.center_x, uf2.board_sprite.center_y = 125, 320
-            self.tools_sprites.append(uf2.board_sprite)
-            self.tools.append(uf2)
+            low_flashlight2 = low_flashlights[1]
+            low_flashlight2.create_board_sprite()
+            low_flashlight2.create_sprite(1.0)
+            self.map.uf2 = low_flashlight2
+            self.map.items_sprite_list.append(low_flashlight2.sprite)
+            low_flashlight2.board_sprite.center_x, low_flashlight2.board_sprite.center_y = 125, 320
+            self.tools_sprites.append(low_flashlight2.board_sprite)
+            self.tools.append(low_flashlight2)
 
         except IndexError:
             pass
 
+        # Блокнот
         books = [Book(self.bias_scale) for _ in range(self.inv['book'])]
         try:
             book1 = books[0]
@@ -106,6 +121,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
+        # Направленный микрофон
         mics = [Microphone(self.bias_scale) for _ in range(self.inv['mic'])]
         try:
             mic1 = mics[0]
@@ -129,29 +145,31 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
-        dicts = [Radio(self.bias_scale) for _ in range(self.inv['dict'])]
+        # Радиоприемник
+        radios = [Radio(self.bias_scale) for _ in range(self.inv['dict'])]
         try:
-            dict1 = dicts[0]
-            dict1.create_board_sprite()
-            dict1.create_sprite(1.0)
-            self.map.dict1 = dict1
-            self.map.items_sprite_list.append(dict1.sprite)
-            dict1.board_sprite.center_x, dict1.board_sprite.center_y = 400, 450
-            self.tools_sprites.append(dict1.board_sprite)
-            self.tools.append(dict1)
+            radio1 = radios[0]
+            radio1.create_board_sprite()
+            radio1.create_sprite(1.0)
+            self.map.dict1 = radio1
+            self.map.items_sprite_list.append(radio1.sprite)
+            radio1.board_sprite.center_x, radio1.board_sprite.center_y = 400, 450
+            self.tools_sprites.append(radio1.board_sprite)
+            self.tools.append(radio1)
 
-            dict2 = dicts[1]
-            dict2.create_board_sprite()
-            dict2.create_sprite(1.0)
-            self.map.dict2 = dict2
-            self.map.items_sprite_list.append(dict2.sprite)
-            dict2.board_sprite.center_x, dict2.board_sprite.center_y = 450, 450
-            self.tools_sprites.append(dict2.board_sprite)
-            self.tools.append(dict2)
+            radio2 = radios[1]
+            radio2.create_board_sprite()
+            radio2.create_sprite(1.0)
+            self.map.dict2 = radio2
+            self.map.items_sprite_list.append(radio2.sprite)
+            radio2.board_sprite.center_x, radio2.board_sprite.center_y = 450, 450
+            self.tools_sprites.append(radio2.board_sprite)
+            self.tools.append(radio2)
 
         except IndexError:
             pass
 
+        # Термометр
         terms = [Thermometer(self.bias_scale) for _ in range(self.inv['term'])]
         try:
             term1 = terms[0]
@@ -175,6 +193,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
+        # Фонарик
         flash_lights = [FlashLight(self.bias_scale) for _ in range(self.inv['flash_light'])]
         try:
             flash_light1 = flash_lights[0]
@@ -216,6 +235,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
+        # Благовония
         incenses = [Incense(self.bias_scale) for _ in range(self.inv['incense'])]
         try:
             incense1 = incenses[0]
@@ -261,6 +281,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
+        # Зажигалка
         lighters = [Lighter(self.bias_scale) for _ in range(self.inv['lighter'])]
         try:
             lighter1 = lighters[0]
@@ -306,6 +327,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
+        # Таблетки
         pills = [Pills(self.map.game.add_sanity, self.bias_scale) for _ in range(self.inv['pills'])]
         try:
             pills1 = pills[0]
@@ -351,6 +373,7 @@ class ToolBoard(arcade.View):
         except IndexError:
             pass
 
+        # Создание фантомных предметов
         self.phantom_items = arcade.SpriteList()
         self.gray_items = arcade.SpriteList()
         for it in self.tools_sprites[:]:
@@ -427,6 +450,7 @@ class ToolBoard(arcade.View):
             self.close()
 
     def take_tool(self, item):
+        """Взять предмет"""
         if item.id in ('lighter',):
             if not self.player.has_lighter:
                 self.player.take_item(item)
@@ -446,6 +470,7 @@ class ToolBoard(arcade.View):
             pass
 
     def put_tool(self, item):
+        """Вернуть предмет"""
         if item.id in ('lighter',):
             return
 
@@ -455,11 +480,13 @@ class ToolBoard(arcade.View):
         self.tools_sprites.append(item.board_sprite)
 
     def close(self):
+        """Закрыть тулборд"""
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(BOARD_1, volume=volume)
         self.window.show_view(self.map)
 
     def open_settings(self):
+        """Открыть настройки"""
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(SETTINGS, volume=volume)
 

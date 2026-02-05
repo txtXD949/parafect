@@ -8,14 +8,20 @@ from constants import LANGUAGE_INDEX
 
 
 class EntryMenu(arcade.View):
+    """Меню входа"""
+
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.BLACK
+
+        # Звук в меню
         ENTRY_BACKGROUND_SOUND.play()
 
+        # Менеджер
         self.manager = UIManager()
         self.manager.enable()
 
+        # Слои
         self.anchor_layout = UIAnchorLayout()
         self.box_layout_labels = UIBoxLayout(vertical=True, space_between=20)
         self.box_layout_buttons = UIBoxLayout(vertical=True, space_between=20)
@@ -33,6 +39,8 @@ class EntryMenu(arcade.View):
         self.setup_widgets()
 
     def setup_widgets(self):
+        """Настройка виджетов"""
+        # Добро пожаловать
         self.label1 = UILabel(
             text='Welcome',
             font_size=26,
@@ -42,6 +50,7 @@ class EntryMenu(arcade.View):
         )
         self.box_layout_labels.add(self.label1)
 
+        # Вам нужен профиль
         self.label2 = UILabel(
             text='You need a profile',
             font_size=20,
@@ -51,6 +60,7 @@ class EntryMenu(arcade.View):
         )
         self.box_layout_labels.add(self.label2)
 
+        # Кнопка СОЗДАТЬ
         self.button_create = InteractiveLabel(
             text='CREATE',
             width=250,
@@ -65,6 +75,7 @@ class EntryMenu(arcade.View):
         )
         self.box_layout_buttons.add(self.button_create)
 
+        # Кнопка ВОЙТИ
         self.button_login = InteractiveLabel(
             text='LOGIN',
             width=250,
@@ -79,6 +90,7 @@ class EntryMenu(arcade.View):
         )
         self.box_layout_buttons.add(self.button_login)
 
+        # Кнопка НАСТРОЙКИ
         self.button_settings = InteractiveLabel(
             text='SETTINGS',
             width=180,
@@ -93,6 +105,7 @@ class EntryMenu(arcade.View):
         )
         self.box_layout_bottom.add(self.button_settings)
 
+        # Кнопка ВЫХОД
         self.button_exit = InteractiveLabel(
             text='EXIT',
             width=180,

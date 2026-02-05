@@ -4,10 +4,13 @@ import arcade
 from ..views import SettingsManager
 from ..sounds import *
 
+# Движение камеры
 CAMERA_LERP = 0.3
 
 
 class LobbyView(arcade.View):
+    """Сцена лобби"""
+
     def __init__(self, account_manager):
         super().__init__()
 
@@ -35,6 +38,7 @@ class LobbyView(arcade.View):
         self.setup()
 
     def setup(self):
+        """Настройка сцены"""
         from ..player import PlayerSprite
 
         # Фоновый звук
@@ -83,6 +87,7 @@ class LobbyView(arcade.View):
             self.map_height / 2
         )
 
+        # Мапборд
         from ..views import MapBoard
         self.map_board = MapBoard(lobby=self, account_manager=self.account_manager)
 
@@ -167,7 +172,7 @@ class LobbyView(arcade.View):
         if symbol == arcade.key.RIGHT:
             self.player.change_x = self.player.speed
 
-        if symbol == arcade.key.F10:
+        if symbol == arcade.key.F10:  # Открыть настройки
             self.open_settings()
 
     def on_key_release(self, symbol: int, modifiers: int) -> bool | None:
@@ -177,6 +182,7 @@ class LobbyView(arcade.View):
             self.player.change_x = 0
 
     def open_main_board(self):
+        """Открывает мейнборд"""
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(BOARD_1, volume=volume)
 
@@ -187,6 +193,7 @@ class LobbyView(arcade.View):
         self.window.show_view(main_board)
 
     def open_map_board(self):
+        """Открывает мапборд"""
         volume = SettingsManager.get_sound_volume()
         arcade.play_sound(BOARD_2, volume=volume)
 
@@ -195,6 +202,7 @@ class LobbyView(arcade.View):
         self.window.show_view(self.map_board)
 
     def open_market(self):
+        """Открывает маркет"""
         volume = SettingsManager.get_sound_volume(0.3)
         arcade.play_sound(MARKET, volume=volume)
 
@@ -205,6 +213,7 @@ class LobbyView(arcade.View):
         self.window.show_view(market)
 
     def open_settings(self):
+        """Открывает настройки"""
         volume = SettingsManager.get_sound_volume(1.2)
         arcade.play_sound(SETTINGS, volume=volume)
 

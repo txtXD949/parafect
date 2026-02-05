@@ -15,6 +15,8 @@ class ClosetSprite(arcade.Sprite):
         self.is_broken = False
 
     def interact(self, player_sprite, items_list):
+        """Обработка взаимодействия со шкафом"""
+
         if self.is_broken:
             return
 
@@ -37,6 +39,8 @@ class ClosetSprite(arcade.Sprite):
         return
 
     def broke(self):
+        """Ломание шкафа"""
+
         if self.player_sprite:
             self.player_sprite.visible = True
             self.player_sprite.speed = 1
